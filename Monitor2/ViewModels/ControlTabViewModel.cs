@@ -55,7 +55,7 @@ namespace Monitor2.ViewModels
             set
             {
                 _isAutoCheckStatus = value;
-                AutoCheckTimer.Enabled = _isAutoCheckStatus;
+                AutoCheckTimer.Enabled = value;
                 OnPropertityChanged("IsAutoCheckStatus");
             }
         }
@@ -119,7 +119,10 @@ namespace Monitor2.ViewModels
                 CANQueueManager manager = CANQueueManager.GetInstance();
                 manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
                 manager.RaiseSendQueueChanged();
-                AutoCheckTimer.Start();
+                if (IsAutoCheckStatus)
+                {
+                    AutoCheckTimer.Start();
+                }
             }
         }
 
@@ -130,11 +133,14 @@ namespace Monitor2.ViewModels
             {
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    ConnectStatus = 1;
+                    ConnectStatus = 0;
                 }));
                 missCount = 0;
             }
-            AutoCheckTimer.Start();
+            if (IsAutoCheckStatus)
+            {
+                AutoCheckTimer.Start();
+            }
         }
 
         public void LoadControlParasList(string fileName)

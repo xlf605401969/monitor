@@ -96,7 +96,7 @@
                        HorizontalAlignment="Right"/>
                 <TextBox Name="IDInput" 
                          Grid.Row="2" Grid.Column="7"
-                         Text="0x00001234"
+                         Text="0x00000100"
                          TextChanged="IDInput_TextChanged"/>
                 <Label Grid.Row="2" Grid.Column="0" Content="AccCode:"
                        HorizontalAlignment="Right"/>
@@ -217,7 +217,8 @@
                                               HorizontalAlignment="Center"
                                               Visibility="Visible"
                                               IsChecked="{Binding IsAutoCheckStatus}"/>
-                                    <Button Name="StatusCheckButton" Content="查询"/>
+                                    <Button Name="StatusCheckButton" Content="查询"
+                                            Click="StatusCheckButton_Click"/>
                                 </StackPanel>
                                 <Label Content="连接状态:"
                                        Grid.Column="1" Grid.Row="1"

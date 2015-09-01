@@ -260,9 +260,25 @@ namespace Monitor2
                 case CANFrameType.Para:
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        foreach(ParaModel m in ParasListVM.parasList)
+                        foreach (ParaModel m in ParasListVM.parasList)
                         {
-                            if(m.Index == frame.FrameIndex)
+                            if (m.Index == frame.FrameIndex)
+                            {
+                                m.Value = frame.Value;
+                                m.IsValueChanged = false;
+                            }
+                        }
+                        foreach (ParaModel m in ControlTabVM.StatusParasList)
+                        {
+                            if (m.Index == frame.FrameIndex)
+                            {
+                                m.Value = frame.Value;
+                                m.IsValueChanged = false;
+                            }
+                        }
+                        foreach (ParaModelWithCommand m in ControlTabVM.ControlParasList)
+                        {
+                            if (m.Index == frame.FrameIndex)
                             {
                                 m.Value = frame.Value;
                                 m.IsValueChanged = false;
@@ -277,13 +293,14 @@ namespace Monitor2
                 case CANFrameType.Query:
                     throw new NotImplementedException();
                 case CANFrameType.Status:
-                    throw new NotImplementedException();
+                    break;
                 case CANFrameType.Start:
                     throw new NotImplementedException();
                 case CANFrameType.Stop:
                     throw new NotImplementedException();
                 case CANFrameType.ACK:
-                    throw new NotImplementedException();
+                    ControlTabVM.ReveicedACK(frame);
+                    break;
             }
         }
 
@@ -391,6 +408,13 @@ namespace Monitor2
             {
                 MessageBox.Show("请先启动CAN控制器", "错误");
             }
+        }
+
+        private void StatusCheckButton_Click(object sender, RoutedEventArgs e)
+        {
+            CANQueueManager manager = CANQueueManager.GetInstance();
+            manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
+            manager.RaiseSendQueueChanged();
         }
     }
 }
