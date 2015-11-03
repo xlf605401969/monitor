@@ -265,6 +265,8 @@ namespace Monitor2
                             if (m.Index == frame.FrameIndex)
                             {
                                 m.Value = frame.Value;
+                                if (m.Type == 1)
+                                    m.Value = frame.IndexValue;
                                 m.IsValueChanged = false;
                             }
                         }
@@ -273,6 +275,8 @@ namespace Monitor2
                             if (m.Index == frame.FrameIndex)
                             {
                                 m.Value = frame.Value;
+                                if (m.Type == 1)
+                                    m.Value = frame.IndexValue;
                                 m.IsValueChanged = false;
                             }
                         }
@@ -281,6 +285,8 @@ namespace Monitor2
                             if (m.Index == frame.FrameIndex)
                             {
                                 m.Value = frame.Value;
+                                if (m.Type == 1)
+                                    m.Value = frame.IndexValue;
                                 m.IsValueChanged = false;
                             }
                         }
@@ -295,7 +301,7 @@ namespace Monitor2
                 case CANFrameType.Status:
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        ControlTabVM.DeviceStatus = frame.DataIndex;
+                        ControlTabVM.DeviceStatus = frame.IndexValue;
                     }));
                     break;
                 case CANFrameType.Start:

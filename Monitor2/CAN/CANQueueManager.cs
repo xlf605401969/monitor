@@ -85,7 +85,8 @@ namespace Monitor2.CAN
                 message.FrameType = (byte)type;
                 message.FrameIndex = para.Index;
                 message.DataType = para.Type;
-                message.DataIndex = 0;
+                if(para.Type == 1)
+                    message.IndexValue = (byte)Math.Round(para.Value);
                 message.Value = para.Value;
                 byte[] value = BitConverter.GetBytes(para.Value);
                 //value.Reverse();
@@ -131,7 +132,7 @@ namespace Monitor2.CAN
             }
         }
 
-        public void ConstractMessage(CANFrameType type, byte index = 0)
+        public void ConstractMessage(CANFrameType type, byte index = 0xff)
         {
             CANFrame message = new CANFrame();
             message.FrameType = (byte)type;
@@ -144,7 +145,7 @@ namespace Monitor2.CAN
             CANFrame message = new CANFrame();
             message.FrameType = (byte)CANFrameType.Control;
             message.FrameIndex = model.Index;
-            message.DataIndex = (byte)modeIndex;
+            message.IndexValue = (byte)modeIndex;
             SendQueue.Enqueue(message);
         }
 
@@ -181,7 +182,7 @@ namespace Monitor2.CAN
                     str += "ID:";
                     str += "0x" + Convert.ToString(frame.FrameIndex, 16);
                     str += " 选项值:";
-                    str += "0x" + Convert.ToString(frame.DataIndex, 16);
+                    str += "0x" + Convert.ToString(frame.IndexValue, 16);
                     str += " 数据值:";
                     str += Convert.ToString(frame.Value);
                     break;

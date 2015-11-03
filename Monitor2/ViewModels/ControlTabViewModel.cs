@@ -83,7 +83,7 @@ namespace Monitor2.ViewModels
             }
             set
             {
-                _connectStatus = value;
+                _deviceStatus = value;
                 OnPropertityChanged("DeviceStatus");
             }
         }
@@ -143,14 +143,14 @@ namespace Monitor2.ViewModels
         public void ReveicedACK(CANFrame frame)
         {
             AutoCheckTimer.Stop();
-            if ((CANACKIndex)frame.FrameIndex == CANACKIndex.Status)
-            {
+//            if ((CANACKIndex)frame.FrameIndex == CANACKIndex.Status)
+//            {
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ConnectStatus = 0;
                 }));
                 missCount = 0;
-            }
+//            }
             if (IsAutoCheckStatus)
             {
                 AutoCheckTimer.Start();

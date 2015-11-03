@@ -37,7 +37,7 @@ namespace Monitor2.CAN
             }
         }
 
-        public byte DataIndex
+        public byte IndexValue
         {
             get { return data[3]; }
             set

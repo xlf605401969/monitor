@@ -154,7 +154,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Name="UpdateParaListButton" Content="发送"
                             Grid.Column="0" Margin="0,0,0,0"
-                            Click="UpdateParaListButton_Click"/>
+                            Click="UpdateParaListButton_Click" Height="30" VerticalAlignment="Top"/>
                     <Button Name="ReadParaListButton" Content="读取"
                             Grid.Column="1" Margin="0,0,0,0"
                             Click="ReadParaListButton_Click"/>
