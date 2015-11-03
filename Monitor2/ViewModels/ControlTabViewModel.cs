@@ -74,6 +74,20 @@ namespace Monitor2.ViewModels
             }
         }
 
+        private int _deviceStatus = -1;
+        public int DeviceStatus
+        {
+            get
+            {
+                return _deviceStatus;
+            }
+            set
+            {
+                _connectStatus = value;
+                OnPropertityChanged("DeviceStatus");
+            }
+        }
+
         public int missCount; 
 
         public List<ParaModelWithCommand> ControlParasList { get; private set; }
@@ -212,11 +226,19 @@ namespace Monitor2.ViewModels
         {
             if (((DeviceStatusIndex)value) == DeviceStatusIndex.Run)
             {
+                return Brushes.Red;
+            }
+            else if ((DeviceStatusIndex)value == DeviceStatusIndex.Stop)
+            {
                 return Brushes.Green;
             }
-            else if ((int)value > 0)
+            else if ((DeviceStatusIndex)value == DeviceStatusIndex.Init)
             {
-                return Brushes.Red;
+                return Brushes.Yellow;
+            }
+            else if ((DeviceStatusIndex)value == DeviceStatusIndex.Error)
+            {
+                return Brushes.Black;
             }
             else
             {

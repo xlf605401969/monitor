@@ -293,6 +293,10 @@ namespace Monitor2
                 case CANFrameType.Query:
                     throw new NotImplementedException();
                 case CANFrameType.Status:
+                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ControlTabVM.DeviceStatus = frame.DataIndex;
+                    }));
                     break;
                 case CANFrameType.Start:
                     throw new NotImplementedException();

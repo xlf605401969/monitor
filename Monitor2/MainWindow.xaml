@@ -11,7 +11,8 @@
         ResizeMode="NoResize">
     <Window.Resources>
         <models:ValueChangedConverter x:Key="GetColor"></models:ValueChangedConverter>
-        <vm:ConnectStatusConverter x:Key="GetStatusColor"></vm:ConnectStatusConverter>
+        <vm:ConnectStatusConverter x:Key="GetConnectStatusColor"></vm:ConnectStatusConverter>
+        <vm:DeviceStatusConverter x:Key="GetDeviceStatusColor"></vm:DeviceStatusConverter>
         <vm:DeviceModeConverter x:Key="FloatToInt"></vm:DeviceModeConverter>
     </Window.Resources>
     <Grid>
@@ -214,7 +215,7 @@
                                     <CheckBox Name="StatusCheckSelection" Content="自动查询"
                                               Grid.Row="1" Grid.Column="0" 
                                               VerticalAlignment="Center" 
-                                              HorizontalAlignment="Center"
+                                              HorizontalAlignment="Right"
                                               Visibility="Visible"
                                               IsChecked="{Binding IsAutoCheckStatus}"/>
                                     <Button Name="StatusCheckButton" Content="查询"
@@ -227,7 +228,7 @@
                                          Grid.Row="1" Grid.Column="2"
                                          Margin="0,10,0,10"
                                          VerticalAlignment="Center"
-                                         Fill="{Binding Path=ConnectStatus, Converter={StaticResource GetStatusColor}}"/>
+                                         Fill="{Binding Path=ConnectStatus, Converter={StaticResource GetConnectStatusColor}}"/>
                                 <Label Content="运行状态:"
                                        Grid.Column="3" Grid.Row="1"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -235,7 +236,7 @@
                                          Grid.Row="1" Grid.Column="4"
                                          Margin="0,10,0,10"
                                          VerticalAlignment="Center"
-                                         Fill="Gray"/>
+                                         Fill="{Binding Path=DeviceStatus, Converter={StaticResource GetDeviceStatusColor}}"/>
                                 <Button Name="MotorStartButton" Content="启动"
                                         Grid.Row="0" Grid.Column="3"
                                         Margin="10,0,10,0"

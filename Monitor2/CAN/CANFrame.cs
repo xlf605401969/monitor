@@ -77,9 +77,10 @@ namespace Monitor2.CAN
 
     public enum DeviceStatusIndex
     {
-        Run,
-        Error,
         Stop,
+        Run,
+        Init,
+        Error,
     }
 
     public enum DeviceModeIndex
