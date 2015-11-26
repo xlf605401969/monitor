@@ -411,7 +411,7 @@ namespace Monitor2
         {
             if (CANController.m_canstart == 1)
             {
-                canQueueManager.ConstractMessage(ControlTabVM.ParaMode, (DeviceModeIndex)(RunModeSelection.SelectedIndex + 1));
+                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[5], (DeviceModeIndex)(RunModeSelection.SelectedIndex + 1));
                 canQueueManager.RaiseSendQueueChanged();
             }
             else

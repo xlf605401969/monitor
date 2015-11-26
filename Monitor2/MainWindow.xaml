@@ -203,7 +203,7 @@
                                 <ComboBox Name="RunModeSelection"
                                           DataContext="{Binding ControlParasList[5]}"
                                           Grid.Column="1"
-                                          SelectedIndex="{Binding Path=Value, Converter={StaticResource FloatToInt}}">
+                                          SelectedIndex="{Binding Path=Value, Converter={StaticResource FloatToInt}}" >
                                     <ComboBoxItem>转速模式</ComboBoxItem>
                                     <ComboBoxItem>转矩模式</ComboBoxItem>
                                     <ComboBoxItem>定位模式</ComboBoxItem>
