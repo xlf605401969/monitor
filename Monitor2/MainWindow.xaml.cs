@@ -32,14 +32,15 @@ namespace Monitor2
         {
             InitializeComponent();
             ParasListVM = new ParasListViewModel();
-            ParasListVM.LoadParasList("paras.config");
+            ParasListVM.LoadParasList("Paras.config");
 
             ControlTabVM = new ControlTabViewModel();
-            ControlTabVM.LoadControlParasList("paras2.config");
-            ControlTabVM.LoadStatusParasList("statuspara.config");
+            ControlTabVM.LoadControlParasList("Command.config");
+            ControlTabVM.LoadStatusParasList("Status.config");
 
             //绑定参数列表
             ParasListView.DataContext = ParasListVM.parasList;
+            ReturnParasListView.DataContext = ParasListVM.returnParasList;
 
             ControlTabView.DataContext = ControlTabVM;
 
@@ -260,11 +261,14 @@ namespace Monitor2
                 case CANFrameType.Para:
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        foreach (ParaModel m in ParasListVM.parasList)
+                        foreach (ParaModel m in ParasListVM.returnParasList)
                         {
                             if (m.Index == frame.FrameIndex)
                             {
-                                m.Value = frame.Value;
+                                if (m.Type == 3)
+                                    m.Value = frame.IntValue;
+                                if (m.Type == 2)
+                                    m.Value = frame.Value;
                                 if (m.Type == 1)
                                     m.Value = frame.IndexValue;
                                 m.IsValueChanged = false;
@@ -274,19 +278,26 @@ namespace Monitor2
                         {
                             if (m.Index == frame.FrameIndex)
                             {
-                                m.Value = frame.Value;
+                                if (m.Type == 3)
+                                    m.Value = frame.IntValue;
+                                if (m.Type == 2)
+                                    m.Value = frame.Value;
                                 if (m.Type == 1)
                                     m.Value = frame.IndexValue;
                                 m.IsValueChanged = false;
                             }
                         }
-                        foreach (ParaModelWithCommand m in ControlTabVM.ControlParasList)
+                        foreach (ParaModelWithCommandAndReturn m in ControlTabVM.ControlParasList)
                         {
                             if (m.Index == frame.FrameIndex)
                             {
-                                m.Value = frame.Value;
+                                if (m.Type == 3)
+                                    m.Value = frame.IntValue;
+                                if (m.Type == 2)
+                                    m.Value = frame.Value;
                                 if (m.Type == 1)
                                     m.Value = frame.IndexValue;
+                                m.ReturnValue = m.Value;
                                 m.IsValueChanged = false;
                             }
                         }
@@ -349,6 +360,7 @@ namespace Monitor2
         private void ParasPanelSaveButton_Click(object sender, RoutedEventArgs e)
         {
             ControlTabVM.SaveParasList("paras2.config");
+            MessageBox.Show("成功");
         }
 
         private void ParasPanelConfirmButton_Click(object sender, RoutedEventArgs e)
@@ -409,9 +421,9 @@ namespace Monitor2
 
         private void RunModeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.m_canstart == 1 || true)
             {
-                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[5], (DeviceModeIndex)(RunModeSelection.SelectedIndex + 1));
+                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[5], CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
             }
             else
@@ -422,9 +434,16 @@ namespace Monitor2
 
         private void StatusCheckButton_Click(object sender, RoutedEventArgs e)
         {
-            CANQueueManager manager = CANQueueManager.GetInstance();
-            manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
-            manager.RaiseSendQueueChanged();
+            if (CANController.m_canstart == 1)
+            {
+                CANQueueManager manager = CANQueueManager.GetInstance();
+                manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
+                manager.RaiseSendQueueChanged();
+            }
+            else
+            {
+                MessageBox.Show("请先启动CAN控制器", "错误");
+            }
         }
     }
 }

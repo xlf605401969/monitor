@@ -124,6 +124,8 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <ListView Name="ParasListView" ItemsSource="{Binding}"
@@ -146,8 +148,28 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <Label Grid.Row="1" Content="返回值"/>
+                <ListView Name="ReturnParasListView" ItemsSource="{Binding}"
+                      Grid.Row="2">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,0" Width="130">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="1.3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="{Binding Name}" 
+                                   Grid.Column="0" Margin="0,0,0,0"
+                                   HorizontalAlignment="Center"/>
+                                <TextBox Text="{Binding Value}" 
+                                   Grid.Column="1" Margin="0,0,0,0"
+                                   />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <Grid Height="Auto"
-                      Grid.Row="1">
+                      Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
@@ -303,6 +325,9 @@
                                             Click="ParaMinusButton_Click"/>
                                     <TextBox Width="50"
                                              Text="{Binding ValueChangeStep}"/>
+                                    <TextBox Text="{Binding Path=ReturnValue, StringFormat={}{0:N}}" 
+                                             Width="100"
+                                             Margin="50,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal"
                                             Margin="0,12,0,12"
@@ -320,6 +345,9 @@
                                             Click="ParaMinusButton_Click"/>
                                     <TextBox Width="50"
                                              Text="{Binding ValueChangeStep}"/>
+                                    <TextBox Text="{Binding Path=ReturnValue, StringFormat={}{0:N}}" 
+                                             Width="100"
+                                             Margin="50,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="2" Orientation="Horizontal"
                                             Margin="0,12,0,12"
@@ -337,6 +365,9 @@
                                             Click="ParaMinusButton_Click"/>
                                     <TextBox Width="50"
                                              Text="{Binding ValueChangeStep}"/>
+                                    <TextBox Text="{Binding Path=ReturnValue, StringFormat={}{0:N}}" 
+                                             Width="100"
+                                             Margin="50,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="3" Orientation="Horizontal"
                                             Margin="0,12,0,12"
@@ -354,6 +385,9 @@
                                             Click="ParaMinusButton_Click"/>
                                     <TextBox Width="50"
                                              Text="{Binding ValueChangeStep}"/>
+                                    <TextBox Text="{Binding Path=ReturnValue, StringFormat={}{0:N}}" 
+                                             Width="100"
+                                             Margin="50,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="4" Orientation="Horizontal"
                                             Margin="0,12,0,12"
@@ -403,6 +437,9 @@
                                        HorizontalAlignment="Right"/>
                             <Label Content="接受计数:"/>
                             <TextBlock Name="ReceiveCountView" Text="{Binding ReceiveCount}"
+                                       HorizontalAlignment="Right"/>                      
+                            <Label Content="错误计数:"/>
+                            <TextBlock Name="ErrCountView" Text="{Binding ErrCount}"
                                        HorizontalAlignment="Right"/>
                             <CheckBox Name="LogEnable" Content="记录日志"
                                       IsChecked="{Binding IsLogEnable}"

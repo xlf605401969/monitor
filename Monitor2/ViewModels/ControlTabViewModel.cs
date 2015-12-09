@@ -18,15 +18,15 @@ namespace Monitor2.ViewModels
 {
     public class ControlTabViewModel:INotifyPropertyChanged
     {
-        public XmlSerializer xmlControlParasFormat = new XmlSerializer(typeof(List<ParaModelWithCommand>));
+        public XmlSerializer xmlControlParasFormat = new XmlSerializer(typeof(List<ParaModelWithCommandAndReturn>));
         public XmlSerializer xmlStatusParasFormat = new XmlSerializer(typeof(ObservableCollection<ParaModel>));
 
-        public ParaModelWithCommand Para1 { get; private set; }
-        public ParaModelWithCommand Para2 { get; private set; }
-        public ParaModelWithCommand Para3 { get; private set; }
-        public ParaModelWithCommand Para4 { get; private set; }
-        public ParaModelWithCommand ParaMode { get; private set; }
-        public ParaModelWithCommand ParaDirection { get; private set; }
+        public ParaModelWithCommandAndReturn Para1 { get; private set; }
+        public ParaModelWithCommandAndReturn Para2 { get; private set; }
+        public ParaModelWithCommandAndReturn Para3 { get; private set; }
+        public ParaModelWithCommandAndReturn Para4 { get; private set; }
+        public ParaModelWithCommandAndReturn ParaMode { get; private set; }
+        public ParaModelWithCommandAndReturn ParaDirection { get; private set; }
 
         public Timer AutoCheckTimer = new Timer(300);
 
@@ -90,20 +90,20 @@ namespace Monitor2.ViewModels
 
         public int missCount; 
 
-        public List<ParaModelWithCommand> ControlParasList { get; private set; }
+        public List<ParaModelWithCommandAndReturn> ControlParasList { get; private set; }
 
         public ObservableCollection<ParaModel> StatusParasList { get; private set; }
 
         public ControlTabViewModel()
         {
-            Para1 = new ParaModelWithCommand();
-            Para2 = new ParaModelWithCommand();
-            Para3 = new ParaModelWithCommand();
-            Para4 = new ParaModelWithCommand();
-            ParaDirection = new ParaModelWithCommand();
-            ParaMode = new ParaModelWithCommand();
+            Para1 = new ParaModelWithCommandAndReturn();
+            Para2 = new ParaModelWithCommandAndReturn();
+            Para3 = new ParaModelWithCommandAndReturn();
+            Para4 = new ParaModelWithCommandAndReturn();
+            ParaDirection = new ParaModelWithCommandAndReturn();
+            ParaMode = new ParaModelWithCommandAndReturn();
 
-            ControlParasList = new List<ParaModelWithCommand>();
+            ControlParasList = new List<ParaModelWithCommandAndReturn>();
             ControlParasList.Add(Para1);
             ControlParasList.Add(Para2);
             ControlParasList.Add(Para3);
@@ -161,7 +161,7 @@ namespace Monitor2.ViewModels
         {
             using (FileStream fStream = File.Open(fileName, FileMode.Open))
             {
-                ControlParasList = xmlControlParasFormat.Deserialize(fStream) as List<ParaModelWithCommand>;
+                ControlParasList = xmlControlParasFormat.Deserialize(fStream) as List<ParaModelWithCommandAndReturn>;
                 foreach (ParaModel m in ControlParasList)
                 {
                     m.IsValueChanged = false;
@@ -183,7 +183,6 @@ namespace Monitor2.ViewModels
             {
                 xmlControlParasFormat.Serialize(fStream, ControlParasList);
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

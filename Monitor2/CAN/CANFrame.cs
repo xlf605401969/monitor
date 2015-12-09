@@ -47,6 +47,7 @@ namespace Monitor2.CAN
         }
         
         public float Value { get; set; }
+        public int IntValue { get; set; }
 
     }
 

@@ -122,6 +122,21 @@ namespace Monitor2.Models
         }
     }
 
+    [Serializable]
+    public class ParaModelWithCommandAndReturn:ParaModelWithCommand
+    {
+        private float _returnValue;
+        public float ReturnValue
+        {
+            get { return _returnValue; }
+            set
+            {
+                _returnValue = value;
+                OnPropertityChanged("ReturnValue");
+            }
+        }
+    }
+
     public class PlusCommand : ICommand
     {
         public event EventHandler CanExecuteChanged;

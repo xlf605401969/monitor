@@ -55,6 +55,17 @@ namespace Monitor2.CAN
             }
         }
 
+        private int _errCount;
+        public int ErrCount
+        {
+            get { return _sendCount; }
+            set
+            {
+                _errCount = value;
+                OnPropertyChanged("ErrCount");
+            }
+        }
+
         private int _receiveCount;
         public int ReceiveCount
         {
@@ -85,14 +96,29 @@ namespace Monitor2.CAN
                 message.FrameType = (byte)type;
                 message.FrameIndex = para.Index;
                 message.DataType = para.Type;
-                if(para.Type == 1)
+                if (para.Type == 1)
                     message.IndexValue = (byte)Math.Round(para.Value);
-                message.Value = para.Value;
-                byte[] value = BitConverter.GetBytes(para.Value);
-                //value.Reverse();
-                for (int i = 0; i < 4; i++)
+                else if (para.Type == 2)
                 {
-                    message.data[i + 4] = value[3 - i];
+                    message.Value = para.Value;
+                    message.IntValue = (int)para.Value;
+                    byte[] value = BitConverter.GetBytes(message.Value);
+                    //value.Reverse();
+                    for (int i = 0; i < 4; i++)
+                    {
+                        message.data[i + 4] = value[3 - i];
+                    }
+                }
+                else if (para.Type == 3)
+                {
+                    message.Value = para.Value;
+                    message.IntValue = (int)para.Value;
+                    byte[] value = BitConverter.GetBytes(message.IntValue);
+                    //value.Reverse();
+                    for (int i = 0; i < 4; i++)
+                    {
+                        message.data[i + 4] = value[3 - i];
+                    }
                 }
                 SendQueue.Enqueue(message);
             }
@@ -118,7 +144,11 @@ namespace Monitor2.CAN
                     if (CANController.VCI_Transmit(CANController.m_devtype, CANController.m_devind, CANController.m_canind,
                         ref obj, 1) == 0)
                     {
-                        MessageBox.Show("发送失败", "错误", MessageBoxButton.OK);
+                        App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            ErrCount++;
+                        }));
+                        //MessageBox.Show("发送失败", "错误", MessageBoxButton.OK);
                     }
 
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>

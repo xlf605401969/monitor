@@ -251,14 +251,16 @@ namespace Monitor2.CAN
             {
                 message.data[i] = obj.Data[i];
             }
-
             byte[] value = new byte[4];
             for (int i = 0; i < 4; i++)
             {
                 value[i] = message.data[7 - i];
             }
             value.Reverse();
-            message.Value = BitConverter.ToSingle(value, 0);
+            if (message.DataType == 2)
+                message.Value = BitConverter.ToSingle(value, 0);
+            else if (message.DataType == 3)
+                message.IntValue = BitConverter.ToInt32(value, 0);
             return message;
         }
 
