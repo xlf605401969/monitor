@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Threading;
 
-namespace CANString.CANDriver
+namespace MonitorV3.CANDriver
 {
     class CANController
     {
@@ -248,13 +248,31 @@ namespace CANString.CANDriver
 
         public static TimeSpan ReceiveTimeSpan;
 
+        public static long ReceivedBytesCount = 0;
+
+        public static long SentBytesCount = 0;
+
         unsafe public static void EnQueueCANObjData(VCI_CAN_OBJ obj)
         {
             for (int i = 0; i < 8; i++)
             {
                 if (obj.Data[i] == 0x04) break;
                 CANReceiveQueue.Enqueue(obj.Data[i]);
+                ReceivedBytesCount++;
                 if (obj.Data[i] == 0xff)
+                {
+                    ReceivedEOF?.Invoke(null, new EventArgs());
+                }
+            }
+        }
+
+        public static void EnQueueString(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c == 0x04) break;
+                CANReceiveQueue.Enqueue((byte)c);
+                if (c == 0xff)
                 {
                     ReceivedEOF?.Invoke(null, new EventArgs());
                 }
@@ -347,6 +365,10 @@ namespace CANString.CANDriver
 
         public unsafe static void SendQueueData()
         {
+            if (m_canstart == 0)
+            {
+                CANSendQueue.Clear();
+            }
             while(CANSendQueue.Count > 0)
             {
                 VCI_CAN_OBJ obj = new VCI_CAN_OBJ();
@@ -360,6 +382,7 @@ namespace CANString.CANDriver
                     for (int i = 0; i < 8; i++)
                     {
                         obj.Data[i] = CANSendQueue.Dequeue();
+                        SentBytesCount++;
                     }
                 }
                 else
@@ -367,6 +390,7 @@ namespace CANString.CANDriver
                     for (int i = 0; i < tmpCount; i++)
                     {
                         obj.Data[i] = CANSendQueue.Dequeue();
+                        SentBytesCount++;
                     }
                     obj.Data[tmpCount] = 0x04;
                 }
@@ -414,7 +438,7 @@ namespace CANString.CANDriver
 
         private static void CANController_ReceivedEOF(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

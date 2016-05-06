@@ -104,7 +104,6 @@ namespace Monitor2.Models
         {
             throw new NotImplementedException();
         }
-
     }
 
     [Serializable]

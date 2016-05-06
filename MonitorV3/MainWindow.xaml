@@ -3,10 +3,226 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:MonitorV3.Models"
         xmlns:local="clr-namespace:MonitorV3"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="CAN" Height="400" Width="600">
+    <Window.Resources>
+        <models:CANStatusToColor x:Key="GetCANStausColor"/>
+        <models:CANStatusToString x:Key="GetCANStatusString"/>
+        <models:IsValueEqualToColor x:Key="GetValueEqualColor"/>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+
+    </Window.Resources>
     <Grid>
-        
+        <DockPanel>
+            <Expander x:Name="CANConfigExpander"
+                      DockPanel.Dock="Top"
+                      Header="CAN配置"
+                      DataContext="{Binding CANConfigVM}">
+                <Grid DataContext="{Binding CANConfig}"
+                      Margin="10,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="0.8*"/>
+                        <ColumnDefinition Width="1.2*"/>
+                        <ColumnDefinition Width="0.8*"/>
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="设备:"
+                       HorizontalAlignment="Right"/>
+                    <ComboBox Name="DeviceSelection"
+                          Grid.Row="0" Grid.Column="1"
+                          IsEditable="False"
+                          SelectedIndex="{Binding Path=Dev}">
+                        <ComboBoxItem>USB_CAN</ComboBoxItem>
+                        <ComboBoxItem>USB_CAN2</ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row="0" Grid.Column="2" Content="索引:"
+                       HorizontalAlignment="Right"/>
+                    <ComboBox Name="IndexSelection"
+                          Grid.Row="0" Grid.Column="3"
+                          IsEditable="False"
+                          SelectedIndex="{Binding Path=Index}">
+                        <ComboBoxItem>0</ComboBoxItem>
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row="0" Grid.Column="4" Content="端口:"
+                       HorizontalAlignment="Right"/>
+                    <ComboBox Name="PortSelection"
+                          Grid.Row="0" Grid.Column="5"
+                          IsEditable="False"
+                          SelectedIndex="{Binding Path=Port}">
+                        <ComboBoxItem>CAN1</ComboBoxItem>
+                        <ComboBoxItem>CAN2</ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row ="0" Grid.Column="6" Content="模式:"
+                       HorizontalAlignment="Right"/>
+                    <ComboBox Name="ModeSelection"
+                          Grid.Row="0" Grid.Column="7"
+                          IsEditable="False"
+                          SelectedIndex="{Binding Path=Mode}">
+                        <ComboBoxItem>正常</ComboBoxItem>
+                        <ComboBoxItem>监听</ComboBoxItem>
+                        <ComboBoxItem>自测</ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row="2" Grid.Column="4" Content="波特率:"
+                       HorizontalAlignment="Right"/>
+                    <ComboBox Name="BaudRateSelection"
+                                  Grid.Row="2" Grid.Column="5"
+                                  SelectedIndex="{Binding Path=Baudrate}"/>
+                    <Label Grid.Row="2" Grid.Column="6" Content="ID:"
+                       HorizontalAlignment="Right"/>
+                    <TextBox Name="IDInput" 
+                         Grid.Row="2" Grid.Column="7"
+                         Text="{Binding Path=MID}"/>
+                    <Label Grid.Row="2" Grid.Column="0" Content="AccCode:"
+                       HorizontalAlignment="Right"/>
+                    <TextBox Name="AccCodeInput"
+                         Grid.Row="2" Grid.Column="1"
+                         Text="{Binding Path=AccCode}"/>
+                    <Label Grid.Row="2" Grid.Column="2" Content="AccMask:"
+                       HorizontalAlignment="Right"/>
+                    <TextBox Name="AccMaskInput"
+                         Grid.Row="2" Grid.Column="3"
+                         Text="{Binding Path=AccMask}"/>
+                </Grid>
+            </Expander>
+            <Expander x:Name="ControlExpander" Header="控制"
+                      DockPanel.Dock="Top"
+                      IsExpanded="True" Margin="0,0,0,0"
+                      >
+                <Grid Margin="4,4,4,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListView Name="ControlDataListView"
+                              AllowDrop="True" SelectionMode="Extended"
+                              Grid.Column="0" 
+                              DataContext="{Binding ControlDataVM}"
+                              ItemsSource="{Binding ControlDataCollection}"
+                              ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                              Grid.Row="0"
+                              KeyUp="ControlDataListView_KeyUp">
+                        <!--<ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Right"
+                                               Width="60"/>
+                                    <TextBox Text="{Binding Value}" VerticalAlignment="Center"
+                                             Width="100"/>
+                                    <CheckBox IsChecked="{Binding IsLog}"/>
+                                    <Button Content="."/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>-->
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="绘制和记录"/>
+                                <MenuItem Header="删除" Click="ControlDataDelet_Click"/>
+                                <MenuItem Header="保存数据定义到文件" Click="ControlDataSaveToFile_Click"/>
+                                <MenuItem Header="从文件加载数据定义" Click="ControlDataLoadFromFile_Click"/>
+                                <MenuItem Header="从控制器读取数据定义"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Value" Width="120">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Value}"
+                                                     IsEnabled="{Binding IsEditable}"
+                                                     TextAlignment="Right"
+                                                     HorizontalAlignment="Stretch"
+                                                     KeyUp="ControlValue_KeyUp"
+                                                     Foreground="{Binding IsValueEqual, Converter={StaticResource GetValueEqualColor}}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="ReturnValue" Width="120">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ReturnValue}" 
+                                                       HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Log">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsLog}" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Auto">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsAutoCheck}" HorizontalAlignment="Center"
+                                                      Checked="CheckBox_Checked"
+                                                      Unchecked="CheckBox_Unchecked"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <StackPanel Grid.Column="1" Grid.Row="0">
+                        <StackPanel DataContext="{Binding CANStatusVM}">
+                            <Button Name="CANStartButton" Width="60"
+                                    Height="30" Margin="4,4,4,4"
+                                    DataContext="{Binding CANStatus}"
+                                    Content="{Binding IsCANStarted, Converter={StaticResource GetCANStatusString}}"
+                                    Foreground="{Binding IsCANStarted, Converter={StaticResource GetCANStausColor}}"
+                                    Click="Button_Click"/>
+                            <Button Name="SendAllButton" Width="60"
+                                    Content="全部发送"
+                                    Height="30" Margin="4,4,4,4"/>
+                            <Button Name="LoadAllButton" Width="60"
+                                    Content="全部读取"
+                                    Height="30" Margin="4,4,4,4"/>
+                            <ListView>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Name="SendAllButton" Width="60"
+                                                Content="{Binding Name}"
+                                                Height="30" Margin="4,4,4,4"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBox Name="ManualCommandBox"
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                             Margin="0,4,0,4"
+                             HorizontalAlignment="Stretch"
+                             Text=""
+                             KeyUp="TextBox_KeyUp"/>
+                </Grid>
+            </Expander>
+        </DockPanel>
     </Grid>
 </Window>
