@@ -179,6 +179,55 @@ namespace MonitorV3
             {
                 MainVM.ControlDataVM.DeletControlDataItem(ControlDataListView.SelectedIndex);
             }
-        } 
+        }
+
+        private void GridViewHeader_Click(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is GridViewColumnHeader)
+            {
+                GridViewColumnHeader gvc = e.OriginalSource as GridViewColumnHeader;
+                if (gvc != null)
+                {
+                    List<ControlDataModel> list = MainVM.ControlDataVM.ControlDataCollection.ToList();
+                    list.Sort((ControlDataModel x, ControlDataModel y) =>
+                    {
+                        if (MainVM.ControlDataVM.SortDirection)
+                        {
+                            switch (gvc.Content.ToString())
+                            {
+                                case ("ID"):
+                                    return x.ID.CompareTo(y.ID);
+                                case ("Name"):
+                                    return x.Name.CompareTo(y.Name);
+                                case ("Value"):
+                                    return x.IsEditable.CompareTo(y.IsEditable);
+                                default:
+                                    return 0;
+                            }
+                        }
+                        else
+                        {
+                            switch (gvc.Content.ToString())
+                            {
+                                case ("ID"):
+                                    return y.ID.CompareTo(x.ID);
+                                case ("Name"):
+                                    return y.Name.CompareTo(x.Name);
+                                case ("Value"):
+                                    return y.IsEditable.CompareTo(x.IsEditable);
+                                default:
+                                    return 0;
+                            }
+                        }
+                    });
+                    MainVM.ControlDataVM.SortDirection = !MainVM.ControlDataVM.SortDirection;
+                    MainVM.ControlDataVM.ControlDataCollection.Clear();
+                    foreach (ControlDataModel cdm in list)
+                    {
+                        MainVM.ControlDataVM.ControlDataCollection.Add(cdm);
+                    }
+                }
+            }
+        }
     }
 }

@@ -143,15 +143,25 @@
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Name" Width="100">
+                            <GridView AllowsColumnReorder="True">
+                                <GridViewColumn>
+                                    <GridViewColumnHeader Content="ID" Click="GridViewHeader_Click"/>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ID}" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="100">
+                                    <GridViewColumnHeader Content="Name" Click="GridViewHeader_Click"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="Value" Width="120">
+                                <GridViewColumn Width="120">
+                                    <GridViewColumnHeader Content="Value" Click="GridViewHeader_Click"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding Value}"

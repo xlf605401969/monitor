@@ -15,6 +15,7 @@ namespace MonitorV3.ViewModels
     {
         public ObservableCollection<ControlDataModel> ControlDataCollection { get; private set; }
         public XmlSerializer ControlDataCollectionSerializer = new XmlSerializer(typeof(ObservableCollection<ControlDataModel>));
+        public bool SortDirection { get; set; }
         public ControlDataViewModel()
         {
             ControlDataCollection = new ObservableCollection<ControlDataModel>();

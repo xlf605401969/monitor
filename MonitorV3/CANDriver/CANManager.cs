@@ -61,15 +61,21 @@ namespace MonitorV3.CANDriver
         {
             ControlDataModel cdm = new ControlDataModel();
             bool err = false;
-
-            switch (msg[0])
+            try
             {
-                case ('R'):
-                    err = ReadR(msg, cdm);
-                    break;
-                case ('F'):
-                    err = ReadF(msg, cdm);
-                    break;
+                switch (msg[0])
+                {
+                    case ('R'):
+                        err = ReadR(msg, cdm);
+                        break;
+                    case ('F'):
+                        err = ReadF(msg, cdm);
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                err = true;
             }
             return err ? null : cdm;
         }
@@ -77,14 +83,7 @@ namespace MonitorV3.CANDriver
         private static bool ReadR(string msg, ControlDataModel cdm)
         {
             int codeNum;
-            try
-            {
-                codeNum = GetIntValue(msg, 'R');
-            }
-            catch (FormatException e)
-            {
-                return true;
-            }
+            codeNum = GetIntValue(msg, 'R');
             switch(codeNum)
             {
                 case (1):
@@ -98,41 +97,19 @@ namespace MonitorV3.CANDriver
         {
             if (FindCode(msg, 'I'))
             {
-                try
-                {
-                    cdm.ID = GetIntValue(msg, 'I');
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+                cdm.ID = GetIntValue(msg, 'I');
             }
             if (FindCode(msg, 'V'))
             {
-                try
-                {
-                    cdm.ReturnValue = GetFloatValue(msg, 'V');
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+                cdm.ReturnValue = GetFloatValue(msg, 'V');
             }
-
             return false;
         }
 
         private static bool ReadF(string msg, ControlDataModel cdm)
         {
             int codeNum;
-            try
-            {
-                codeNum = GetIntValue(msg, 'F');
-            }
-            catch (FormatException e)
-            {
-                return true;
-            }
+            codeNum = GetIntValue(msg, 'F');
             switch (codeNum)
             {
                 case (1):
@@ -146,50 +123,24 @@ namespace MonitorV3.CANDriver
         {
             if (FindCode(msg, 'I'))
             {
-                try
-                {
-                    cdm.ID = GetIntValue(msg, 'I');
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+                cdm.ID = GetIntValue(msg, 'I');
             }
 
             if (FindCode(msg, 'T'))
             {
-                try
-                {
-                    cdm.Type = (ControlDataType)GetIntValue(msg, 'T');
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+
+                cdm.Type = (ControlDataType)GetIntValue(msg, 'T');
             }
 
             if (FindCode(msg, 'W'))
             {
-                try
-                {
-                    cdm.IsEditable = GetIntValue(msg, 'W') > 0;
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+
+                cdm.IsEditable = GetIntValue(msg, 'W') > 0;
             }
 
             if (FindCode(msg, 'N'))
             {
-                try
-                {
-                    cdm.Name = GetStringValue(msg, 'N');
-                }
-                catch (FormatException e)
-                {
-                    return true;
-                }
+                cdm.Name = GetStringValue(msg, 'N');
             }
             return false;
         }

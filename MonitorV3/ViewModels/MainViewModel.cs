@@ -32,31 +32,31 @@ namespace MonitorV3.ViewModels
                 if (c == 0xff) break;
                 msg += c;
             }
-            switch (msg[0])
+            try
             {
-                case ('R'):
-                    HandleR(msg);
-                    break;
-                case ('F'):
-                    HandleF(msg);
-                    break;
-                case ('H'):
-                    HandleH(msg);
-                    break;
+                switch (msg[0])
+                {
+                    case ('R'):
+                        HandleR(msg);
+                        break;
+                    case ('F'):
+                        HandleF(msg);
+                        break;
+                    case ('H'):
+                        HandleH(msg);
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                return;
             }
         }
 
         private void HandleR(string msg)
         {
             int codeNum;
-            try
-            {
-                codeNum = CANManager.GetIntValue(msg, 'R');
-            }
-            catch (FormatException e)
-            {
-                return;
-            }
+            codeNum = CANManager.GetIntValue(msg, 'R');
             switch (codeNum)
             {
                 case (1):
@@ -69,14 +69,7 @@ namespace MonitorV3.ViewModels
         private void HandleF(string msg)
         {
             int codeNum;
-            try
-            {
-                codeNum = CANManager.GetIntValue(msg, 'F');
-            }
-            catch (FormatException e)
-            {
-                return;
-            }
+            codeNum = CANManager.GetIntValue(msg, 'F');
             switch (codeNum)
             {
                 case (1):
@@ -88,14 +81,7 @@ namespace MonitorV3.ViewModels
         private void HandleH(string msg)
         {
             int codeNum;
-            try
-            {
-                codeNum = CANManager.GetIntValue(msg, 'H');
-            }
-            catch (FormatException e)
-            {
-                return;
-            }
+            codeNum = CANManager.GetIntValue(msg, 'H');
             switch (codeNum)
             {
                 case (1):
