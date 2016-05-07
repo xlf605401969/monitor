@@ -14,11 +14,14 @@ namespace MonitorV3.ViewModels
         public CANConfigViewModel CANConfigVM { get; private set; }
         public CANStatusViewModel CANStatusVM { get; private set; }
         public ControlDataViewModel ControlDataVM { get; private set; }
+        public CustomButtonViewModel CustomButtonVM { get; private set; }
+
         public MainViewModel()
         {
             CANConfigVM = new CANConfigViewModel();
             CANStatusVM = new CANStatusViewModel();
             ControlDataVM = new ControlDataViewModel();
+            CustomButtonVM = new CustomButtonViewModel();
             CANController.ReceivedEOF += HandleCANMessage;
         }
 
@@ -117,6 +120,69 @@ namespace MonitorV3.ViewModels
         private void HandleH1(string msg)
         {
 
+        }
+
+        public bool InitCAN(bool open)
+        {
+            if (open)
+            {
+                CANController.VCI_INIT_CONFIG cfg = new CANController.VCI_INIT_CONFIG();
+                switch (CANConfigVM.CANConfig.Dev)
+                {
+                    case (0):
+                        CANController.m_devtype = CANController.DEV_USBCAN;
+                        break;
+                    case (1):
+                        CANController.m_devtype = CANController.DEV_USBCAN2;
+                        break;
+                }
+                CANController.m_devind = (uint)CANConfigVM.CANConfig.Index;
+                CANController.m_canind = (uint)CANConfigVM.CANConfig.Port;
+                CANController.m_canmode = (uint)CANConfigVM.CANConfig.Mode;
+                cfg.Mode = (byte)CANController.m_canmode;
+                try
+                {
+                    cfg.AccCode = Convert.ToUInt32(CANConfigVM.CANConfig.AccCode, 16);
+                    cfg.AccMask = Convert.ToUInt32(CANConfigVM.CANConfig.AccMask, 16);
+                    cfg.Timing0 = CANController.BaudrateList[CANConfigVM.CANConfig.Baudrate].Value[0];
+                    cfg.Timing1 = CANController.BaudrateList[CANConfigVM.CANConfig.Baudrate].Value[1];
+                    CANController.m_ID = Convert.ToUInt32(CANConfigVM.CANConfig.MID, 16);
+                }
+                catch(Exception)
+                {
+                    return false;
+                }
+                if (CANController.VCI_OpenDevice(CANController.m_devtype, CANController.m_devind, 0) != 0)
+                {
+                    try
+                    {
+                        CANController.VCI_InitCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind, ref cfg);
+                        CANController.VCI_StartCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind);
+                        CANController.m_bOpen = 1;
+                        CANController.m_canstart = 1;
+                        return true; ;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Initialize Error");
+                        Console.WriteLine("Error Infomation: {0}", e.Message);
+                        return false;
+                    }
+                }
+                else
+                {
+                    CANController.m_bOpen = 0;
+                    CANController.m_canstart = 0;
+                    return false;
+                }
+            }
+            else
+            {
+                CANController.VCI_CloseDevice(CANController.m_devtype, CANController.m_devind);
+                CANController.m_bOpen = 0;
+                CANController.m_canstart = 0;
+                return false;
+            }
         }
     }
 }

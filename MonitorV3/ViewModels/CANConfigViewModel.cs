@@ -7,6 +7,7 @@ using MonitorV3.Models;
 using MonitorV3.CANDriver;
 using System.Xml.Serialization;
 using System.IO;
+using System.Windows;
 
 namespace MonitorV3.ViewModels
 {
@@ -28,23 +29,18 @@ namespace MonitorV3.ViewModels
                     CANConfig = xmlFormatter.Deserialize(fs) as CANConfigModel;
                 }
             }
-            catch (FileNotFoundException e)
+            catch (Exception)
             {
                 CANConfig = new CANConfigModel();
-            }
-            catch (FileFormatException e)
-            {
-                CANConfig = new CANConfigModel();
-            }
-            finally
-            {
+                MessageBox.Show("CAN参数配置文件格式错误", "错误",
+                                MessageBoxButton.OK);
                 SaveCANConfig(fileName);
             }
         }
 
         public void SaveCANConfig(string fileName)
         {
-            using (FileStream fs = File.Open(fileName, FileMode.OpenOrCreate))
+            using (FileStream fs = File.Open(fileName, FileMode.Create))
             {
                 xmlFormatter.Serialize(fs, CANConfig);
             }

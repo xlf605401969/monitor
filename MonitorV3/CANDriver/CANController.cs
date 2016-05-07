@@ -236,7 +236,7 @@ namespace MonitorV3.CANDriver
 
         public static UInt32 m_ID = 0x00001234;
 
-        public static Dictionary<string, byte[]> BaudrateDic;
+        public static List<KeyValuePair<string, byte[]>> BaudrateList;
 
         public static System.Timers.Timer ReceiveTimer;
 
@@ -402,24 +402,24 @@ namespace MonitorV3.CANDriver
 
         static CANController()
         {
-            BaudrateDic = new Dictionary<string, byte[]>();
-            BaudrateDic.Add("10K", new byte[] { 0x9f, 0xff });
-            BaudrateDic.Add("20K", new byte[] { 0x18, 0x1c });
-            BaudrateDic.Add("40K", new byte[] { 0x87, 0xff });
-            BaudrateDic.Add("50K", new byte[] { 0x09, 0x1c });
-            BaudrateDic.Add("80K", new byte[] { 0x83, 0xff });
-            BaudrateDic.Add("100K", new byte[] { 0x04, 0x1c });
-            BaudrateDic.Add("124K", new byte[] { 0x03, 0x1c });
-            BaudrateDic.Add("200K", new byte[] { 0x81, 0xfa });
-            BaudrateDic.Add("250K", new byte[] { 0x01, 0x1c });
-            BaudrateDic.Add("400K", new byte[] { 0x80, 0xfa });
-            BaudrateDic.Add("500K", new byte[] { 0x00, 0x1c });
-            BaudrateDic.Add("666K", new byte[] { 0x80, 0xb6 });
-            BaudrateDic.Add("800K", new byte[] { 0x00, 0x16 });
-            BaudrateDic.Add("1000K", new byte[] { 0x00, 0x14 });
-            BaudrateDic.Add("33.33K", new byte[] { 0x09, 0x6f });
-            BaudrateDic.Add("66.6K", new byte[] { 0x04, 0x6f });
-            BaudrateDic.Add("83.33K", new byte[] { 0x03, 0x6f });
+            BaudrateList = new List<KeyValuePair<string, byte[]>>();
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("10K", new byte[] { 0x9f, 0xff }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("20K", new byte[] { 0x18, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("40K", new byte[] { 0x87, 0xff }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("50K", new byte[] { 0x09, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("80K", new byte[] { 0x83, 0xff }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("100K", new byte[] { 0x04, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("124K", new byte[] { 0x03, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("200K", new byte[] { 0x81, 0xfa }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("250K", new byte[] { 0x01, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("400K", new byte[] { 0x80, 0xfa }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("500K", new byte[] { 0x00, 0x1c }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("666K", new byte[] { 0x80, 0xb6 }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("800K", new byte[] { 0x00, 0x16 }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("1000K", new byte[] { 0x00, 0x14 }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("33.33K", new byte[] { 0x09, 0x6f }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("66.6K", new byte[] { 0x04, 0x6f }));
+            BaudrateList.Add(new KeyValuePair<string, byte[]>("83.33K", new byte[] { 0x03, 0x6f }));
 
             CANSendQueue = new Queue<byte>();
             CANReceiveQueue = new Queue<byte>();

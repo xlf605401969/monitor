@@ -8,6 +8,7 @@ using MonitorV3.Models;
 using System.Xml.Serialization;
 using System.IO;
 using MonitorV3.CANDriver;
+using System.Windows;
 
 namespace MonitorV3.ViewModels
 {
@@ -19,8 +20,7 @@ namespace MonitorV3.ViewModels
         public ControlDataViewModel()
         {
             ControlDataCollection = new ObservableCollection<ControlDataModel>();
-            ControlDataCollection.Add(new ControlDataModel());
-            
+            ControlDataCollection.Add(new ControlDataModel());    
         }
 
         public void SaveDataFormat(string name)
@@ -29,32 +29,27 @@ namespace MonitorV3.ViewModels
         }
 
         public void LoadDataFormat(string name)
-        {
-            ControlDataCollection.Clear();
+        {          
             try
             {
                 ObservableCollection<ControlDataModel> cdc = ControlDataCollectionSerializer.Deserialize(File.Open(name, FileMode.Open)) as ObservableCollection<ControlDataModel>;
+                ControlDataCollection.Clear();
                 foreach (ControlDataModel cdce in cdc)
                 {
                     ControlDataCollection.Add(cdce);
                 }
             }
-            catch(FileFormatException e)
+            catch(Exception)
             {
-                
+                MessageBox.Show("数据格式配置文件格式错误", "错误",
+                                MessageBoxButton.OK);
             }
         }
 
         public void DeletControlDataItem(int index)
         {
-            try
-            {
+            if (index >= 0)
                 ControlDataCollection.RemoveAt(index);
-            }
-            catch
-            {
-
-            }
         }
 
         

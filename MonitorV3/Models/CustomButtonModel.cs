@@ -7,14 +7,21 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Media;
+using System.Windows.Input;
 
 namespace MonitorV3.Models
 {
     [Serializable]
-    class CustomButtonModel:INotifyPropertyChanged
+    public class CustomButtonModel:INotifyPropertyChanged
     {
         private string _name;
         private int _id;
+        public CustomButtonModel() { }
+        public CustomButtonModel(string name, int id)
+        {
+            this._name = name;
+            this._id = id;
+        }
 
         public int ID
         {

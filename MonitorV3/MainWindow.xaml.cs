@@ -17,6 +17,7 @@ using MonitorV3.Models;
 using MonitorV3.CANDriver;
 using System.IO;
 using Microsoft.Win32;
+using MonitorV3.Wondows;
 
 namespace MonitorV3
 {
@@ -32,83 +33,42 @@ namespace MonitorV3
             this.DataContext = MainVM;
             MainVM.CANConfigVM.LoadCANConfig("can.xml");
             MainVM.ControlDataVM.LoadDataFormat("data.xml");
-            foreach (string s in CANController.BaudrateDic.Keys)
+            MainVM.CustomButtonVM.LoadButtonConfig("button.xml");
+            foreach (KeyValuePair<string, byte[]> s in CANController.BaudrateList)
             {
-                BaudRateSelection.Items.Add(s);
+                BaudRateSelection.Items.Add(s.Key);
             }
             this.Closing += MainWindow_Closing;
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            MainVM.CANConfigVM.SaveCANConfig("can.xml");
+            MainVM.CustomButtonVM.SaveButtonConfig("button.xml");
         }
 
-        private bool InitCAN(bool open)
-        {
-            if (open)
-            {
-                CANController.VCI_INIT_CONFIG cfg = new CANController.VCI_INIT_CONFIG();
-                switch ((DeviceSelection.SelectedItem as ComboBoxItem).Content as string)
-                {
-                    case ("USB_CAN"):
-                        CANController.m_devtype = CANController.DEV_USBCAN;
-                        break;
-                    case ("USB_CAN2"):
-                        CANController.m_devtype = CANController.DEV_USBCAN2;
-                        break;
-                }
-                CANController.m_devind = (uint)IndexSelection.SelectedIndex;
-                CANController.m_canind = (uint)PortSelection.SelectedIndex;
-                CANController.m_canmode = (uint)ModeSelection.SelectedIndex;
-                cfg.Mode = (byte)CANController.m_canmode;
-                cfg.AccCode = Convert.ToUInt32(AccCodeInput.Text, 16);
-                cfg.AccMask = Convert.ToUInt32(AccMaskInput.Text, 16);
-                cfg.Timing0 = CANController.BaudrateDic[BaudRateSelection.SelectedItem as string][0];
-                cfg.Timing1 = CANController.BaudrateDic[BaudRateSelection.SelectedItem as string][1];
-                CANController.m_ID = Convert.ToUInt32(IDInput.Text, 16);
-                if (CANController.VCI_OpenDevice(CANController.m_devtype, CANController.m_devind, 0) != 0)
-                {
-                    try
-                    {
-                        CANController.VCI_InitCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind, ref cfg);
-                        CANController.VCI_StartCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind);
-                        CANController.m_bOpen = 1;
-                        CANController.m_canstart = 1;
-                        return true; ;
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Initialize Error");
-                        Console.WriteLine("Error Infomation: {0}", e.Message);
-                        return false;
-                    }
-                }
-                else
-                {
-                    CANController.m_bOpen = 0;
-                    CANController.m_canstart = 0;
-                    return false;
-                }
-            }
-            else
-            {
-                CANController.VCI_CloseDevice(CANController.m_devtype, CANController.m_devind);
-                CANController.m_bOpen = 0;
-                CANController.m_canstart = 0;
-                return false;
-            }
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (MainVM.CANStatusVM.CANStatus.IsCANStarted == false)
             {
-                MainVM.CANStatusVM.CANStatus.IsCANStarted =InitCAN(true);
+                MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(true);
+#if DEBUG
+                MainVM.CANStatusVM.CANStatus.IsCANStarted = true;
+                CANController.m_bOpen = 1;
+                CANController.m_canstart = 1;
+#endif
             }
             else if (MainVM.CANStatusVM.CANStatus.IsCANStarted == true)
             {
-                MainVM.CANStatusVM.CANStatus.IsCANStarted = InitCAN(false);
+                MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(false);
+#if DEBUG
+                MainVM.CANStatusVM.CANStatus.IsCANStarted = false;
+                CANController.m_bOpen = 0;
+                CANController.m_canstart = 0;
+#endif
             }
+            MainVM.CustomButtonVM.ButtonCommand.UpdateCommandStatus();
         }
 
         private void ControlDataLoadFromFile_Click(object sender, RoutedEventArgs e)
@@ -125,13 +85,13 @@ namespace MonitorV3
 
         private void ControlDataSaveToFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog();
-            open.Title = "选择文件";
-            open.Filter = "文件（.xml）|*.xml|所有文件|*.*";
-            open.Multiselect = false;
-            if (open.ShowDialog().GetValueOrDefault())
+            SaveFileDialog save = new SaveFileDialog();
+            save.Title = "选择文件";
+            save.Filter = "文件（.xml）|*.xml|所有文件|*.*";
+            save.CheckFileExists = false;
+            if (save.ShowDialog().GetValueOrDefault())
             {
-                MainVM.ControlDataVM.SaveDataFormat(open.FileName);
+                MainVM.ControlDataVM.SaveDataFormat(save.FileName);
             }
         }
 
@@ -228,6 +188,21 @@ namespace MonitorV3
                     }
                 }
             }
+        }
+
+        private void CustomButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            AddCustomButton addWindow = new AddCustomButton();
+            addWindow.Show();
+            addWindow.ConfirmEvent += ((object _o, EventArgs _e) =>
+            {
+                MainVM.CustomButtonVM.AddButton(addWindow.CustomButtonName, addWindow.CustomButtonID);
+            });
+        }
+
+        private void CustomButtonDelet_Click(object sender, RoutedEventArgs e)
+        {
+            MainVM.CustomButtonVM.DeletCustomButton(CustomButtonListView.SelectedIndex);
         }
     }
 }

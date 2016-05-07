@@ -114,7 +114,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <ListView Name="ControlDataListView"
-                              AllowDrop="True" SelectionMode="Extended"
+                              AllowDrop="True" SelectionMode="Single"
                               Grid.Column="0" 
                               DataContext="{Binding ControlDataVM}"
                               ItemsSource="{Binding ControlDataCollection}"
@@ -200,31 +200,52 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <StackPanel Grid.Column="1" Grid.Row="0">
-                        <StackPanel DataContext="{Binding CANStatusVM}">
-                            <Button Name="CANStartButton" Width="60"
+                    <Border Grid.Column="1" Grid.Row="0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel DataContext="{Binding CANStatusVM}" Grid.Row="0">
+                                <Button Name="CANStartButton" Width="60"
                                     Height="30" Margin="4,4,4,4"
                                     DataContext="{Binding CANStatus}"
                                     Content="{Binding IsCANStarted, Converter={StaticResource GetCANStatusString}}"
                                     Foreground="{Binding IsCANStarted, Converter={StaticResource GetCANStausColor}}"
                                     Click="Button_Click"/>
-                            <Button Name="SendAllButton" Width="60"
-                                    Content="全部发送"
-                                    Height="30" Margin="4,4,4,4"/>
-                            <Button Name="LoadAllButton" Width="60"
-                                    Content="全部读取"
-                                    Height="30" Margin="4,4,4,4"/>
-                            <ListView>
+                                <Button Name="SendAllButton" Width="60"
+                                        Content="全部发送"
+                                        Height="30" Margin="4,4,4,4"
+                                        DataContext="{Binding CANStatus}"
+                                        IsEnabled="{Binding IsCANStarted}"/>
+                                <Button Name="LoadAllButton" Width="60"
+                                        Content="全部读取"
+                                        Height="30" Margin="4,4,4,4"
+                                        DataContext="{Binding CANStatus}"
+                                        IsEnabled="{Binding IsCANStarted}"/>                              
+                            </StackPanel>
+                            <ListView Name="CustomButtonListView"
+                                      VerticalAlignment="Stretch" Grid.Row="1"
+                                      DataContext="{Binding CustomButtonVM}"
+                                      ItemsSource="{Binding CustomButtonCollection}">
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="添加" Click="CustomButtonAdd_Click"/>
+                                        <MenuItem Header="删除" Click="CustomButtonDelet_Click"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Button Name="SendAllButton" Width="60"
                                                 Content="{Binding Name}"
-                                                Height="30" Margin="4,4,4,4"/>
+                                                Height="30" Margin="0,0,0,0"
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path = DataContext.ButtonCommand}"
+                                                CommandParameter="{Binding ID}"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-                        </StackPanel>
-                    </StackPanel>
+                        </Grid>
+                    </Border>
                     <TextBox Name="ManualCommandBox"
                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                              Margin="0,4,0,4"
