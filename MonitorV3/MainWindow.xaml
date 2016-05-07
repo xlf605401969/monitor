@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:MonitorV3.Models"
+        xmlns:viewModels="clr-namespace:MonitorV3.ViewModels"
         xmlns:local="clr-namespace:MonitorV3"
         mc:Ignorable="d"
         Title="CAN" Height="400" Width="600">
@@ -11,6 +12,7 @@
         <models:CANStatusToColor x:Key="GetCANStausColor"/>
         <models:CANStatusToString x:Key="GetCANStatusString"/>
         <models:IsValueEqualToColor x:Key="GetValueEqualColor"/>
+        <viewModels:VisibilityConverter x:Key="GetVisibility"/>
         <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
@@ -119,26 +121,20 @@
                               DataContext="{Binding ControlDataVM}"
                               ItemsSource="{Binding ControlDataCollection}"
                               ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                              SelectedIndex="{Binding SelectedControlDataIndex, Mode=OneWayToSource}"
                               Grid.Row="0"
                               KeyUp="ControlDataListView_KeyUp">
-                        <!--<ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Right"
-                                               Width="60"/>
-                                    <TextBox Text="{Binding Value}" VerticalAlignment="Center"
-                                             Width="100"/>
-                                    <CheckBox IsChecked="{Binding IsLog}"/>
-                                    <Button Content="."/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>-->
                         <ListView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="绘制和记录"/>
-                                <MenuItem Header="删除" Click="ControlDataDelet_Click"/>
-                                <MenuItem Header="保存数据定义到文件" Click="ControlDataSaveToFile_Click"/>
-                                <MenuItem Header="从文件加载数据定义" Click="ControlDataLoadFromFile_Click"/>
+                                <MenuItem Header="绘制和记录"
+                                          Visibility="{Binding Path=SelectedControlDataIndex, Converter={StaticResource GetVisibility}}"/>
+                                <MenuItem Header="删除"
+                                          Visibility="{Binding Path=SelectedControlDataIndex, Converter={StaticResource GetVisibility}}"
+                                          Click="ControlDataDelet_Click"/>
+                                <MenuItem Header="保存数据定义到文件"
+                                          Click="ControlDataSaveToFile_Click"/>
+                                <MenuItem Header="从文件加载数据定义" 
+                                          Click="ControlDataLoadFromFile_Click"/>
                                 <MenuItem Header="从控制器读取数据定义"/>
                             </ContextMenu>
                         </ListView.ContextMenu>

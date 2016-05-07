@@ -97,7 +97,7 @@ namespace MonitorV3
 
         private void ControlDataDelet_Click(object sender, RoutedEventArgs e)
         {
-            MainVM.ControlDataVM.DeletControlDataItem(ControlDataListView.SelectedIndex);
+            MainVM.ControlDataVM.DeleteSelectedControlDataItem();
         }
 
         private void ControlValue_KeyUp(object sender, KeyEventArgs e)
@@ -137,7 +137,7 @@ namespace MonitorV3
         {
             if (e.Key == Key.Delete)
             {
-                MainVM.ControlDataVM.DeletControlDataItem(ControlDataListView.SelectedIndex);
+                MainVM.ControlDataVM.DeleteSelectedControlDataItem();
             }
         }
 

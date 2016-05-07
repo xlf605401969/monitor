@@ -9,6 +9,9 @@ using System.Xml.Serialization;
 using System.IO;
 using MonitorV3.CANDriver;
 using System.Windows;
+using System.Data;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace MonitorV3.ViewModels
 {
@@ -16,11 +19,13 @@ namespace MonitorV3.ViewModels
     {
         public ObservableCollection<ControlDataModel> ControlDataCollection { get; private set; }
         public XmlSerializer ControlDataCollectionSerializer = new XmlSerializer(typeof(ObservableCollection<ControlDataModel>));
+        public int SelectedControlDataIndex { get; set; }
         public bool SortDirection { get; set; }
         public ControlDataViewModel()
         {
             ControlDataCollection = new ObservableCollection<ControlDataModel>();
-            ControlDataCollection.Add(new ControlDataModel());    
+            ControlDataCollection.Add(new ControlDataModel());
+            SelectedControlDataIndex = -1;
         }
 
         public void SaveDataFormat(string name)
@@ -46,12 +51,35 @@ namespace MonitorV3.ViewModels
             }
         }
 
-        public void DeletControlDataItem(int index)
+        public void DeleteControlDataItem(int index)
         {
             if (index >= 0)
                 ControlDataCollection.RemoveAt(index);
         }
 
-        
+        public void DeleteSelectedControlDataItem()
+        {
+            DeleteControlDataItem(this.SelectedControlDataIndex);
+        }
+    }
+
+    public class VisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((int)value >= 0)
+            {
+                return Visibility.Visible;
+            }
+            else
+            {
+                return Visibility.Collapsed;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
