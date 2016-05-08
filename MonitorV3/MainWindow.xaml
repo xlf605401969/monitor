@@ -135,7 +135,8 @@
                                           Click="ControlDataSaveToFile_Click"/>
                                 <MenuItem Header="从文件加载数据定义" 
                                           Click="ControlDataLoadFromFile_Click"/>
-                                <MenuItem Header="从控制器读取数据定义"/>
+                                <MenuItem Header="从控制器读取数据定义"
+                                          Click="ControlDataLoadFromDSP_Click"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>

@@ -95,6 +95,11 @@ namespace MonitorV3
             }
         }
 
+        private void ControlDataLoadFromDSP_Click(object sender, RoutedEventArgs e)
+        {
+            MainVM.LoadDefinitionsFromDSP();
+        }
+
         private void ControlDataDelet_Click(object sender, RoutedEventArgs e)
         {
             MainVM.ControlDataVM.DeleteSelectedControlDataItem();
@@ -193,6 +198,7 @@ namespace MonitorV3
         private void CustomButtonAdd_Click(object sender, RoutedEventArgs e)
         {
             AddCustomButton addWindow = new AddCustomButton();
+            addWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             addWindow.Show();
             addWindow.ConfirmEvent += ((object _o, EventArgs _e) =>
             {
