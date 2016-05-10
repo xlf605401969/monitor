@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CANString", "CANString\CANS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorV3", "MonitorV3\MonitorV3.csproj", "{5CD8C792-9379-4A57-AD54-1C0DA3BD6858}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CANDSPStringHandler", "CANDSPStringHandler\CANDSPStringHandler.vcxproj", "{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,16 @@ Global
 		{5CD8C792-9379-4A57-AD54-1C0DA3BD6858}.Release|x64.Build.0 = Release|Any CPU
 		{5CD8C792-9379-4A57-AD54-1C0DA3BD6858}.Release|x86.ActiveCfg = Release|Any CPU
 		{5CD8C792-9379-4A57-AD54-1C0DA3BD6858}.Release|x86.Build.0 = Release|Any CPU
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Debug|x64.ActiveCfg = Debug|x64
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Debug|x64.Build.0 = Debug|x64
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Debug|x86.ActiveCfg = Debug|Win32
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Debug|x86.Build.0 = Debug|Win32
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|Any CPU.ActiveCfg = Release|Win32
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x64.ActiveCfg = Release|x64
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x64.Build.0 = Release|x64
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x86.ActiveCfg = Release|Win32
+		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
