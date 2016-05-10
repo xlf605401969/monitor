@@ -36,7 +36,7 @@ namespace MonitorV3.CANDriver
             {
                 CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("G8"), 0xff);
             }
-            else if (cdm.Type == ControlDataType.INT || cdm.Type == ControlDataType.INTINDEX)
+            else if (cdm.Type == ControlDataType.INT16 || cdm.Type == ControlDataType.NONE)
             {
                 CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("F0"), 0xff);
             }

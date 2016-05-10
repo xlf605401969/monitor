@@ -16,14 +16,14 @@ namespace CANString
         static void Main(string[] args)
         {
             SetDefaultConfig();
-            if(ParseArgs(args))
+            if (ParseArgs(args))
             {
                 PrintHelp();
                 Console.ReadKey();
                 return;
             }
             PrintArgs();
-            if(InitCAN(ref GlobalCANConfig))
+            if (InitCAN(ref GlobalCANConfig))
             {
                 Console.ReadKey();
                 return;
@@ -39,7 +39,7 @@ namespace CANString
                 if (strLine == "exit")
                     break;
                 CANController.Write(strLine);
-                while(CANController.Avaliable() > 0)
+                while (CANController.Avaliable() > 0)
                 {
                     Console.Write((char)CANController.Read());
                 }
@@ -59,7 +59,7 @@ namespace CANString
                     {
                         args2.Add(args[i]);
                     }
-                    else 
+                    else
                     {
                         if (!args[i + 1].Contains('-'))
                         {
@@ -71,7 +71,7 @@ namespace CANString
                             args2.Add(args[i]);
                         }
                     }
-                }           
+                }
             }
             foreach (string str in args2)
             {
@@ -153,7 +153,7 @@ namespace CANString
                     case ("acccode"):
                         try
                         {
-                            GlobalCANConfig.AccCode = Convert.ToUInt32(value,16);
+                            GlobalCANConfig.AccCode = Convert.ToUInt32(value, 16);
                         }
                         catch (Exception e)
                         {
@@ -197,7 +197,7 @@ namespace CANString
                 }
                 ArgsPair.Add(command, value);
             }
-            if(err==true)
+            if (err == true)
             {
                 Console.WriteLine("Wrong Arguments!");
             }

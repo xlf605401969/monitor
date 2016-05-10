@@ -18,9 +18,24 @@
     <ClInclude Include="CANQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CANString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CANQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CANString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

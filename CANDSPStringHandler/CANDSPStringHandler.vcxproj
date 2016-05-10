@@ -87,7 +87,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS; _CRT_NONSTDC_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -147,9 +147,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CANQueue.h" />
+    <ClInclude Include="CANString.h" />
+    <ClInclude Include="ControlStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CANQueue.cpp" />
+    <ClCompile Include="CANString.cpp" />
+    <ClCompile Include="ControlStruct.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
