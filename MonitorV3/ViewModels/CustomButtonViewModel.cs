@@ -30,7 +30,11 @@ namespace MonitorV3.ViewModels
         {
             try
             {
-                CunstomButtonSerializer.Serialize(File.Open(name, FileMode.Create), CustomButtonCollection);
+                using (FileStream fs = File.Open(name, FileMode.Create))
+                {
+                    CunstomButtonSerializer.Serialize(fs, CustomButtonCollection);
+                    fs.Close();
+                }
             }
             catch(Exception)
             {
@@ -43,11 +47,16 @@ namespace MonitorV3.ViewModels
         {
             try
             {
-                ObservableCollection<CustomButtonModel> cbc = CunstomButtonSerializer.Deserialize(File.Open(name, FileMode.Open)) as ObservableCollection<CustomButtonModel>;
-                CustomButtonCollection.Clear();
-                foreach (CustomButtonModel cbce in cbc)
+                using (FileStream fs = File.Open(name, FileMode.Open))
                 {
-                    CustomButtonCollection.Add(cbce);
+                    ObservableCollection<CustomButtonModel> cbc = CunstomButtonSerializer.Deserialize(fs) as ObservableCollection<CustomButtonModel>;
+
+                    CustomButtonCollection.Clear();
+                    foreach (CustomButtonModel cbce in cbc)
+                    {
+                        CustomButtonCollection.Add(cbce);
+                    }
+                    fs.Close();
                 }
             }
             catch (Exception)

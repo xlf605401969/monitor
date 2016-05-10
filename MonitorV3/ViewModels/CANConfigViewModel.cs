@@ -27,6 +27,7 @@ namespace MonitorV3.ViewModels
                 using (FileStream fs = File.Open(fileName, FileMode.Open))
                 {
                     CANConfig = xmlFormatter.Deserialize(fs) as CANConfigModel;
+                    fs.Close();
                 }
             }
             catch (Exception)
@@ -43,6 +44,7 @@ namespace MonitorV3.ViewModels
             using (FileStream fs = File.Open(fileName, FileMode.Create))
             {
                 xmlFormatter.Serialize(fs, CANConfig);
+                fs.Close();
             }
         }
     }
