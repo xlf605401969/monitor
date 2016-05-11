@@ -10,7 +10,7 @@ char* ftoa(float f, int de, char * str)
 	i = floor(f);
 	for (temp = de; temp > 0; temp--)
 		d *= 10;
-	d = (f - i)*d;
+	d = roundf((f - i)*d);
 	ltoa(i, str, 10);
 	str += strlen(str);
 	*str = '.';
@@ -24,7 +24,12 @@ char* code_position(char* str, char c)
 	return strchr(str, c);
 }
 
-float code_value(char* str)
+float code_value_float(char* str)
 {
 	return atof(str);
+}
+
+int code_value_int(char* str)
+{
+	return atol(str);
 }

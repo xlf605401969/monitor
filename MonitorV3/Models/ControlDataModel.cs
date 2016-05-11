@@ -159,7 +159,7 @@ namespace MonitorV3.Models
     public enum ControlDataType
     {
         NONE = 0,
-        INT16 = 1,
+        INT32 = 1,
         FLOAT = 2,
     }
 }

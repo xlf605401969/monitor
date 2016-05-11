@@ -3,7 +3,7 @@
 typedef enum ControlDataType ControlDataType;
 enum ControlDataType{
 	NONE,
-	INT16,
+	INT32,
 	FLOAT,
 };
 

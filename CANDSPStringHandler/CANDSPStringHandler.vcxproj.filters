@@ -24,6 +24,12 @@
     <ClInclude Include="ControlStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CANDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CANManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CANQueue.cpp">
@@ -36,6 +42,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ControlStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CANDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CANManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
