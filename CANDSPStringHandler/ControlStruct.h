@@ -2,9 +2,9 @@
 #define _CONTROL_STRUCT_
 
 enum ControlDataType {
-	NONE,
-	INT32,
-	FLOAT
+	DTNONE,
+	DTINT32,
+	DTFLOAT
 };
 typedef enum ControlDataType ControlDataType;
 
@@ -27,13 +27,13 @@ struct CtrlDtLnkdLstElement{
 };
 
 
-void CtrlDtLstAppendElement(CtrlDtLnkdLstElement* e);
+void CtrlDtLstAppend(CtrlDtLnkdLstElement* e);
 
-void CtrlDtLstRmTailElement();
+void CtrlDtLstRmTail();
 
-void CtrlDtLstRmElementByID(long id);
+void CtrlDtLstRmByID(long id);
 
-CtrlDtLnkdLstElement* CtrlDtLstSelectElementByID(long id);
+CtrlDtLnkdLstElement* CtrlDtLstSelectByID(long id);
 
 void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, void* address);
 

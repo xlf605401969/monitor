@@ -4,6 +4,8 @@
 #include "ControlStruct.h"
 #include "CommandManager.h"
 
+#define REPORT_TASK_OFFSET 100
+
 extern char RecvCommandBuffer[100];
 extern char SendCommandBuffer[100];
 
@@ -21,6 +23,12 @@ void H1(long id);
 
 char* GetControlDataValue(CtrlDtLnkdLstElement* e, char* buffer);
 
+void ReportTask(void * data);
+
+void CANManagerTask(void *);
+
+void InitCANManager();
+
 void ReadCommand();
 
 void HandleCommand();
@@ -28,6 +36,10 @@ void HandleCommand();
 void HandleR();
 
 void HandleR0();
+
+void HandleR3();
+
+void HandleR4();
 
 void HandleF();
 

@@ -5,7 +5,7 @@
 CtrlDtLnkdLstElement* CtrlDtLnkdLstEntry = 0;
 CtrlDtLnkdLstElement* CtrlDtLnkdLstEnd = 0;
 
-void CtrlDtLstAppendElement(CtrlDtLnkdLstElement* e)
+void CtrlDtLstAppend(CtrlDtLnkdLstElement* e)
 {
 	if (CtrlDtLnkdLstEntry == 0) 
 	{
@@ -21,7 +21,7 @@ void CtrlDtLstAppendElement(CtrlDtLnkdLstElement* e)
 	}
 }
 
-void CtrlDtLstRmTailElement()
+void CtrlDtLstRmTail()
 {
 	if (CtrlDtLnkdLstEnd != CtrlDtLnkdLstEntry)
 	{
@@ -37,9 +37,9 @@ void CtrlDtLstRmTailElement()
 
 }
 
-void CtrlDtLstRmElementByID(long id)
+void CtrlDtLstRmByID(long id)
 {
-	CtrlDtLnkdLstElement* p = CtrlDtLstSelectElementByID(id);
+	CtrlDtLnkdLstElement* p = CtrlDtLstSelectByID(id);
 	if (p != 0)
 	{
 		if (p->Previous != 0)
@@ -62,7 +62,7 @@ void CtrlDtLstRmElementByID(long id)
 	}
 }
 
-CtrlDtLnkdLstElement* CtrlDtLstSelectElementByID(long id)
+CtrlDtLnkdLstElement* CtrlDtLstSelectByID(long id)
 {
 	CtrlDtLnkdLstElement* p = CtrlDtLnkdLstEntry;
 	while (p != 0)
@@ -82,7 +82,7 @@ void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, voi
 	p->Data.IsEditable = isEditable;
 	p->Data.Address = address;
 	strcpy(p->Data.Name, name);
-	CtrlDtLstAppendElement(p);
+	CtrlDtLstAppend(p);
 }
 
 CtrlDtLnkdLstElement* CtrlDtLnkdLstGetEntry()

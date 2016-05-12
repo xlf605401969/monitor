@@ -17,13 +17,13 @@ struct CmdLnkdLstElement {
 
 #endif
 
-void CmdLstAppendElement(CmdLnkdLstElement * e);
+void CmdLstAppend(CmdLnkdLstElement * e);
 
-void CmdLstRmTailElement();
+void CmdLstRmTail();
 
-void CmdLstRmElementByID(long id);
+void CmdLstRmByID(long id);
 
-CmdLnkdLstElement * CmdLstSelectElementByID(long id);
+CmdLnkdLstElement * CmdLstSelectByID(long id);
 
 void AddCommand(long id, char* name, void(*command)());
 

@@ -11,11 +11,11 @@ char* ftoa(float f, long de, char * str)
 	for (temp = de; temp > 0; temp--)
 		d *= 10;
 	d = (long)ceil((f - i)*d);
-	ltoa(i, str, 10);
+	ltoa_c(i, str, 10);
 	str += strlen(str);
 	*str = '.';
 	str++;
-	ltoa(d, str, 10);
+	ltoa_c(d, str, 10);
 	return strs;
 }
 
@@ -36,6 +36,47 @@ long code_value_int32(char* str)
 
 char* ltoa_dec(long value, char* buffer)
 {
-	return ltoa(value, buffer, 10);
+	return ltoa_c(value, buffer, 10);
+}
+
+char* ltoa_c(long value, char *string, int radix)
+{
+	char tmp[33];
+	char *tp = tmp;
+	long i;
+	unsigned long v;
+	int sign;
+	char *sp;
+
+	if (radix > 36 || radix <= 1)
+	{
+		return 0;
+	}
+
+	sign = (radix == 10 && value < 0);
+	if (sign)
+		v = -value;
+	else
+		v = (unsigned long)value;
+	while (v || tp == tmp)
+	{
+		i = v % radix;
+		v = v / radix;
+		if (i < 10)
+			*tp++ = i + '0';
+		else
+			*tp++ = i + 'a' - 10;
+	}
+
+	if (string == 0)
+		string = (char *)malloc((tp - tmp) + sign + 1);
+	sp = string;
+
+	if (sign)
+		*sp++ = '-';
+	while (tp > tmp)
+		*sp++ = *--tp;
+	*sp = 0;
+	return string;
 }
 

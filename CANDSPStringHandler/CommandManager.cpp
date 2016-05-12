@@ -5,7 +5,7 @@
 CmdLnkdLstElement* CmdLnkdLstEntry = 0;
 CmdLnkdLstElement* CmdLnkdLstEnd = 0;
 
-void CmdLstAppendElement(CmdLnkdLstElement* e)
+void CmdLstAppend(CmdLnkdLstElement* e)
 {
 	if (CmdLnkdLstEntry == 0)
 	{
@@ -22,7 +22,7 @@ void CmdLstAppendElement(CmdLnkdLstElement* e)
 	}
 }
 
-void CmdLstRmTailElement()
+void CmdLstRmTail()
 {
 	if (CmdLnkdLstEnd != CmdLnkdLstEntry)
 	{
@@ -37,12 +37,12 @@ void CmdLstRmTailElement()
 	}
 }
 
-void CmdLstRmElementByID(long id)
+void CmdLstRmByID(long id)
 {
 	
 }
 
-CmdLnkdLstElement* CmdLstSelectElementByID(long id)
+CmdLnkdLstElement* CmdLstSelectByID(long id)
 {
 	CmdLnkdLstElement* e = CmdLnkdLstEntry;
 	while (e != 0)
@@ -60,7 +60,7 @@ void AddCommand(long id, char* name, void(*command)())
 	e->Command.ID = id;
 	strcpy(e->Command.Name, name);
 	e->Command.Execute = command;
-	CmdLstAppendElement(e);
+	CmdLstAppend(e);
 }
 
 void ExecCommand(CmdLnkdLstElement* e)
@@ -70,7 +70,7 @@ void ExecCommand(CmdLnkdLstElement* e)
 
 void ExecCommandByID(long id)
 {
-	CmdLnkdLstElement* e = CmdLstSelectElementByID(id);
+	CmdLnkdLstElement* e = CmdLstSelectByID(id);
 	if (e != 0)
 	{
 		ExecCommand(e);

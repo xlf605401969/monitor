@@ -3,11 +3,10 @@
 #include "CANString.h"
 #include "ControlStruct.h"
 #include "CommandManager.h"
+#include "TimingTaskScheduler.h"
+#include "CANDriver.h"
 #include <stdlib.h>
 #include <string.h>
-
-long IsCANBusy = 0;
-long RecvFlag = 0;
 
 char RecvCommandBuffer[100] = { '\0' };
 char SendCommandBuffer[100] = { '\0' };
@@ -57,8 +56,10 @@ void HandleR()
 	case(2):
 		break;
 	case(3):
+		HandleR3();
 		break;
 	case(4):
+		HandleR4();
 		break;
 	default:
 		break;
@@ -71,13 +72,33 @@ void HandleR0()
 	CtrlDtLnkdLstElement* e;
 
 	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
-	e = CtrlDtLstSelectElementByID(i);
+	e = CtrlDtLstSelectByID(i);
 	if (e != 0)
 	{
 		R1(e);
 		EnqueueSend_String(SendCommandBuffer);
 		EnqueueSendEOF();
 	}
+}
+
+void HandleR3()
+{
+	long i, t;
+	CtrlDtLnkdLstElement* e;
+
+	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
+	t = code_value_int32(code_position(RecvCommandBuffer, 'T'));
+	e = CtrlDtLstSelectByID(i);
+	if (e != 0)
+	{
+		AddTimingTask(i + REPORT_TASK_OFFSET, t, (void*)e, ReportTask);
+	}
+}
+
+void HandleR4()
+{
+	long i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
+	RemoveTimingTask(i + REPORT_TASK_OFFSET);
 }
 
 void HandleF()
@@ -155,16 +176,16 @@ void HandleM0()
 	CtrlDtLnkdLstElement* e;
 
 	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
-	e = CtrlDtLstSelectElementByID(i);
+	e = CtrlDtLstSelectByID(i);
 	if (e != 0)
 	{
 		switch (e->Data.Type)
 		{
-		case(INT32):
+		case(DTINT32):
 			vi = code_value_int32(code_position(RecvCommandBuffer, 'V'));
 			*(long*)(e->Data.Address) = (long)vi;
 			break;
-		case(FLOAT):
+		case(DTFLOAT):
 			vf = code_value_float(code_position(RecvCommandBuffer, 'V'));
 			*(float*)(e->Data.Address) = vf;
 			break;
@@ -180,7 +201,7 @@ void HandleM0()
 void R1ByID(long id)
 {
 	CtrlDtLnkdLstElement* e;
-	e = CtrlDtLstSelectElementByID(id);
+	e = CtrlDtLstSelectByID(id);
 	if (e != 0)
 	{
 		R1(e);
@@ -207,7 +228,7 @@ void R1(CtrlDtLnkdLstElement* e)
 void F1ByID(long id)
 {
 	CtrlDtLnkdLstElement* e;
-	e = CtrlDtLstSelectElementByID(id);
+	e = CtrlDtLstSelectByID(id);
 	if (e != 0)
 	{
 		F1(e);
@@ -264,14 +285,41 @@ char* GetControlDataValue(CtrlDtLnkdLstElement* e, char* buffer)
 {
 	switch (e->Data.Type)
 	{
-	case(INT32):
-		ltoa(*(long*)(e->Data.Address), buffer, 10);
+	case(DTINT32):
+		ltoa_dec(*(long*)(e->Data.Address), buffer);
 		break;
-	case(FLOAT):
+	case(DTFLOAT):
 		ftoa(*(float*)(e->Data.Address), 3, buffer);
 		break;
 	default:
 		break;
 	}
 	return buffer;
+}
+
+void ReportTask(void* data)
+{
+	CtrlDtLnkdLstElement* e = (CtrlDtLnkdLstElement*)data;
+	R1(e);
+	EnqueueSend_String(SendCommandBuffer);
+	EnqueueSendEOF();
+}
+
+void CANManagerTask(void*)
+{
+	if (RecvEOFFlag)
+	{
+		RecvEOFFlag = 0;
+		ReadCommand();
+		HandleCommand();
+	}
+	if (!IsCANBusy)
+	{
+		CAN_TRY_SEND();
+	}
+}
+
+void InitCANManager()
+{
+	AddTimingTask(10, 30, (void*)0, CANManagerTask);
 }
