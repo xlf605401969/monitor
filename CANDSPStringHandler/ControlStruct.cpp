@@ -94,3 +94,9 @@ CtrlDtLnkdLstElement* CtrlDtLnkdLstGetEnd()
 {
 	return CtrlDtLnkdLstEnd;
 }
+
+void InitControlStruct()
+{
+	CtrlDtLnkdLstEntry = 0;
+	CtrlDtLnkdLstEnd = 0;
+}

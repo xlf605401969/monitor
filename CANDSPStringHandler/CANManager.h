@@ -37,6 +37,8 @@ void HandleR();
 
 void HandleR0();
 
+void HandleR2();
+
 void HandleR3();
 
 void HandleR4();

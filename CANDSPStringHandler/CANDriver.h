@@ -7,10 +7,14 @@ extern long RecvEOFFlag;
 
 #endif
 
-void InitCAN();
+void InitCANDriver();
 
 void CANRX_SERVER();
 
 void CANTX_SERVER();
 
 void CAN_TRY_SEND();
+
+void EnqueueCANData(char* bytes);
+
+void DequeueCANData(char* bytes);

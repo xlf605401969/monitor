@@ -41,4 +41,6 @@ CtrlDtLnkdLstElement * CtrlDtLnkdLstGetEntry();
 
 CtrlDtLnkdLstElement * CtrlDtLnkdLstGetEnd();
 
+void InitControlStruct();
+
 #endif

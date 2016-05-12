@@ -1,7 +1,7 @@
 #ifndef _TIMING_TASK_SCHEDULER_
 #define _TIMING_TASK_SCHEDULER_
 
-#define TIMING_TASK_TIMER_FREQ 100
+#define TIMING_TASK_TIMER_FREQ 10000
 
 typedef struct TimingTask TimingTask;
 struct TimingTask {
@@ -19,9 +19,6 @@ struct TmngTskLnkdLstElement {
 };
 
 
-
-#endif
-
 void TskLstAppend(TmngTskLnkdLstElement * e);
 
 TmngTskLnkdLstElement * TskLstSelectByID(long id);
@@ -35,3 +32,9 @@ void RemoveTimingTask(long id);
 void TimingTaskTimerServer();
 
 void TimingTaskLoopServer();
+
+void InitTaskScheduler();
+
+
+#endif
+

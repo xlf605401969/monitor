@@ -214,12 +214,12 @@
                                         Content="全部发送"
                                         Height="30" Margin="4,4,4,4"
                                         DataContext="{Binding CANStatus}"
-                                        IsEnabled="{Binding IsCANStarted}"/>
+                                        IsEnabled="{Binding IsCANStarted}" Click="SendAllButton_Click"/>
                                 <Button Name="LoadAllButton" Width="60"
                                         Content="全部读取"
                                         Height="30" Margin="4,4,4,4"
                                         DataContext="{Binding CANStatus}"
-                                        IsEnabled="{Binding IsCANStarted}"/>                              
+                                        IsEnabled="{Binding IsCANStarted}" Click="LoadAllButton_Click"/>                              
                             </StackPanel>
                             <ListView Name="CustomButtonListView"
                                       VerticalAlignment="Stretch" Grid.Row="1"

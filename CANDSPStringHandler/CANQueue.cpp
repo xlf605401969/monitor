@@ -109,5 +109,13 @@ void EnqueueRecv_String(char* str)
 	}
 }
 
+void InitCANQueue()
+{
+	SendTail = 0;
+	SendHead = 0;
+	RecvTail = 0;
+	RecvHead = 0;
+}
+
 
 

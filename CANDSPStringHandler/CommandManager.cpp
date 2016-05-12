@@ -86,3 +86,9 @@ CmdLnkdLstElement* CmdLstGetEnd()
 {
 	return CmdLnkdLstEnd;
 }
+
+void InitCommandManager()
+{
+	CmdLnkdLstEntry = 0;
+	CmdLnkdLstEnd = 0;
+}

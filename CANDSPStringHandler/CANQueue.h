@@ -25,4 +25,6 @@ void EnqueueSend_String(char * str);
 
 void EnqueueRecv_String(char * str);
 
+void InitCANQueue();
+
 #endif

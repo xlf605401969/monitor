@@ -1,11 +1,12 @@
 #include "TimingTaskScheduler.h"
 #include <stdlib.h>
 
-TmngTskLnkdLstElement* TmngTskLnkdLstEntry;
-TmngTskLnkdLstElement* TmngTskLnkdLstEnd;
+TmngTskLnkdLstElement* TmngTskLnkdLstEntry = 0;
+TmngTskLnkdLstElement* TmngTskLnkdLstEnd = 0;
 
 unsigned long long TimingTaskTimerTick = 0;
 unsigned int TimingTaskInc = 1000000 / TIMING_TASK_TIMER_FREQ;
+int LoopServerExecutedFlag = 0;
 
 void TskLstAppend(TmngTskLnkdLstElement* e)
 {
@@ -84,17 +85,28 @@ void RemoveTimingTask(long id)
 void TimingTaskTimerServer()
 {
 	TimingTaskTimerTick += TimingTaskInc;
+	LoopServerExecutedFlag = 0;
 }
 
 void TimingTaskLoopServer()
 {
-	TmngTskLnkdLstElement* e = TmngTskLnkdLstEntry;
-	while (e != 0)
+	if (LoopServerExecutedFlag == 0)
 	{
-		if (TimingTaskTimerTick % e->Task.TimeSpan == 0)
+		TmngTskLnkdLstElement* e = TmngTskLnkdLstEntry;
+		while (e != 0)
 		{
-			e->Task.Body(e->Task.Para);
+			if (TimingTaskTimerTick % e->Task.TimeSpan == 0)
+			{
+				e->Task.Body(e->Task.Para);
+			}
+			e = e->Next;
 		}
-		e = e->Next;
+		LoopServerExecutedFlag = 1;
 	}
+}
+
+void InitTaskScheduler()
+{
+	TmngTskLnkdLstEntry = 0;
+	TmngTskLnkdLstEnd = 0;
 }

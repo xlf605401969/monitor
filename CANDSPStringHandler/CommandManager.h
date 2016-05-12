@@ -34,3 +34,5 @@ void ExecCommandByID(long id);
 CmdLnkdLstElement * CmdLstGetEntry();
 
 CmdLnkdLstElement * CmdLstGetEnd();
+
+void InitCommandManager();

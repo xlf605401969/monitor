@@ -54,6 +54,7 @@ void HandleR()
 		HandleR0();
 		break;
 	case(2):
+		HandleR2();
 		break;
 	case(3):
 		HandleR3();
@@ -79,6 +80,11 @@ void HandleR0()
 		EnqueueSend_String(SendCommandBuffer);
 		EnqueueSendEOF();
 	}
+}
+
+void HandleR2()
+{
+
 }
 
 void HandleR3()
@@ -305,7 +311,7 @@ void ReportTask(void* data)
 	EnqueueSendEOF();
 }
 
-void CANManagerTask(void*)
+void CANManagerTask(void* d)
 {
 	if (RecvEOFFlag)
 	{

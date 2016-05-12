@@ -27,33 +27,35 @@ namespace MonitorV3.ViewModels
 
         public void HandleCANMessage(object sender, EventArgs e)
         {
-            string msg = "";
-            while (CANController.Avaliable() > 0)
-            {
-                char c = (char)CANController.Read();
-                CANStatusVM.CANStatus.ReceiveCount++;
-                if (c == 0xff) break;
-                msg += c;
-            }
-            try
-            {
-                switch (msg[0])
+            App.Current.Dispatcher.BeginInvoke(new Action(()=>{
+                string msg = "";
+                while (CANController.Avaliable() > 0)
                 {
-                    case ('R'):
-                        HandleR(msg);
-                        break;
-                    case ('F'):
-                        HandleF(msg);
-                        break;
-                    case ('H'):
-                        HandleH(msg);
-                        break;
+                    char c = (char)CANController.Read();
+                    CANStatusVM.CANStatus.ReceiveCount++;
+                    if (c == 0xff) break;
+                    msg += c;
                 }
-            }
-            catch (FormatException)
-            {
-                return;
-            }
+                try
+                {
+                    switch (msg[0])
+                    {
+                        case ('R'):
+                            HandleR(msg);
+                            break;
+                        case ('F'):
+                            HandleF(msg);
+                            break;
+                        case ('H'):
+                            HandleH(msg);
+                            break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    return;
+                }
+            }));
         }
 
         private void HandleR(string msg)
@@ -83,7 +85,6 @@ namespace MonitorV3.ViewModels
                     break;
             }
         }
-
 
         private void HandleH(string msg)
         {
@@ -184,12 +185,14 @@ namespace MonitorV3.ViewModels
                     CANController.VCI_StartCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind);
                     CANController.m_bOpen = 1;
                     CANController.m_canstart = 1;
+                    CANController.ReceiveTimer.Start();
                     return true; ;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Initialize Error");
                     Console.WriteLine("Error Infomation: {0}", e.Message);
+                    CANController.ReceiveTimer.Stop();
                     return false;
                 }
             }
@@ -206,12 +209,26 @@ namespace MonitorV3.ViewModels
             CANController.VCI_CloseDevice(CANController.m_devtype, CANController.m_devind);
             CANController.m_bOpen = 0;
             CANController.m_canstart = 0;
+            CANController.ReceiveTimer.Stop();
             return false;
         }
 
         public void LoadDefinitionsFromDSP()
         {
             CANManager.F2();
+        }
+
+        public void LoadAllControlData()
+        {
+            CANManager.R2();
+        }
+
+        public void SendAllControlData()
+        {
+            foreach(ControlDataModel cdm in ControlDataVM.ControlDataCollection)
+            {
+                CANManager.M0(cdm);
+            }
         }
     }
 }

@@ -53,7 +53,7 @@ namespace MonitorV3
             if (MainVM.CANStatusVM.CANStatus.IsCANStarted == false)
             {
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(true);
-#if DEBUG
+#if DEBUG2
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = true;
                 CANController.m_bOpen = 1;
                 CANController.m_canstart = 1;
@@ -62,7 +62,7 @@ namespace MonitorV3
             else if (MainVM.CANStatusVM.CANStatus.IsCANStarted == true)
             {
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(false);
-#if DEBUG
+#if DEBUG2
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = false;
                 CANController.m_bOpen = 0;
                 CANController.m_canstart = 0;
@@ -209,6 +209,16 @@ namespace MonitorV3
         private void CustomButtonDelet_Click(object sender, RoutedEventArgs e)
         {
             MainVM.CustomButtonVM.DeletCustomButton(CustomButtonListView.SelectedIndex);
+        }
+
+        private void LoadAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainVM.LoadAllControlData();
+        }
+
+        private void SendAllButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
