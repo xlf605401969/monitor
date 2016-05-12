@@ -2,38 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-CtrlDtLnkdLstElement* LnkdLstEntry = 0;
-CtrlDtLnkdLstElement* LnkdLstEnd = 0;
+CtrlDtLnkdLstElement* CtrlDtLnkdLstEntry = 0;
+CtrlDtLnkdLstElement* CtrlDtLnkdLstEnd = 0;
 
-void LstAppendElement(CtrlDtLnkdLstElement* e)
+void CtrlDtLstAppendElement(CtrlDtLnkdLstElement* e)
 {
-	if (LnkdLstEntry == 0) 
+	if (CtrlDtLnkdLstEntry == 0) 
 	{
-		LnkdLstEnd = LnkdLstEntry = e;
+		CtrlDtLnkdLstEnd = CtrlDtLnkdLstEntry = e;
 		e->Previous = e->Next = 0;
 	}
 	else
 	{
-		LnkdLstEnd->Next = e;
-		e->Previous = LnkdLstEnd;
+		CtrlDtLnkdLstEnd->Next = e;
+		e->Previous = CtrlDtLnkdLstEnd;
 		e->Next = 0;
-		LnkdLstEnd = e;
+		CtrlDtLnkdLstEnd = e;
 	}
 }
 
-void LstRmTailElement()
+void CtrlDtLstRmTailElement()
 {
-	if (LnkdLstEnd != 0)
+	if (CtrlDtLnkdLstEnd != CtrlDtLnkdLstEntry)
 	{
-		LnkdLstEnd = LnkdLstEnd->Previous;
-		free(LnkdLstEnd->Next);
-		LnkdLstEnd->Next = 0;
+		CtrlDtLnkdLstEnd = CtrlDtLnkdLstEnd->Previous;
+		free(CtrlDtLnkdLstEnd->Next);
+		CtrlDtLnkdLstEnd->Next = 0;
 	}
+	else
+	{
+		free(CtrlDtLnkdLstEnd);
+		CtrlDtLnkdLstEnd = CtrlDtLnkdLstEntry = 0;
+	}
+
 }
 
-void LstRmElementByID(long id)
+void CtrlDtLstRmElementByID(long id)
 {
-	CtrlDtLnkdLstElement* p = SelectLstElementByID(id);
+	CtrlDtLnkdLstElement* p = CtrlDtLstSelectElementByID(id);
 	if (p != 0)
 	{
 		if (p->Previous != 0)
@@ -42,7 +48,7 @@ void LstRmElementByID(long id)
 		}
 		else
 		{
-			LnkdLstEntry = p->Next;
+			CtrlDtLnkdLstEntry = p->Next;
 		}
 		if (p->Next != 0)
 		{
@@ -50,15 +56,15 @@ void LstRmElementByID(long id)
 		}
 		else
 		{
-			LnkdLstEnd = p->Previous;
+			CtrlDtLnkdLstEnd = p->Previous;
 		}
 		free(p);
 	}
 }
 
-CtrlDtLnkdLstElement* SelectLstElementByID(long id)
+CtrlDtLnkdLstElement* CtrlDtLstSelectElementByID(long id)
 {
-	CtrlDtLnkdLstElement* p = LnkdLstEntry;
+	CtrlDtLnkdLstElement* p = CtrlDtLnkdLstEntry;
 	while (p != 0)
 	{
 		if (p->Data.ID == id)
@@ -76,15 +82,15 @@ void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, voi
 	p->Data.IsEditable = isEditable;
 	p->Data.Address = address;
 	strcpy(p->Data.Name, name);
-	LstAppendElement(p);
+	CtrlDtLstAppendElement(p);
 }
 
-CtrlDtLnkdLstElement* GetLnkdLstEntry()
+CtrlDtLnkdLstElement* CtrlDtLnkdLstGetEntry()
 {
-	return LnkdLstEntry;
+	return CtrlDtLnkdLstEntry;
 }
 
-CtrlDtLnkdLstElement* GetLnkdLstEnd()
+CtrlDtLnkdLstElement* CtrlDtLnkdLstGetEnd()
 {
-	return LnkdLstEnd;
+	return CtrlDtLnkdLstEnd;
 }

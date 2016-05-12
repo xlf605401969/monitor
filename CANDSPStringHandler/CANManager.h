@@ -2,6 +2,7 @@
 #define _CAN_MANAGER_
 
 #include "ControlStruct.h"
+#include "CommandManager.h"
 
 extern char RecvCommandBuffer[100];
 extern char SendCommandBuffer[100];
@@ -13,6 +14,8 @@ void R1(CtrlDtLnkdLstElement* e);
 void F1ByID(long id);
 
 void F1(CtrlDtLnkdLstElement* e);
+
+void F3(CmdLnkdLstElement * e);
 
 void H1(long id);
 
@@ -35,6 +38,8 @@ void HandleH();
 void HandleM();
 
 void HandleS();
+
+void HandleSN(long id);
 
 void HandleM0();
 

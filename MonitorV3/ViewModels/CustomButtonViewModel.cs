@@ -33,7 +33,6 @@ namespace MonitorV3.ViewModels
                 using (FileStream fs = File.Open(name, FileMode.Create))
                 {
                     CunstomButtonSerializer.Serialize(fs, CustomButtonCollection);
-                    fs.Close();
                 }
             }
             catch(Exception)
@@ -56,7 +55,6 @@ namespace MonitorV3.ViewModels
                     {
                         CustomButtonCollection.Add(cbce);
                     }
-                    fs.Close();
                 }
             }
             catch (Exception)

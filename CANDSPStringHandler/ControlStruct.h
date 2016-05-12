@@ -27,18 +27,18 @@ struct CtrlDtLnkdLstElement{
 };
 
 
-void LstAppendElement(CtrlDtLnkdLstElement* e);
+void CtrlDtLstAppendElement(CtrlDtLnkdLstElement* e);
 
-void LstRmTailElement();
+void CtrlDtLstRmTailElement();
 
-void LstRmElementByID(long id);
+void CtrlDtLstRmElementByID(long id);
 
-CtrlDtLnkdLstElement* SelectLstElementByID(long id);
+CtrlDtLnkdLstElement* CtrlDtLstSelectElementByID(long id);
 
 void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, void* address);
 
-CtrlDtLnkdLstElement * GetLnkdLstEntry();
+CtrlDtLnkdLstElement * CtrlDtLnkdLstGetEntry();
 
-CtrlDtLnkdLstElement * GetLnkdLstEnd();
+CtrlDtLnkdLstElement * CtrlDtLnkdLstGetEnd();
 
 #endif

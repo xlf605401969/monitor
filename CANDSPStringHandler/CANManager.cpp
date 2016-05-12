@@ -2,6 +2,7 @@
 #include "CANQueue.h"
 #include "CANString.h"
 #include "ControlStruct.h"
+#include "CommandManager.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -70,7 +71,7 @@ void HandleR0()
 	CtrlDtLnkdLstElement* e;
 
 	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
-	e = SelectLstElementByID(i);
+	e = CtrlDtLstSelectElementByID(i);
 	if (e != 0)
 	{
 		R1(e);
@@ -93,13 +94,22 @@ void HandleF()
 
 void HandleF2()
 {
-	CtrlDtLnkdLstElement* e = GetLnkdLstEntry();
+	CtrlDtLnkdLstElement* e = CtrlDtLnkdLstGetEntry();
 	while (e != 0)
 	{
 		F1(e);
 		EnqueueSend_String(SendCommandBuffer);
 		EnqueueSendEOF();
 		e = e->Next;
+	}
+
+	CmdLnkdLstElement* e1 = CmdLstGetEntry();
+	while (e1 != 0)
+	{
+		F3(e1);
+		EnqueueSend_String(SendCommandBuffer);
+		EnqueueSendEOF();
+		e1 = e1->Next;
 	}
 }
 
@@ -128,7 +138,14 @@ void HandleM()
 
 void HandleS()
 {
+	long i;
+	i = code_value_int32(code_position(RecvCommandBuffer, 'S'));
+	HandleSN(i);
+}
 
+void HandleSN(long id)
+{
+	ExecCommandByID(id);
 }
 
 void HandleM0()
@@ -138,7 +155,7 @@ void HandleM0()
 	CtrlDtLnkdLstElement* e;
 
 	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
-	e = SelectLstElementByID(i);
+	e = CtrlDtLstSelectElementByID(i);
 	if (e != 0)
 	{
 		switch (e->Data.Type)
@@ -163,7 +180,7 @@ void HandleM0()
 void R1ByID(long id)
 {
 	CtrlDtLnkdLstElement* e;
-	e = SelectLstElementByID(id);
+	e = CtrlDtLstSelectElementByID(id);
 	if (e != 0)
 	{
 		R1(e);
@@ -190,7 +207,7 @@ void R1(CtrlDtLnkdLstElement* e)
 void F1ByID(long id)
 {
 	CtrlDtLnkdLstElement* e;
-	e = SelectLstElementByID(id);
+	e = CtrlDtLstSelectElementByID(id);
 	if (e != 0)
 	{
 		F1(e);
@@ -218,7 +235,23 @@ void F1(CtrlDtLnkdLstElement* e)
 	p += strlen(p);
 	*p = ' ';
 	p++;
+	*p = 'N';
+	p++;
 	strcpy(p, e->Data.Name);
+}
+
+void F3(CmdLnkdLstElement* e)
+{
+	char* p = SendCommandBuffer;
+	strcpy(p, "F3 I");
+	p = p + 4;
+	ltoa_dec(e->Command.ID, p);
+	p += strlen(p);
+	*p = ' ';
+	p++;
+	*p = 'N';
+	p++;
+	strcpy(p, e->Command.Name);
 }
 
 void H1(long id)

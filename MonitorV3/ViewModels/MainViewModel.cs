@@ -78,8 +78,12 @@ namespace MonitorV3.ViewModels
                 case (1):
                     HandleF1(msg);
                     break;
+                case (3):
+                    HandleF3(msg);
+                    break;
             }
         }
+
 
         private void HandleH(string msg)
         {
@@ -114,6 +118,16 @@ namespace MonitorV3.ViewModels
             if (targetcmd != null)
             {
                 ControlDataVM.ControlDataCollection.Add(targetcmd);
+            }
+        }
+
+        private void HandleF3(string msg)
+        {
+            ControlDataModel targetcmd = CANManager.ReadMessage(msg);
+            if (targetcmd != null)
+            {
+                CustomButtonModel button = new CustomButtonModel(targetcmd.Name, targetcmd.ID);
+                CustomButtonVM.CustomButtonCollection.Add(button);
             }
         }
 

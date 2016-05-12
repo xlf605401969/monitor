@@ -13,9 +13,12 @@ long RecvHead = 0;
 
 void EnqueueSend(char c)
 {
-	SendBuffer[SendTail] = c;
-	SendTail++;
-	SendTail %= SEND_BUFFER_SIZE;
+	if (SendQueueLength() < SEND_BUFFER_SIZE - 10)
+	{
+		SendBuffer[SendTail] = c;
+		SendTail++;
+		SendTail %= SEND_BUFFER_SIZE;
+	}
 }
 
 char DequeueSend()
@@ -28,9 +31,12 @@ char DequeueSend()
 
 void EnqueueRecv(char c)
 {
-	RecvBuffer[RecvTail] = c;
-	RecvTail++;
-	RecvTail %= RECV_BUFFER_SIZE;
+	if (RecvQueueLength() < RECV_BUFFER_SIZE - 10)
+	{
+		RecvBuffer[RecvTail] = c;
+		RecvTail++;
+		RecvTail %= RECV_BUFFER_SIZE;
+	}
 }
 
 char DequeueRecv()
@@ -43,12 +49,12 @@ char DequeueRecv()
 
 long SendQueueLength()
 {
-	return (SendTail - SendHead) % SEND_BUFFER_SIZE;
+	return ((SendTail - SendHead) + SEND_BUFFER_SIZE) % SEND_BUFFER_SIZE;
 }
 
 long RecvQueueLength()
 {
-	return (RecvTail - RecvHead) % RECV_BUFFER_SIZE;
+	return ((RecvTail - RecvHead) + RECV_BUFFER_SIZE) % RECV_BUFFER_SIZE;
 }
 
 void EnqueueSendEOF()
@@ -63,37 +69,43 @@ void EnqueueRecvEOF()
 
 void EnqueueSend_String(char* str)
 {
-	long length = strlen(str);
-	if (SEND_BUFFER_SIZE - SendTail > length)
+	if (SendQueueLength() < SEND_BUFFER_SIZE - 10)
 	{
-		strcpy(&SendBuffer[SendTail], str);
-		SendTail += length;
-	}
-	else
-	{
-		long tempLength = SEND_BUFFER_SIZE - SendTail + 1;
-		memcpy(&SendBuffer[SendTail], str, tempLength);
-		SendTail = 0;
-		memcpy(SendBuffer, str + tempLength, length - tempLength);
-		SendTail += (length - tempLength);
+		long length = strlen(str);
+		if (SEND_BUFFER_SIZE - SendTail > length)
+		{
+			strcpy(&SendBuffer[SendTail], str);
+			SendTail += length;
+		}
+		else
+		{
+			long tempLength = SEND_BUFFER_SIZE - SendTail;
+			memcpy(&SendBuffer[SendTail], str, tempLength);
+			SendTail = 0;
+			memcpy(SendBuffer, str + tempLength, length - tempLength);
+			SendTail += (length - tempLength);
+		}
 	}
 }
 
 void EnqueueRecv_String(char* str)
 {
-	long length = strlen(str);
-	if (RECV_BUFFER_SIZE - RecvTail > length)
+	if (RecvQueueLength() < RECV_BUFFER_SIZE - 10)
 	{
-		strcpy(&RecvBuffer[RecvTail], str);
-		RecvTail += length;
-	}
-	else
-	{
-		long tempLength = RECV_BUFFER_SIZE - RecvTail + 1;
-		memcpy(&RecvBuffer[RecvTail], str, tempLength);
-		RecvTail = 0;
-		memcpy(RecvBuffer, str + tempLength, length - tempLength);
-		RecvTail += (length - tempLength);
+		long length = strlen(str);
+		if (RECV_BUFFER_SIZE - RecvTail > length)
+		{
+			strcpy(&RecvBuffer[RecvTail], str);
+			RecvTail += length;
+		}
+		else
+		{
+			long tempLength = RECV_BUFFER_SIZE - RecvTail;
+			memcpy(&RecvBuffer[RecvTail], str, tempLength);
+			RecvTail = 0;
+			memcpy(RecvBuffer, str + tempLength, length - tempLength);
+			RecvTail += (length - tempLength);
+		}
 	}
 }
 

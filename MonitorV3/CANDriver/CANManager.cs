@@ -114,6 +114,8 @@ namespace MonitorV3.CANDriver
             {
                 case (1):
                     return ReadF1(msg, cdm);
+                case (3):
+                    return ReadF3(msg, cdm);
                 default:
                     return true;
             }
@@ -136,6 +138,20 @@ namespace MonitorV3.CANDriver
             {
 
                 cdm.IsEditable = GetIntValue(msg, 'W') > 0;
+            }
+
+            if (FindCode(msg, 'N'))
+            {
+                cdm.Name = GetStringValue(msg, 'N');
+            }
+            return false;
+        }
+
+        private static bool ReadF3(string msg, ControlDataModel cdm)
+        {
+            if (FindCode(msg, 'I'))
+            {
+                cdm.ID = GetIntValue(msg, 'I');
             }
 
             if (FindCode(msg, 'N'))

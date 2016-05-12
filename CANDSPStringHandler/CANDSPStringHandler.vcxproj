@@ -150,6 +150,7 @@
     <ClInclude Include="CANManager.h" />
     <ClInclude Include="CANQueue.h" />
     <ClInclude Include="CANString.h" />
+    <ClInclude Include="CommandManager.h" />
     <ClInclude Include="ControlStruct.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <ClCompile Include="CANManager.cpp" />
     <ClCompile Include="CANQueue.cpp" />
     <ClCompile Include="CANString.cpp" />
+    <ClCompile Include="CommandManager.cpp" />
     <ClCompile Include="ControlStruct.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
