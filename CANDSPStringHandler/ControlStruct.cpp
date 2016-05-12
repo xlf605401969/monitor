@@ -31,7 +31,7 @@ void LstRmTailElement()
 	}
 }
 
-void LstRmElementByID(int id)
+void LstRmElementByID(long id)
 {
 	CtrlDtLnkdLstElement* p = SelectLstElementByID(id);
 	if (p != 0)
@@ -56,7 +56,7 @@ void LstRmElementByID(int id)
 	}
 }
 
-CtrlDtLnkdLstElement* SelectLstElementByID(int id)
+CtrlDtLnkdLstElement* SelectLstElementByID(long id)
 {
 	CtrlDtLnkdLstElement* p = LnkdLstEntry;
 	while (p != 0)
@@ -68,7 +68,7 @@ CtrlDtLnkdLstElement* SelectLstElementByID(int id)
 	return p;
 }
 
-void AddCtrlData(int id, ControlDataType type, int isEditable, char* name, void* address)
+void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, void* address)
 {
 	CtrlDtLnkdLstElement* p = (CtrlDtLnkdLstElement*)malloc(sizeof(CtrlDtLnkdLstElement));
 	p->Data.ID = id;
@@ -77,4 +77,14 @@ void AddCtrlData(int id, ControlDataType type, int isEditable, char* name, void*
 	p->Data.Address = address;
 	strcpy(p->Data.Name, name);
 	LstAppendElement(p);
+}
+
+CtrlDtLnkdLstElement* GetLnkdLstEntry()
+{
+	return LnkdLstEntry;
+}
+
+CtrlDtLnkdLstElement* GetLnkdLstEnd()
+{
+	return LnkdLstEnd;
 }

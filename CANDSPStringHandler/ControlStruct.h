@@ -1,20 +1,23 @@
-#pragma once
+#ifndef _CONTROL_STRUCT_
+#define _CONTROL_STRUCT_
 
-typedef enum ControlDataType ControlDataType;
-enum ControlDataType{
+enum ControlDataType {
 	NONE,
 	INT32,
-	FLOAT,
+	FLOAT
 };
+typedef enum ControlDataType ControlDataType;
+
 
 typedef struct ControlData ControlData;
 struct ControlData{
 	char Name[16];
-	int ID;
+	long ID;
 	ControlDataType Type;
 	void* Address;
-	int IsEditable;
+	long IsEditable;
 };
+
 
 typedef struct CtrlDtLnkdLstElement CtrlDtLnkdLstElement;
 struct CtrlDtLnkdLstElement{
@@ -23,12 +26,19 @@ struct CtrlDtLnkdLstElement{
 	CtrlDtLnkdLstElement* Next;
 };
 
-void LstAppendElement(CtrlDtLnkdLstElement * e);
+
+void LstAppendElement(CtrlDtLnkdLstElement* e);
 
 void LstRmTailElement();
 
-void LstRmElementByID(int id);
+void LstRmElementByID(long id);
 
-CtrlDtLnkdLstElement * SelectLstElementByID(int id);
+CtrlDtLnkdLstElement* SelectLstElementByID(long id);
 
-void AddCtrlData(int id, ControlDataType type, int isEditable, char * name, void * address);
+void AddCtrlData(long id, ControlDataType type, long isEditable, char* name, void* address);
+
+CtrlDtLnkdLstElement * GetLnkdLstEntry();
+
+CtrlDtLnkdLstElement * GetLnkdLstEnd();
+
+#endif

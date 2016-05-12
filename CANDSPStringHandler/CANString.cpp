@@ -3,14 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* ftoa(float f, int de, char * str)
+char* ftoa(float f, long de, char * str)
 {
-	int i, d = 1, temp;
+	long i, d = 1, temp;
 	char* strs = str;
-	i = floor(f);
+	i = (long)floor(f);
 	for (temp = de; temp > 0; temp--)
 		d *= 10;
-	d = roundf((f - i)*d);
+	d = (long)ceil((f - i)*d);
 	ltoa(i, str, 10);
 	str += strlen(str);
 	*str = '.';
@@ -26,10 +26,16 @@ char* code_position(char* str, char c)
 
 float code_value_float(char* str)
 {
-	return atof(str);
+	return (float)atof(str + 1);
 }
 
-int code_value_int(char* str)
+long code_value_int32(char* str)
 {
-	return atol(str);
+	return atol(str + 1);
 }
+
+char* ltoa_dec(long value, char* buffer)
+{
+	return ltoa(value, buffer, 10);
+}
+

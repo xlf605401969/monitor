@@ -5,27 +5,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-int IsCANBusy = 0;
-int RecvFlag = 0;
+long IsCANBusy = 0;
+long RecvFlag = 0;
 
-char CommandBuffer[100];
-char ReplyCommandBuffer[100];
+char RecvCommandBuffer[100] = { '\0' };
+char SendCommandBuffer[100] = { '\0' };
 
 void ReadCommand()
 {
 	char c;
-	int i = 0;
-	while (c = DequeueRecv() != EOF)
+	long i = 0;
+	while ((c = DequeueRecv()) != EOF_C)
 	{
-		CommandBuffer[i] = c;
+		RecvCommandBuffer[i] = c;
 		i++;
 	}
-	CommandBuffer[i] = '\0';
+	RecvCommandBuffer[i] = '\0';
 }
 
 void HandleCommand()
 {
-	switch (CommandBuffer[0])
+	switch (RecvCommandBuffer[0])
 	{
 	case('R'):
 		HandleR();
@@ -48,9 +48,10 @@ void HandleCommand()
 
 void HandleR()
 {
-	switch (code_value_int(CommandBuffer+1))
+	switch (code_value_int32(RecvCommandBuffer))
 	{
-	case(1):
+	case(0):
+		HandleR0();
 		break;
 	case(2):
 		break;
@@ -63,22 +64,50 @@ void HandleR()
 	}
 }
 
+void HandleR0()
+{
+	long i;
+	CtrlDtLnkdLstElement* e;
+
+	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
+	e = SelectLstElementByID(i);
+	if (e != 0)
+	{
+		R1(e);
+		EnqueueSend_String(SendCommandBuffer);
+		EnqueueSendEOF();
+	}
+}
+
 void HandleF()
 {
-	switch (code_value_int(CommandBuffer + 1))
+	switch (code_value_int32(RecvCommandBuffer))
 	{
 	case(2):
+		HandleF2();
 		break;
 	default:
 		break;
 	}
 }
 
+void HandleF2()
+{
+	CtrlDtLnkdLstElement* e = GetLnkdLstEntry();
+	while (e != 0)
+	{
+		F1(e);
+		EnqueueSend_String(SendCommandBuffer);
+		EnqueueSendEOF();
+		e = e->Next;
+	}
+}
+
 void HandleH()
 {
-	switch (code_value_int(CommandBuffer + 1))
+	switch (code_value_int32(RecvCommandBuffer + 1))
 	{
-	case(1):
+	case(0):
 		break;
 	default:
 		break;
@@ -87,9 +116,10 @@ void HandleH()
 
 void HandleM()
 {
-	switch (code_value_int(CommandBuffer + 1))
+	switch (code_value_int32(RecvCommandBuffer + 1))
 	{
 	case(0):
+		HandleM0();
 		break;
 	default:
 		break;
@@ -103,30 +133,34 @@ void HandleS()
 
 void HandleM0()
 {
-	int i;
-	float v;
+	long i, vi;
+	float vf;
 	CtrlDtLnkdLstElement* e;
 
-	i = code_value_int(code_position(CommandBuffer, 'I'));
-	v = code_value_float(code_position(CommandBuffer, 'V'));
+	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
 	e = SelectLstElementByID(i);
 	if (e != 0)
 	{
 		switch (e->Data.Type)
 		{
 		case(INT32):
-			*(long*)(e->Data.Address) = (int)v;
+			vi = code_value_int32(code_position(RecvCommandBuffer, 'V'));
+			*(long*)(e->Data.Address) = (long)vi;
 			break;
 		case(FLOAT):
-			*(float*)(e->Data.Address) = v;
+			vf = code_value_float(code_position(RecvCommandBuffer, 'V'));
+			*(float*)(e->Data.Address) = vf;
 			break;
 		default:
 			break;
 		}
+		R1(e);
+		EnqueueSend_String(SendCommandBuffer);
+		EnqueueSendEOF();
 	}
 }
 
-void R1ByID(int id)
+void R1ByID(long id)
 {
 	CtrlDtLnkdLstElement* e;
 	e = SelectLstElementByID(id);
@@ -138,10 +172,10 @@ void R1ByID(int id)
 
 void R1(CtrlDtLnkdLstElement* e)
 {
-	char* p = ReplyCommandBuffer;
+	char* p = SendCommandBuffer;
 	strcpy(p, "R1 I");
 	p = p + 4;
-	ltoa(e->Data.ID, p, 10);
+	ltoa_dec(e->Data.ID, p);
 	p += strlen(p);
 	*p = ' ';
 	p++;
@@ -153,14 +187,44 @@ void R1(CtrlDtLnkdLstElement* e)
 	*p = '\0';
 }
 
-void F1(int id)
+void F1ByID(long id)
 {
-
+	CtrlDtLnkdLstElement* e;
+	e = SelectLstElementByID(id);
+	if (e != 0)
+	{
+		F1(e);
+	}
 }
 
-void H1(int id)
+void F1(CtrlDtLnkdLstElement* e)
 {
+	char* p = SendCommandBuffer;
+	strcpy(p, "F1 I");
+	p = p + 4;
+	ltoa_dec(e->Data.ID, p);
+	p += strlen(p);
+	*p = ' ';
+	p++;
+	*p = 'T';
+	p++;
+	ltoa_dec(e->Data.Type, p);
+	p += strlen(p);
+	*p = ' ';
+	p++;
+	*p = 'W';
+	p++;
+	ltoa_dec(e->Data.IsEditable, p);
+	p += strlen(p);
+	*p = ' ';
+	p++;
+	strcpy(p, e->Data.Name);
+}
 
+void H1(long id)
+{
+	char* p = SendCommandBuffer;
+	strcpy(p, "H1");
 }
 
 char* GetControlDataValue(CtrlDtLnkdLstElement* e, char* buffer)
