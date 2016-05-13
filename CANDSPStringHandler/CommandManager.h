@@ -15,8 +15,6 @@ struct CmdLnkdLstElement {
 	CommandStruct Command;
 };
 
-#endif
-
 void CmdLstAppend(CmdLnkdLstElement * e);
 
 void CmdLstRmTail();
@@ -36,3 +34,5 @@ CmdLnkdLstElement * CmdLstGetEntry();
 CmdLnkdLstElement * CmdLstGetEnd();
 
 void InitCommandManager();
+
+#endif
