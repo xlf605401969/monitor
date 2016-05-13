@@ -111,8 +111,14 @@ namespace MonitorV3
             {
                 TextBox senderTextBox = sender as TextBox;
                 ControlDataModel cdm = senderTextBox.DataContext as ControlDataModel;
-                cdm.Value = Convert.ToSingle(senderTextBox.Text);
-                CANManager.M0(cdm);
+                try
+                {
+                    cdm.Value = Convert.ToSingle(senderTextBox.Text);
+                    CANManager.M0(cdm);
+                }
+                catch
+                {
+                }
             }
         }
 

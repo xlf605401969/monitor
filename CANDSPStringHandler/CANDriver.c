@@ -181,7 +181,7 @@ void EnqueueCANData(char* bytes)
 		if (bytes[i] == 0x04)
 			break;
 		if (bytes[i] == 0xff)
-			RecvEOFFlag = 1;
+			RecvEOFFlag++;
 		EnqueueRecv(bytes[i]);
 	}
 }

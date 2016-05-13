@@ -215,6 +215,8 @@ namespace MonitorV3.ViewModels
 
         public void LoadDefinitionsFromDSP()
         {
+            ControlDataVM.ControlDataCollection.Clear();
+            CustomButtonVM.CustomButtonCollection.Clear();
             CANManager.F2();
         }
 
@@ -223,11 +225,24 @@ namespace MonitorV3.ViewModels
             CANManager.R2();
         }
 
+        public void UpdateAutoCheckStatus(ControlDataModel cdm)
+        {
+            if (cdm.IsAutoCheck == true)
+            {
+                CANManager.R3(cdm);
+            }
+            else
+            {
+                CANManager.R4(cdm);
+            }
+        }
+
         public void SendAllControlData()
         {
             foreach(ControlDataModel cdm in ControlDataVM.ControlDataCollection)
             {
                 CANManager.M0(cdm);
+                UpdateAutoCheckStatus(cdm);
             }
         }
     }

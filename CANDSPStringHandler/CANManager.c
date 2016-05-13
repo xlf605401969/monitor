@@ -15,7 +15,7 @@ void ReadCommand()
 {
 	char c;
 	long i = 0;
-	while ((c = DequeueRecv()) != EOF_C)
+	while ((c = DequeueRecv()) != EOF_C && i < 100)
 	{
 		RecvCommandBuffer[i] = c;
 		i++;
@@ -315,7 +315,7 @@ void CANManagerTask(void* d)
 {
 	if (RecvEOFFlag)
 	{
-		RecvEOFFlag = 0;
+		RecvEOFFlag--;
 		ReadCommand();
 		HandleCommand();
 	}
@@ -328,4 +328,5 @@ void CANManagerTask(void* d)
 void InitCANManager()
 {
 	AddTimingTask(10, 30, (void*)0, CANManagerTask);
+	RecvEOFFlag = 0;
 }
