@@ -39,7 +39,13 @@ namespace MonitorV3
                 BaudRateSelection.Items.Add(s.Key);
             }
             this.Closing += MainWindow_Closing;
+#if DEBUG
+            ManualCommandBox.Visibility = Visibility.Visible;
+#else
+            ManualCommandBox.Visibility = Visibility.Collapsed;
+#endif
         }
+
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
