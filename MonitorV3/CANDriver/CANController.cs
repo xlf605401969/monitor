@@ -240,7 +240,9 @@ namespace MonitorV3.CANDriver
 
         public static System.Timers.Timer ReceiveTimer;
 
-        public static Mutex CANControllerMutex;
+        public static Mutex CANControllerDeviceMutex;
+
+        public static Mutex CANControllerQueueMutex;
 
         public static Queue<byte> CANSendQueue, CANReceiveQueue;
 
@@ -281,7 +283,7 @@ namespace MonitorV3.CANDriver
 
         public static void CANControllerTimerHandler(object sender, ElapsedEventArgs e)
         {
-            if (CANControllerMutex.WaitOne(30) == true)
+            if (CANControllerDeviceMutex.WaitOne(30) == true)
             {
                 UInt32 res = new UInt32();
                 res = VCI_GetReceiveNum(m_devtype, m_devind, m_canind);
@@ -301,34 +303,40 @@ namespace MonitorV3.CANDriver
                 {
                     EnQueueCANObjData(m_recobj[i]);
                 }
-                CANControllerMutex.ReleaseMutex();
+                CANControllerDeviceMutex.ReleaseMutex();
             }
         }
 
         public static void Write(String str, byte EndChar = 0x00)
         {
-            foreach(byte c in str)
+            if (CANControllerQueueMutex.WaitOne(100))
             {
-                CANSendQueue.Enqueue(c);
+                foreach (byte c in str)
+                {
+                    CANSendQueue.Enqueue(c);
+                }
+                if (EndChar != 0x00)
+                {
+                    CANSendQueue.Enqueue(EndChar);
+                }
+                SendQueueData();
             }
-            if (EndChar != 0x00)
-            {
-                CANSendQueue.Enqueue(EndChar);
-            }
-            SendQueueData();
         }
 
         public static void Write(byte[] bs, byte EndChar = 0x00)
         {
-            foreach (byte b in bs)
+            if (CANControllerQueueMutex.WaitOne(100))
             {
-                CANSendQueue.Enqueue(b);
+                foreach (byte b in bs)
+                {
+                    CANSendQueue.Enqueue(b);
+                }
+                if (EndChar != 0x00)
+                {
+                    CANSendQueue.Enqueue(EndChar);
+                }
+                SendQueueData();
             }
-            if (EndChar != 0x00)
-            {
-                CANSendQueue.Enqueue(EndChar);
-            }
-            SendQueueData();
         }
 
         public static void Write(byte val)
@@ -394,9 +402,9 @@ namespace MonitorV3.CANDriver
                     }
                     obj.Data[tmpCount] = 0x04;
                 }
-                CANControllerMutex.WaitOne();
+                CANControllerDeviceMutex.WaitOne();
                 CANController.VCI_Transmit(CANController.m_devtype, CANController.m_devind, CANController.m_canind, ref obj, 1);
-                CANControllerMutex.ReleaseMutex();
+                CANControllerDeviceMutex.ReleaseMutex();
             }
         }
 
@@ -433,7 +441,8 @@ namespace MonitorV3.CANDriver
 
             ReceiveTimeSpan = new TimeSpan(0);
 
-            CANControllerMutex = new Mutex(false);
+            CANControllerDeviceMutex = new Mutex(false);
+            CANControllerQueueMutex = new Mutex(false);
         }
 
         private static void CANController_ReceivedEOF(object sender, EventArgs e)

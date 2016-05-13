@@ -155,14 +155,14 @@
     <ClInclude Include="TimingTaskScheduler.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CANDriver.cpp" />
-    <ClCompile Include="CANManager.cpp" />
-    <ClCompile Include="CANQueue.cpp" />
-    <ClCompile Include="CANString.cpp" />
-    <ClCompile Include="CommandManager.cpp" />
-    <ClCompile Include="ControlStruct.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="TimingTaskScheduler.cpp" />
+    <ClCompile Include="CANDriver.c" />
+    <ClCompile Include="CANManager.c" />
+    <ClCompile Include="CANQueue.c" />
+    <ClCompile Include="CANString.c" />
+    <ClCompile Include="CommandManager.c" />
+    <ClCompile Include="ControlStruct.c" />
+    <ClCompile Include="Main.c" />
+    <ClCompile Include="TimingTaskScheduler.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

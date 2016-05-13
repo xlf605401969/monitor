@@ -218,7 +218,7 @@ namespace MonitorV3
 
         private void SendAllButton_Click(object sender, RoutedEventArgs e)
         {
-
+            MainVM.SendAllControlData();
         }
     }
 }

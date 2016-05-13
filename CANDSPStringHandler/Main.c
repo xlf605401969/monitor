@@ -11,7 +11,7 @@
 void TestCommand();
 void TestTask(void*);
 
-float i, j, k;
+float i = 1.002, j, k;
 long main()
 {
 	char str[100] = "R3 I1 T1000";
@@ -19,6 +19,7 @@ long main()
 	AddCtrlData(2, DTFLOAT, 1, "hahaha", &j);
 	AddCommand(128, "TestCommand", TestCommand);
 	AddTimingTask(1, 1000, 0, TestTask);
+	scanf("%f", &i);
 
 	while (1)
 	{
@@ -31,7 +32,6 @@ long main()
 			char c = DequeueSend();
 			printf("%c", c);
 		}
-		printf("\n");
 		TimingTaskLoopServer();
 		TimingTaskTimerServer();
 		Sleep(10);
@@ -43,7 +43,7 @@ void TestCommand()
 	printf("Executing Command!\n");
 }
 
-void TestTask(void *)
+void TestTask(void *e)
 {
 	printf("Executing Timing Task!\n");
 }

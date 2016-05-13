@@ -38,28 +38,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CANQueue.cpp">
+    <ClCompile Include="CANDriver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CANString.cpp">
+    <ClCompile Include="CANManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="CANQueue.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ControlStruct.cpp">
+    <ClCompile Include="CANString.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CANDriver.cpp">
+    <ClCompile Include="CommandManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CANManager.cpp">
+    <ClCompile Include="ControlStruct.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommandManager.cpp">
+    <ClCompile Include="Main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TimingTaskScheduler.cpp">
+    <ClCompile Include="TimingTaskScheduler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

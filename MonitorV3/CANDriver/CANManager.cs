@@ -63,21 +63,46 @@ namespace MonitorV3.CANDriver
             bool err = false;
             try
             {
-                switch (msg[0])
-                {
-                    case ('R'):
-                        err = ReadR(msg, cdm);
-                        break;
-                    case ('F'):
-                        err = ReadF(msg, cdm);
-                        break;
-                }
+                ReadAll(msg, cdm);
             }
             catch (FormatException)
             {
                 err = true;
             }
             return err ? null : cdm;
+        }
+
+        private static bool ReadAll(string msg, ControlDataModel cdm)
+        {
+            if (FindCode(msg, 'I'))
+            {
+                cdm.ID = GetIntValue(msg, 'I');
+            }
+            if (FindCode(msg, 'V'))
+            {
+                cdm.ReturnValue = GetFloatValue(msg, 'V');
+            }
+            if (FindCode(msg, 'I'))
+            {
+                cdm.ID = GetIntValue(msg, 'I');
+            }
+            if (FindCode(msg, 'T'))
+            {
+
+                cdm.Type = (ControlDataType)GetIntValue(msg, 'T');
+            }
+
+            if (FindCode(msg, 'W'))
+            {
+
+                cdm.IsEditable = GetIntValue(msg, 'W') > 0;
+            }
+
+            if (FindCode(msg, 'N'))
+            {
+                cdm.Name = GetStringValue(msg, 'N');
+            }
+            return false;
         }
 
         private static bool ReadR(string msg, ControlDataModel cdm)

@@ -5,17 +5,27 @@
 
 char* ftoa(float f, long de, char * str)
 {
-	long i, d = 1, temp;
+	long i, d = 1, temp, df;
 	char* strs = str;
 	i = (long)floor(f);
 	for (temp = de; temp > 0; temp--)
+	{
 		d *= 10;
-	d = (long)ceil((f - i)*d);
+	}
+	df = (long)floor((f - i)*d);
 	ltoa_c(i, str, 10);
 	str += strlen(str);
 	*str = '.';
-	str++;
-	ltoa_c(d, str, 10);
+	if (df * 10 < d)
+	{
+		ltoa_dec(df + d, str);
+		*str = '.';
+	}
+	else
+	{
+		str++;
+		ltoa_dec(df, str);
+	}
 	return strs;
 }
 
