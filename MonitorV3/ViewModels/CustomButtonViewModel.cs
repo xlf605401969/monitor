@@ -19,11 +19,13 @@ namespace MonitorV3.ViewModels
         public ObservableCollection<CustomButtonModel> CustomButtonCollection { get; private set; }
         public XmlSerializer CunstomButtonSerializer = new XmlSerializer(typeof(ObservableCollection<CustomButtonModel>));
         public CustomButtonCommand ButtonCommand { get; private set; }
+        public int SelectedCustomButtonIndex { get; set; }
         public CustomButtonViewModel()
         {
             CustomButtonCollection = new ObservableCollection<CustomButtonModel>();
             CustomButtonCollection.Add(new CustomButtonModel());
             ButtonCommand = new CustomButtonCommand();
+            SelectedCustomButtonIndex = -1;
         }
 
         public void SaveButtonConfig(string name)
@@ -70,6 +72,21 @@ namespace MonitorV3.ViewModels
             {
                 CustomButtonCollection.RemoveAt(index);
             }
+        }
+
+        public void DeletSelectedButton()
+        {
+            DeletCustomButton(SelectedCustomButtonIndex);
+        }
+
+        public CustomButtonModel GetSelectedButton()
+        {
+            if (SelectedCustomButtonIndex >= 0)
+            {
+                return CustomButtonCollection[SelectedCustomButtonIndex];
+            }
+            else
+                return null;
         }
 
         public void AddButton(string name, int id)

@@ -17,12 +17,12 @@ namespace MonitorV3.Wondows
     /// <summary>
     /// AddCustomButton.xaml 的交互逻辑
     /// </summary>
-    public partial class AddCustomButton : Window
+    public partial class EditWindow : Window
     {
-        public string CustomButtonName { get; set; }
-        public int CustomButtonID { get; set; }
+        public string EditName { get; set; }
+        public int EditID { get; set; }
         public event EventHandler ConfirmEvent;
-        public AddCustomButton()
+        public EditWindow()
         {
             InitializeComponent();
             this.DataContext = this;

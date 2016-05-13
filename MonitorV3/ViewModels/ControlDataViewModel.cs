@@ -61,6 +61,16 @@ namespace MonitorV3.ViewModels
         {
             DeleteControlDataItem(this.SelectedControlDataIndex);
         }
+
+        public ControlDataModel GetSelectedControlData()
+        {
+            if (SelectedControlDataIndex >= 0)
+            {
+                return ControlDataCollection[SelectedControlDataIndex];
+            }
+            else
+                return null;
+        }
     }
 
     public class VisibilityConverter : IValueConverter

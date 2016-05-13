@@ -22,7 +22,7 @@ namespace MonitorV3.Models
             set
             {
                 _isCANStarted = value;
-                OnPropertityChanged("IsCANStarted");
+                OnPropertyChanged("IsCANStarted");
             }
         }
 
@@ -32,7 +32,7 @@ namespace MonitorV3.Models
             set
             {
                 _receiveCount = value;
-                OnPropertityChanged("ReceiveCount");
+                OnPropertyChanged("ReceiveCount");
             }
         }
 
@@ -42,12 +42,12 @@ namespace MonitorV3.Models
             set
             {
                 _sendCount = value;
-                OnPropertityChanged("SendCount");
+                OnPropertyChanged("SendCount");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertityChanged(string propertityName)
+        protected void OnPropertyChanged(string propertityName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }

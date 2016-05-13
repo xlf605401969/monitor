@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace MonitorV3.Models
 {
@@ -24,7 +25,7 @@ namespace MonitorV3.Models
         private bool _isEditable = true;
 
         [NonSerialized]
-        private List<KeyValuePair<DateTime, float>> _log;
+        private ObservableCollection<LogData> _log;
 
         public int ID
         {
@@ -32,7 +33,7 @@ namespace MonitorV3.Models
             set
             {
                 _id = value;
-                OnPropertityChanged("ID");
+                OnPropertyChanged("ID");
             }
         }
 
@@ -42,8 +43,8 @@ namespace MonitorV3.Models
             set
             {
                 _value = value;
-                OnPropertityChanged("Value");
-                OnPropertityChanged("IsValueEqual");
+                OnPropertyChanged("Value");
+                OnPropertyChanged("IsValueEqual");
             }
         }
 
@@ -53,7 +54,7 @@ namespace MonitorV3.Models
             set
             {
                 _name = value;
-                OnPropertityChanged("Name");
+                OnPropertyChanged("Name");
             }
         }
 
@@ -63,7 +64,7 @@ namespace MonitorV3.Models
             set
             {
                 _type = value;
-                OnPropertityChanged("Type");
+                OnPropertyChanged("Type");
             }
         }
 
@@ -73,7 +74,7 @@ namespace MonitorV3.Models
             set
             {
                 _isLog = value;
-                OnPropertityChanged("IsLog");
+                OnPropertyChanged("IsLog");
             }
         }
 
@@ -83,7 +84,7 @@ namespace MonitorV3.Models
             set
             {
                 _autoCheckTimeSpan = value;
-                OnPropertityChanged("AutoCheckTimeSpan");
+                OnPropertyChanged("AutoCheckTimeSpan");
             }
         }
 
@@ -93,7 +94,7 @@ namespace MonitorV3.Models
             set
             {
                 _isEditable = value;
-                OnPropertityChanged("IsReadOnly");
+                OnPropertyChanged("IsReadOnly");
             }
         }
 
@@ -103,7 +104,7 @@ namespace MonitorV3.Models
             set
             {
                 _isAutoCheck = value;
-                OnPropertityChanged("IsAutoCheck");
+                OnPropertyChanged("IsAutoCheck");
             }
         }
 
@@ -113,8 +114,8 @@ namespace MonitorV3.Models
             set
             {
                 _returnValue = value;
-                OnPropertityChanged("ReturnValue");
-                OnPropertityChanged("IsValueEqual");
+                OnPropertyChanged("ReturnValue");
+                OnPropertyChanged("IsValueEqual");
             }
         }
 
@@ -129,8 +130,53 @@ namespace MonitorV3.Models
             }
         }
 
+        public ObservableCollection<LogData> Log
+        {
+            get
+            {
+                return _log;
+            }
+            set
+            {
+                _log = value;
+                OnPropertyChanged("Log");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertityChanged(string propertityName)
+        protected void OnPropertyChanged(string propertityName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
+        }
+    }
+
+    public class LogData:INotifyPropertyChanged
+    {
+        private DateTime _time;
+        private float _value;
+
+        public DateTime Time
+        {
+            get { return _time; }
+            set
+            {
+                _time = value;
+                OnPropertyChanged("Time");
+            }
+        }
+
+        public float Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+                OnPropertyChanged("Value");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertityName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }

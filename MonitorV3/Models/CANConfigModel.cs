@@ -30,7 +30,7 @@ namespace MonitorV3.Models
             set
             {
                 _dev = value;
-                OnPropertityChanged("Dev");
+                OnPropertyChanged("Dev");
             }
         }
 
@@ -40,7 +40,7 @@ namespace MonitorV3.Models
             set
             {
                 _index = value;
-                OnPropertityChanged("Index");
+                OnPropertyChanged("Index");
             }
         }
 
@@ -50,7 +50,7 @@ namespace MonitorV3.Models
             set
             {
                 _port = value;
-                OnPropertityChanged("Port");
+                OnPropertyChanged("Port");
             }
         }
 
@@ -60,7 +60,7 @@ namespace MonitorV3.Models
             set
             {
                 _mode = value;
-                OnPropertityChanged("Mode");
+                OnPropertyChanged("Mode");
             }
         }
 
@@ -70,7 +70,7 @@ namespace MonitorV3.Models
             set
             {
                 _accCode = value;
-                OnPropertityChanged("AccCode");
+                OnPropertyChanged("AccCode");
             }
         }
 
@@ -80,7 +80,7 @@ namespace MonitorV3.Models
             set
             {
                 _accMask = value;
-                OnPropertityChanged("AccMask");
+                OnPropertyChanged("AccMask");
             }
         }
 
@@ -90,7 +90,7 @@ namespace MonitorV3.Models
             set
             {
                 _baudrate = value;
-                OnPropertityChanged("Baudrate");
+                OnPropertyChanged("Baudrate");
             }
         }
 
@@ -100,12 +100,12 @@ namespace MonitorV3.Models
             set
             {
                 _mid = value;
-                OnPropertityChanged("MID");
+                OnPropertyChanged("MID");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertityChanged(string propertityName)
+        protected void OnPropertyChanged(string propertityName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }

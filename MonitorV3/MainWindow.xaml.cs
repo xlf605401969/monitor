@@ -47,7 +47,6 @@ namespace MonitorV3
             MainVM.CustomButtonVM.SaveButtonConfig("button.xml");
         }
 
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (MainVM.CANStatusVM.CANStatus.IsCANStarted == false)
@@ -100,9 +99,33 @@ namespace MonitorV3
             MainVM.LoadDefinitionsFromDSP();
         }
 
-        private void ControlDataDelet_Click(object sender, RoutedEventArgs e)
+        private void ControlDataDelete_Click(object sender, RoutedEventArgs e)
         {
             MainVM.ControlDataVM.DeleteSelectedControlDataItem();
+        }
+
+        private void ControlDataEdit_Click(object sender, RoutedEventArgs e)
+        {
+            ControlDataModel cdm = MainVM.ControlDataVM.GetSelectedControlData();
+            if (cdm != null)
+            {
+                EditWindow editWindow = new EditWindow();
+                editWindow.EditName = cdm.Name;
+                editWindow.EditID = cdm.ID;
+                editWindow.IDTextBox.IsEnabled = false;
+                editWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                editWindow.Show();
+                editWindow.ConfirmEvent += ((object _o, EventArgs _e) =>
+                {
+                    cdm.ID = editWindow.EditID;
+                    cdm.Name = editWindow.EditName;
+                });
+            }
+        }
+
+        private void ControlDataDeleteAll_Click(object sender, RoutedEventArgs e)
+        {
+            MainVM.ControlDataVM.ControlDataCollection.Clear();
         }
 
         private void ControlValue_KeyUp(object sender, KeyEventArgs e)
@@ -203,18 +226,18 @@ namespace MonitorV3
 
         private void CustomButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            AddCustomButton addWindow = new AddCustomButton();
+            EditWindow addWindow = new EditWindow();
             addWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             addWindow.Show();
             addWindow.ConfirmEvent += ((object _o, EventArgs _e) =>
             {
-                MainVM.CustomButtonVM.AddButton(addWindow.CustomButtonName, addWindow.CustomButtonID);
+                MainVM.CustomButtonVM.AddButton(addWindow.EditName, addWindow.EditID);
             });
         }
 
         private void CustomButtonDelet_Click(object sender, RoutedEventArgs e)
         {
-            MainVM.CustomButtonVM.DeletCustomButton(CustomButtonListView.SelectedIndex);
+            MainVM.CustomButtonVM.DeletSelectedButton();
         }
 
         private void LoadAllButton_Click(object sender, RoutedEventArgs e)
@@ -225,6 +248,25 @@ namespace MonitorV3
         private void SendAllButton_Click(object sender, RoutedEventArgs e)
         {
             MainVM.SendAllControlData();
+        }
+
+        private void CustomButtonEdit_Click(object sender, RoutedEventArgs e)
+        {
+            CustomButtonModel cbm = MainVM.CustomButtonVM.GetSelectedButton();
+            if (cbm != null)
+            {
+                EditWindow editWindow = new EditWindow();
+                editWindow.EditName = cbm.Name;
+                editWindow.EditID = cbm.ID;
+                editWindow.IDTextBox.IsEnabled = false;
+                editWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                editWindow.Show();
+                editWindow.ConfirmEvent += ((object _o, EventArgs _e) =>
+                {
+                    cbm.ID = editWindow.EditID;
+                    cbm.Name = editWindow.EditName;
+                });
+            }
         }
     }
 }

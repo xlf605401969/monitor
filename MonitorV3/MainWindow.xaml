@@ -130,13 +130,18 @@
                                           Visibility="{Binding Path=SelectedControlDataIndex, Converter={StaticResource GetVisibility}}"/>
                                 <MenuItem Header="删除"
                                           Visibility="{Binding Path=SelectedControlDataIndex, Converter={StaticResource GetVisibility}}"
-                                          Click="ControlDataDelet_Click"/>
+                                          Click="ControlDataDelete_Click"/>
+                                <MenuItem Header="编辑"
+                                          Visibility="{Binding Path=SelectedControlDataIndex, Converter={StaticResource GetVisibility}}"
+                                          Click="ControlDataEdit_Click"/>
                                 <MenuItem Header="保存数据定义到文件"
                                           Click="ControlDataSaveToFile_Click"/>
                                 <MenuItem Header="从文件加载数据定义" 
                                           Click="ControlDataLoadFromFile_Click"/>
                                 <MenuItem Header="从控制器读取数据定义"
                                           Click="ControlDataLoadFromDSP_Click"/>
+                                <MenuItem Header="全部删除"
+                                          Click="ControlDataDeleteAll_Click"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -205,11 +210,11 @@
                             </Grid.RowDefinitions>
                             <StackPanel DataContext="{Binding CANStatusVM}" Grid.Row="0">
                                 <Button Name="CANStartButton" Width="60"
-                                    Height="30" Margin="4,4,4,4"
-                                    DataContext="{Binding CANStatus}"
-                                    Content="{Binding IsCANStarted, Converter={StaticResource GetCANStatusString}}"
-                                    Foreground="{Binding IsCANStarted, Converter={StaticResource GetCANStausColor}}"
-                                    Click="Button_Click"/>
+                                        Height="30" Margin="4,4,4,4"
+                                        DataContext="{Binding CANStatus}"
+                                        Content="{Binding IsCANStarted, Converter={StaticResource GetCANStatusString}}"
+                                        Foreground="{Binding IsCANStarted, Converter={StaticResource GetCANStausColor}}"
+                                        Click="Button_Click"/>
                                 <Button Name="SendAllButton" Width="60"
                                         Content="全部发送"
                                         Height="30" Margin="4,4,4,4"
@@ -224,11 +229,16 @@
                             <ListView Name="CustomButtonListView"
                                       VerticalAlignment="Stretch" Grid.Row="1"
                                       DataContext="{Binding CustomButtonVM}"
-                                      ItemsSource="{Binding CustomButtonCollection}">
+                                      ItemsSource="{Binding CustomButtonCollection}"
+                                      SelectedIndex="{Binding SelectedCustomButtonIndex}">
                                 <ListView.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Header="编辑" 
+                                                  Click="CustomButtonEdit_Click"
+                                                  Visibility="{Binding SelectedCustomButtonIndex, Converter={StaticResource GetVisibility}}"/>
+                                        <MenuItem Header="删除" Click="CustomButtonDelet_Click"
+                                                  Visibility="{Binding SelectedCustomButtonIndex, Converter={StaticResource GetVisibility}}"/>
                                         <MenuItem Header="添加" Click="CustomButtonAdd_Click"/>
-                                        <MenuItem Header="删除" Click="CustomButtonDelet_Click"/>
                                     </ContextMenu>
                                 </ListView.ContextMenu>
                                 <ListView.ItemTemplate>

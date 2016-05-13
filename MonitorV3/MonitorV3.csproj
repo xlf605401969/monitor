@@ -66,8 +66,8 @@
     <Compile Include="ViewModels\ControlDataViewModel.cs" />
     <Compile Include="ViewModels\CustomButtonViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Wondows\AddCustomButton.xaml.cs">
-      <DependentUpon>AddCustomButton.xaml</DependentUpon>
+    <Compile Include="Wondows\EditWindow.xaml.cs">
+      <DependentUpon>EditWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -81,7 +81,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Wondows\AddCustomButton.xaml">
+    <Page Include="Wondows\EditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -29,7 +29,7 @@ namespace MonitorV3.Models
             set
             {
                 _id = value;
-                OnPropertityChanged("ID");
+                OnPropertyChanged("ID");
             }
         }
 
@@ -39,13 +39,13 @@ namespace MonitorV3.Models
             set
             {
                 _name = value;
-                OnPropertityChanged("Name");
+                OnPropertyChanged("Name");
             }
         }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertityChanged(string propertityName)
+        protected void OnPropertyChanged(string propertityName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }
