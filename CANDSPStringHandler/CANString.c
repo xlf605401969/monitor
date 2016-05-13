@@ -5,14 +5,14 @@
 
 char* ftoa(float f, long de, char * str)
 {
-	long i, d = 1, temp, df;
+	long i, d = 1, temp, df, templ;
 	char* strs = str;
 	i = (long)floor(f);
 	for (temp = de; temp > 0; temp--)
 	{
 		d *= 10;
 	}
-	df = (long)floor((f - i)*d);
+	df = (long)roundl_c((f - i)*d);
 	ltoa_c(i, str, 10);
 	str += strlen(str);
 	*str = '.';
@@ -20,11 +20,22 @@ char* ftoa(float f, long de, char * str)
 	{
 		ltoa_dec(df + d, str);
 		*str = '.';
+		str++;
 	}
 	else
 	{
 		str++;
 		ltoa_dec(df, str);
+	}
+	str--;
+	templ = strlen(str);
+	str += templ - 1;
+	for (temp = 0; temp < templ; temp++)
+	{
+		if (*str > '0' && *str <= '9')
+			break;
+		*str = '\0';
+		str--;
 	}
 	return strs;
 }
@@ -47,6 +58,16 @@ long code_value_int32(char* str)
 char* ltoa_dec(long value, char* buffer)
 {
 	return ltoa_c(value, buffer, 10);
+}
+
+long roundl_c(float value)
+{
+	float temp;
+	temp = floor(value);
+	if (value - temp > 0.5)
+		return (long)(temp + 1);
+	else
+		return (long)temp;
 }
 
 char* ltoa_c(long value, char *string, int radix)

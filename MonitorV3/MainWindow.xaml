@@ -161,7 +161,7 @@
                                     <GridViewColumnHeader Content="Value" Click="GridViewHeader_Click"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Text="{Binding Value}"
+                                            <TextBox Text="{Binding Value, StringFormat={}{0:.###}}"
                                                      IsEnabled="{Binding IsEditable}"
                                                      TextAlignment="Right"
                                                      HorizontalAlignment="Stretch"
@@ -173,7 +173,7 @@
                                 <GridViewColumn Header="ReturnValue" Width="120">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding ReturnValue}" 
+                                            <TextBlock Text="{Binding ReturnValue, StringFormat={}{0:.###}}" 
                                                        HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>

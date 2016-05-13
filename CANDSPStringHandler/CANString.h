@@ -11,6 +11,8 @@ long code_value_int32(char * str);
 
 char * ltoa_dec(long value, char * buffer);
 
+long roundl_c(float value);
+
 char *ltoa_c(long value, char *string, int radix);
 
 #endif
