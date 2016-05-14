@@ -81,7 +81,6 @@ void HandleR0()
 	{
 		R1(e);
 		EnqueueSend_String(SendCommandBuffer);
-		EnqueueSendEOF();
 	}
 }
 
@@ -92,7 +91,6 @@ void HandleR2()
 	{
 		R1(e);
 		EnqueueSend_String(SendCommandBuffer);
-		EnqueueSendEOF();
 		e = e->Next;
 	}
 }
@@ -157,7 +155,6 @@ void HandleF2()
 	{
 		F1(e);
 		EnqueueSend_String(SendCommandBuffer);
-		EnqueueSendEOF();
 		e = e->Next;
 	}
 
@@ -166,7 +163,6 @@ void HandleF2()
 	{
 		F3(e1);
 		EnqueueSend_String(SendCommandBuffer);
-		EnqueueSendEOF();
 		e1 = e1->Next;
 	}
 }
@@ -235,7 +231,6 @@ void HandleM0()
 		}
 		R1(e);
 		EnqueueSend_String(SendCommandBuffer);
-		EnqueueSendEOF();
 	}
 }
 
@@ -346,7 +341,6 @@ void ReportTask(void* data)
 	CtrlDtLnkdLstElement* e = (CtrlDtLnkdLstElement*)data;
 	R1(e);
 	EnqueueSend_String(SendCommandBuffer);
-	EnqueueSendEOF();
 }
 
 void CANManagerTask(void* d)

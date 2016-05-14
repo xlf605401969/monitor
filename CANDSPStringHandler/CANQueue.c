@@ -69,9 +69,9 @@ void EnqueueRecvEOF()
 
 void EnqueueSend_String(char* str)
 {
-	if (SendQueueLength() < SEND_BUFFER_SIZE - 10)
-	{
-		long length = strlen(str);
+	long length = strlen(str);
+	if (SendQueueLength() < SEND_BUFFER_SIZE - 10 - length)
+	{	
 		if (SEND_BUFFER_SIZE - SendTail > length)
 		{
 			strcpy(&SendBuffer[SendTail], str);
@@ -85,14 +85,15 @@ void EnqueueSend_String(char* str)
 			memcpy(SendBuffer, str + tempLength, length - tempLength);
 			SendTail += (length - tempLength);
 		}
+		EnqueueSend(EOF_C);
 	}
 }
 
 void EnqueueRecv_String(char* str)
 {
-	if (RecvQueueLength() < RECV_BUFFER_SIZE - 10)
+	long length = strlen(str);
+	if (RecvQueueLength() < RECV_BUFFER_SIZE  - 10 - length)
 	{
-		long length = strlen(str);
 		if (RECV_BUFFER_SIZE - RecvTail > length)
 		{
 			strcpy(&RecvBuffer[RecvTail], str);
@@ -106,6 +107,7 @@ void EnqueueRecv_String(char* str)
 			memcpy(RecvBuffer, str + tempLength, length - tempLength);
 			RecvTail += (length - tempLength);
 		}
+		EnqueueRecv(EOF_C);
 	}
 }
 
