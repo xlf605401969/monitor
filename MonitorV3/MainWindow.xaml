@@ -166,7 +166,7 @@
                                     <GridViewColumnHeader Content="Value" Click="GridViewHeader_Click"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Text="{Binding Value, StringFormat={}{0:.###}}"
+                                            <TextBox Text="{Binding Value, StringFormat={}{0:0.###}}"
                                                      IsEnabled="{Binding IsEditable}"
                                                      TextAlignment="Right"
                                                      HorizontalAlignment="Stretch"
@@ -178,7 +178,7 @@
                                 <GridViewColumn Header="ReturnValue" Width="120">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding ReturnValue, StringFormat={}{0:.###}}" 
+                                            <TextBlock Text="{Binding ReturnValue, StringFormat={}{0:0.###}}" 
                                                        HorizontalAlignment="Right"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -224,7 +224,12 @@
                                         Content="全部读取"
                                         Height="30" Margin="4,4,4,4"
                                         DataContext="{Binding CANStatus}"
-                                        IsEnabled="{Binding IsCANStarted}" Click="LoadAllButton_Click"/>                              
+                                        IsEnabled="{Binding IsCANStarted}" Click="LoadAllButton_Click"/>
+                                <Button Name="StopAllButton" Width="60"
+                                        Content="全部停止"
+                                        Height="30" Margin="4,4,4,4"
+                                        DataContext="{Binding CANStatus}"
+                                        IsEnabled="{Binding IsCANStarted}" Click="StopAllButton_Click"/>
                             </StackPanel>
                             <ListView Name="CustomButtonListView"
                                       VerticalAlignment="Stretch" Grid.Row="1"

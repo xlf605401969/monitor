@@ -36,6 +36,9 @@
     <ClInclude Include="TimingTaskScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CAN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CANDriver.c">

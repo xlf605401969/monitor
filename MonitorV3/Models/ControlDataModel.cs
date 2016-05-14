@@ -207,5 +207,6 @@ namespace MonitorV3.Models
         NONE = 0,
         INT32 = 1,
         FLOAT = 2,
+        INT16 = 3
     }
 }

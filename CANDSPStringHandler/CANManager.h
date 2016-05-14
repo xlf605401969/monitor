@@ -4,7 +4,7 @@
 #include "ControlStruct.h"
 #include "CommandManager.h"
 
-#define REPORT_TASK_OFFSET 100
+#define REPORT_TASK_OFFSET 1000
 
 extern char RecvCommandBuffer[100];
 extern char SendCommandBuffer[100];
@@ -42,6 +42,8 @@ void HandleR2();
 void HandleR3();
 
 void HandleR4();
+
+void HandleR5();
 
 void HandleF();
 

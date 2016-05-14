@@ -6,7 +6,8 @@
 typedef struct TimingTask TimingTask;
 struct TimingTask {
 	long ID;
-	long long TimeSpan;
+	unsigned long long TimeSpan;
+	unsigned long long Tick;
 	void* Para;
 	void(*Body)(void*);
 };
@@ -25,9 +26,13 @@ TmngTskLnkdLstElement * TskLstSelectByID(long id);
 
 void TskLstRmByID(long id);
 
+void TskLstRm(TmngTskLnkdLstElement* p);
+
 int AddTimingTask(long id, long span, void * para, void(*body)(void *));
 
 void RemoveTimingTask(long id);
+
+TmngTskLnkdLstElement* TmngTskLnkdLstGetEntry();
 
 void TimingTaskTimerServer();
 

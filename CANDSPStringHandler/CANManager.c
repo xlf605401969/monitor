@@ -62,6 +62,9 @@ void HandleR()
 	case(4):
 		HandleR4();
 		break;
+	case(5):
+		HandleR5();
+		break;
 	default:
 		break;
 	}
@@ -84,7 +87,14 @@ void HandleR0()
 
 void HandleR2()
 {
-
+	CtrlDtLnkdLstElement* e = CtrlDtLnkdLstGetEntry();
+	while(e != 0)
+	{
+		R1(e);
+		EnqueueSend_String(SendCommandBuffer);
+		EnqueueSendEOF();
+		e = e->Next;
+	}
 }
 
 void HandleR3()
@@ -110,6 +120,22 @@ void HandleR4()
 {
 	long i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
 	RemoveTimingTask(i + REPORT_TASK_OFFSET);
+}
+
+void HandleR5()
+{
+	TmngTskLnkdLstElement* e = TmngTskLnkdLstGetEntry();
+	TmngTskLnkdLstElement* etemp = e;
+	while(e != 0)
+	{
+		etemp = e;
+		e = e->Next;
+		if (etemp->Task.ID > REPORT_TASK_OFFSET)
+		{
+			TskLstRm(etemp);
+		}
+	}
+
 }
 
 void HandleF()
@@ -199,6 +225,10 @@ void HandleM0()
 		case(DTFLOAT):
 			vf = code_value_float(code_position(RecvCommandBuffer, 'V'));
 			*(float*)(e->Data.Address) = vf;
+			break;
+		case(DTINT16):
+			vi = code_value_int32(code_position(RecvCommandBuffer, 'V'));
+			*(int*)(e->Data.Address) = (int)vi;
 			break;
 		default:
 			break;
@@ -302,6 +332,9 @@ char* GetControlDataValue(CtrlDtLnkdLstElement* e, char* buffer)
 	case(DTFLOAT):
 		ftoa(*(float*)(e->Data.Address), 3, buffer);
 		break;
+	case(DTINT16):
+		ltoa_dec(*(int*)(e->Data.Address), buffer);
+		break;
 	default:
 		break;
 	}
@@ -332,6 +365,6 @@ void CANManagerTask(void* d)
 
 void InitCANManager()
 {
-	AddTimingTask(10, 30, (void*)0, CANManagerTask);
+	AddTimingTask(1, 30, (void*)0, CANManagerTask);
 	RecvEOFFlag = 0;
 }

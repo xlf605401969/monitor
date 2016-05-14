@@ -1,8 +1,6 @@
 #include "CANDriver.h"
 #include "CANQueue.h"
 
-#define WINDOWS
-
 #if defined(DSP)
 #include "DSP28x_Project.h"
 #endif
@@ -200,7 +198,7 @@ void DequeueCANData(char* bytes)
 }
 #endif
 
-#if defined(WINDOWS)
+#if defined(WIN32)
 void CAN_TRY_SEND()
 {
 

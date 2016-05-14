@@ -9,7 +9,7 @@ void CmdLstAppend(CmdLnkdLstElement* e)
 {
 	if (CmdLnkdLstEntry == 0)
 	{
-		CmdLnkdLstEntry = e;
+		CmdLnkdLstEntry = CmdLnkdLstEnd = e;
 		e->Next = 0;
 		e->Previous = 0;
 	}
@@ -47,7 +47,7 @@ CmdLnkdLstElement* CmdLstSelectByID(long id)
 	CmdLnkdLstElement* e = CmdLnkdLstEntry;
 	while (e != 0)
 	{
-		if (e->Command.ID = id)
+		if (e->Command.ID == id)
 			break;
 		e = e->Next;
 	}

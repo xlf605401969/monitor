@@ -30,15 +30,23 @@ namespace MonitorV3.CANDriver
             CANController.Write("R4 I" + cdm.ID.ToString(), 0xff);
         }
 
+        public static void R5()
+        {
+            CANController.Write("R5", 0xff);
+        }
+
         public static void M0(ControlDataModel cdm)
         {
-            if (cdm.Type == ControlDataType.FLOAT)
+            if (cdm.IsEditable == true)
             {
-                CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("G8"), 0xff);
-            }
-            else if (cdm.Type == ControlDataType.INT32 || cdm.Type == ControlDataType.NONE)
-            {
-                CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("F0"), 0xff);
+                if (cdm.Type == ControlDataType.FLOAT)
+                {
+                    CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("G8"), 0xff);
+                }
+                else if (cdm.Type == ControlDataType.INT32 || cdm.Type == ControlDataType.NONE || cdm.Type == ControlDataType.INT16)
+                {
+                    CANController.Write("M0 I" + cdm.ID.ToString() + " V" + cdm.Value.ToString("F0"), 0xff);
+                }
             }
         }
 

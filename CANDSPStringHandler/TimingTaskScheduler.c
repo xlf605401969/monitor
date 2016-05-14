@@ -5,6 +5,9 @@ TmngTskLnkdLstElement* TmngTskLnkdLstEntry = 0;
 TmngTskLnkdLstElement* TmngTskLnkdLstEnd = 0;
 
 unsigned long long TimingTaskTimerTick = 0;
+unsigned long long TimingTaskTimerTickTemp = 0;
+unsigned long long TimingTaskTimerTickTempOld = 0;
+unsigned long long TimingTaskTimerTickPassed = 0;
 unsigned int TimingTaskInc = 1000000 / TIMING_TASK_TIMER_FREQ;
 int LoopServerExecutedFlag = 0;
 
@@ -39,6 +42,11 @@ TmngTskLnkdLstElement* TskLstSelectByID(long id)
 void TskLstRmByID(long id)
 {
 	TmngTskLnkdLstElement* p = TskLstSelectByID(id);
+	TskLstRm(p);
+}
+
+void TskLstRm(TmngTskLnkdLstElement* p)
+{
 	if (p != 0)
 	{
 		if (p->Previous != 0)
@@ -69,12 +77,18 @@ int AddTimingTask(long id, long span, void* para, void(*body)(void*))
 		e->Task.ID = id;
 		e->Task.Para = para;
 		e->Task.TimeSpan = span * 1000;
+		e->Task.Tick = 0;
 		e->Task.Body = body;
 		TskLstAppend(e);
 		return 0;
 	}
 	else
 		return -1;
+}
+
+TmngTskLnkdLstElement* TmngTskLnkdLstGetEntry()
+{
+	return TmngTskLnkdLstEntry;
 }
 
 void RemoveTimingTask(long id)
@@ -90,14 +104,19 @@ void TimingTaskTimerServer()
 
 void TimingTaskLoopServer()
 {
+	TimingTaskTimerTickTempOld = TimingTaskTimerTickTemp;
+	TimingTaskTimerTickTemp = TimingTaskTimerTick;
+	TimingTaskTimerTickPassed = TimingTaskTimerTickTemp - TimingTaskTimerTickTempOld;
 	if (LoopServerExecutedFlag == 0)
 	{
 		TmngTskLnkdLstElement* e = TmngTskLnkdLstEntry;
 		while (e != 0)
 		{
-			if (TimingTaskTimerTick % e->Task.TimeSpan == 0)
+			e->Task.Tick += TimingTaskTimerTickPassed;
+			if (e->Task.Tick >= e->Task.TimeSpan)
 			{
 				e->Task.Body(e->Task.Para);
+				e->Task.Tick = 0;
 			}
 			e = e->Next;
 		}

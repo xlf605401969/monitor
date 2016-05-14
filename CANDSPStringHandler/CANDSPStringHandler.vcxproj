@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CAN.h" />
     <ClInclude Include="CANDriver.h" />
     <ClInclude Include="CANManager.h" />
     <ClInclude Include="CANQueue.h" />

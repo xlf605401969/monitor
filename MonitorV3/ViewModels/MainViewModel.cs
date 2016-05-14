@@ -223,6 +223,10 @@ namespace MonitorV3.ViewModels
         public void LoadAllControlData()
         {
             CANManager.R2();
+            foreach (ControlDataModel cdm in ControlDataVM.ControlDataCollection)
+            {
+                UpdateAutoCheckStatus(cdm);
+            }
         }
 
         public void UpdateAutoCheckStatus(ControlDataModel cdm)
@@ -242,8 +246,12 @@ namespace MonitorV3.ViewModels
             foreach(ControlDataModel cdm in ControlDataVM.ControlDataCollection)
             {
                 CANManager.M0(cdm);
-                UpdateAutoCheckStatus(cdm);
             }
+        }
+
+        public void StopAllControlDataAuto()
+        {
+            CANManager.R5();
         }
     }
 }

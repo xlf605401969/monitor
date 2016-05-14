@@ -51,6 +51,8 @@ namespace MonitorV3
         {
             MainVM.CANConfigVM.SaveCANConfig("can.xml");
             MainVM.CustomButtonVM.SaveButtonConfig("button.xml");
+            MainVM.StopAllControlDataAuto();
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -253,7 +255,15 @@ namespace MonitorV3
 
         private void SendAllButton_Click(object sender, RoutedEventArgs e)
         {
-            MainVM.SendAllControlData();
+            MessageBoxResult result = MessageBox.Show("全部发送将更新DSP中所有值（Value列可能有大量0），确定？", "警告",
+                                MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+                MainVM.SendAllControlData();
+        }
+
+        private void StopAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainVM.StopAllControlDataAuto();
         }
 
         private void CustomButtonEdit_Click(object sender, RoutedEventArgs e)

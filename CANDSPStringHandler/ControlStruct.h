@@ -4,7 +4,8 @@
 enum ControlDataType {
 	DTNONE,
 	DTINT32,
-	DTFLOAT
+	DTFLOAT,
+	DTINT16
 };
 typedef enum ControlDataType ControlDataType;
 
