@@ -91,13 +91,18 @@ void HandleR3()
 {
 	long i, t;
 	CtrlDtLnkdLstElement* e;
+	TmngTskLnkdLstElement* et;
 
 	i = code_value_int32(code_position(RecvCommandBuffer, 'I'));
 	t = code_value_int32(code_position(RecvCommandBuffer, 'T'));
 	e = CtrlDtLstSelectByID(i);
 	if (e != 0)
 	{
-		AddTimingTask(i + REPORT_TASK_OFFSET, t, (void*)e, ReportTask);
+		et = TskLstSelectByID(i + REPORT_TASK_OFFSET);
+		if (et == 0)
+			AddTimingTask(i + REPORT_TASK_OFFSET, t, (void*)e, ReportTask);
+		else
+			et->Task.TimeSpan = t;
 	}
 }
 
