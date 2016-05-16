@@ -360,5 +360,6 @@ void CANManagerTask(void* d)
 void InitCANManager()
 {
 	AddTimingTask(1, 30, (void*)0, CANManagerTask);
+	AddCtrlData(1, DTFLOAT, 0, "CPU_LOAD", &CPULoad);
 	RecvEOFFlag = 0;
 }

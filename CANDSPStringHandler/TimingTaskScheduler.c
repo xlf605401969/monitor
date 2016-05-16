@@ -9,6 +9,10 @@ unsigned long long TimingTaskTimerTickTemp = 0;
 unsigned long long TimingTaskTimerTickTempOld = 0;
 unsigned long long TimingTaskTimerTickPassed = 0;
 unsigned int TimingTaskInc = 1000000 / TIMING_TASK_TIMER_FREQ;
+unsigned long CPULoadCounter;
+float CPULoadCounter1sScaler = 1.0/CPU_LOAD_COUNTER_1S;
+float CPULoad;
+
 int LoopServerExecutedFlag = 0;
 
 void TskLstAppend(TmngTskLnkdLstElement* e)
@@ -122,10 +126,19 @@ void TimingTaskLoopServer()
 		}
 		LoopServerExecutedFlag = 1;
 	}
+	CPULoadCounter++;
 }
 
 void InitTaskScheduler()
 {
 	TmngTskLnkdLstEntry = 0;
 	TmngTskLnkdLstEnd = 0;
+	CPULoadCounter = 0;
+	AddTimingTask(0, 1000, (void*)0, CPULoadCalculationTask);
+}
+
+void CPULoadCalculationTask()
+{
+	CPULoad = (CPU_LOAD_COUNTER_1S - CPULoadCounter) * CPULoadCounter1sScaler;
+	CPULoadCounter = 0;
 }

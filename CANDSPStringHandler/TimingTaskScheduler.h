@@ -2,6 +2,9 @@
 #define _TIMING_TASK_SCHEDULER_
 
 #define TIMING_TASK_TIMER_FREQ 10000
+#define CPU_LOAD_COUNTER_1S 5200000
+
+extern float CPULoad;
 
 typedef struct TimingTask TimingTask;
 struct TimingTask {
@@ -40,6 +43,7 @@ void TimingTaskLoopServer();
 
 void InitTaskScheduler();
 
+void CPULoadCalculationTask();
 
 #endif
 
