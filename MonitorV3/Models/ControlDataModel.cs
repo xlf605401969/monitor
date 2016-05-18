@@ -148,6 +148,11 @@ namespace MonitorV3.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }
+
+        public ControlDataModel()
+        {
+            this._autoCheckTimeSpan = 1000;
+        }
     }
 
     public class LogData:INotifyPropertyChanged

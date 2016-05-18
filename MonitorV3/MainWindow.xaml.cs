@@ -60,7 +60,7 @@ namespace MonitorV3
             if (MainVM.CANStatusVM.CANStatus.IsCANStarted == false)
             {
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(true);
-#if DEBUG2
+#if DEBUG
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = true;
                 CANController.m_bOpen = 1;
                 CANController.m_canstart = 1;
@@ -69,7 +69,7 @@ namespace MonitorV3
             else if (MainVM.CANStatusVM.CANStatus.IsCANStarted == true)
             {
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = MainVM.InitCAN(false);
-#if DEBUG2
+#if DEBUG
                 MainVM.CANStatusVM.CANStatus.IsCANStarted = false;
                 CANController.m_bOpen = 0;
                 CANController.m_canstart = 0;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using MonitorV3.Models;
 using MonitorV3.CANDriver;
+using System.Timers;
 
 namespace MonitorV3.ViewModels
 {
@@ -23,37 +24,42 @@ namespace MonitorV3.ViewModels
             ControlDataVM = new ControlDataViewModel();
             CustomButtonVM = new CustomButtonViewModel();
             CANController.ReceivedEOF += HandleCANMessage;
+            CANController.ReceiveTimer.Elapsed += UpdateSendRecvCounter;
         }
 
         public void HandleCANMessage(object sender, EventArgs e)
         {
             App.Current.Dispatcher.BeginInvoke(new Action(()=>{
                 string msg = "";
+                CANStatusVM.CANStatus.ReceiveCount = CANController.ReceivedBytesCount;
+                CANStatusVM.CANStatus.SendCount = CANController.SentBytesCount;
                 while (CANController.Avaliable() > 0)
                 {
-                    char c = (char)CANController.Read();
-                    CANStatusVM.CANStatus.ReceiveCount++;
+                    char c = (char)CANController.Read();                 
                     if (c == 0xff) break;
                     msg += c;
                 }
-                try
+                if (msg != "")
                 {
-                    switch (msg[0])
+                    try
                     {
-                        case ('R'):
-                            HandleR(msg);
-                            break;
-                        case ('F'):
-                            HandleF(msg);
-                            break;
-                        case ('H'):
-                            HandleH(msg);
-                            break;
+                        switch (msg[0])
+                        {
+                            case ('R'):
+                                HandleR(msg);
+                                break;
+                            case ('F'):
+                                HandleF(msg);
+                                break;
+                            case ('H'):
+                                HandleH(msg);
+                                break;
+                        }
                     }
-                }
-                catch (FormatException)
-                {
-                    return;
+                    catch (FormatException)
+                    {
+                        return;
+                    }
                 }
             }));
         }
@@ -252,6 +258,14 @@ namespace MonitorV3.ViewModels
         public void StopAllControlDataAuto()
         {
             CANManager.R5();
+        }
+
+        public void UpdateSendRecvCounter(object sender, ElapsedEventArgs e)
+        {
+            App.Current.Dispatcher.BeginInvoke(new Action(() => {
+                CANStatusVM.CANStatus.ReceiveCount = CANController.ReceivedBytesCount;
+                CANStatusVM.CANStatus.SendCount = CANController.SentBytesCount;
+            }));
         }
     }
 }

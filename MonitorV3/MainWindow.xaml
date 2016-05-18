@@ -230,6 +230,30 @@
                                         Height="30" Margin="4,4,4,4"
                                         DataContext="{Binding CANStatus}"
                                         IsEnabled="{Binding IsCANStarted}" Click="StopAllButton_Click"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Content="发送:"/>
+                                    <Ellipse Grid.Column="1"/>
+                                    <Label Grid.Column="2" 
+                                           DataContext="{Binding CANStatus}"
+                                           Content="{Binding SendCount}"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Content="接收:"/>
+                                    <Ellipse Grid.Column="1"/>
+                                    <Label Grid.Column="2" 
+                                           DataContext="{Binding CANStatus}"
+                                           Content="{Binding ReceiveCount}"/>
+                                </Grid>
                             </StackPanel>
                             <ListView Name="CustomButtonListView"
                                       VerticalAlignment="Stretch" Grid.Row="1"
