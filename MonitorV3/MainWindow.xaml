@@ -158,7 +158,7 @@
                                     <GridViewColumnHeader Content="Name" Click="GridViewHeader_Click"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

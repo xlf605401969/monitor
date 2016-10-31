@@ -16,7 +16,9 @@ namespace Monitor2.ViewModels
         XmlSerializer xmlFormat = new XmlSerializer(typeof(ObservableCollection<ParaModel>), new Type[] { typeof(ParaModel) });
 
         public ObservableCollection<ParaModel> parasList = new ObservableCollection<ParaModel>();
-        public ObservableCollection<ParaModel> returnParasList = new ObservableCollection<ParaModel>();
+        public ParaModel DCRelay { get; set; }
+        public ParaModel LoadRelay { get; set; }
+        public ParaModel DisRelay { get; set; }
 
         public void LoadParasList()
         {
@@ -30,13 +32,14 @@ namespace Monitor2.ViewModels
             using (FileStream fStream = File.Open(fileName, FileMode.Open))
             {
                 parasList = xmlFormat.Deserialize(fStream) as ObservableCollection<ParaModel>;
-                fStream.Seek(0,SeekOrigin.Begin);
-                returnParasList = xmlFormat.Deserialize(fStream) as ObservableCollection<ParaModel>;
                 foreach(ParaModel m in parasList)
                 {
                     m.IsValueChanged = false;
                 }
             }
+            DCRelay = (from p in parasList where p.Index == 32 select p).First() as ParaModel;
+            LoadRelay = (from p in parasList where p.Index == 33 select p).First() as ParaModel;
+            DisRelay = (from p in parasList where p.Index == 34 select p).First() as ParaModel;
         }
 
         public void SaveParasList(string fileName)

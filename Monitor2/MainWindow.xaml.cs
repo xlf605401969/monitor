@@ -27,10 +27,13 @@ namespace Monitor2
         public ControlTabViewModel ControlTabVM { get; set; }
 
         CANQueueManager canQueueManager = new CANQueueManager();
+        AutoControlWindow AutoControlWindow = new Monitor2.AutoControlWindow();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Closing += ((object sender, System.ComponentModel.CancelEventArgs e) => { AutoControlWindow.Close(); });
             ParasListVM = new ParasListViewModel();
             ParasListVM.LoadParasList("Paras.config");
 
@@ -38,11 +41,15 @@ namespace Monitor2
             ControlTabVM.LoadControlParasList("Command.config");
             ControlTabVM.LoadStatusParasList("Status.config");
 
+            AutoControlWindow.ParaList = ParasListVM.parasList.ToList();
+            AutoControlWindow.StatusList = ControlTabVM.StatusParasList.ToList();
+
             //绑定参数列表
             ParasListView.DataContext = ParasListVM.parasList;
-            ReturnParasListView.DataContext = ParasListVM.returnParasList;
 
             ControlTabView.DataContext = ControlTabVM;
+
+            SwitchStackPanel.DataContext = ParasListVM;
 
             //绑定日志面板
             LogTable.DataContext = canQueueManager;
@@ -56,7 +63,6 @@ namespace Monitor2
 
             //绑定接受队列事件处理程序
             canQueueManager.OnReceiveQueueChanged += HandleReceiveMessage;
-
         }
 
         private void ConnectDeviceButton_Click(object sender, RoutedEventArgs e)
@@ -261,7 +267,7 @@ namespace Monitor2
                 case CANFrameType.Para:
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        foreach (ParaModel m in ParasListVM.returnParasList)
+                        foreach (ParaModel m in ParasListVM.parasList)
                         {
                             if (m.Index == frame.FrameIndex)
                             {
@@ -310,16 +316,16 @@ namespace Monitor2
                 case CANFrameType.Query:
                     throw new NotImplementedException();
                 case CANFrameType.Status:
-                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        ControlTabVM.DeviceStatus = frame.IndexValue;
-                    }));
                     break;
                 case CANFrameType.Start:
                     throw new NotImplementedException();
                 case CANFrameType.Stop:
                     throw new NotImplementedException();
                 case CANFrameType.ACK:
+                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ControlTabVM.DeviceStatus = frame.IndexValue;
+                    }));
                     ControlTabVM.ReveicedACK(frame);
                     break;
             }
@@ -421,9 +427,9 @@ namespace Monitor2
 
         private void RunModeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.m_canstart == 1)
             {
-                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[5], CANFrameType.Control);
+                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[4], CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
             }
             else
@@ -444,6 +450,68 @@ namespace Monitor2
             {
                 MessageBox.Show("请先启动CAN控制器", "错误");
             }
+        }
+        private void Switch1_Click(object sender, RoutedEventArgs e)
+        {
+            if (CANController.m_canstart == 1 )
+            {
+                CANQueueManager manager = CANQueueManager.GetInstance();
+                var paras = (from p in ParasListVM.parasList where p.Index == 32 select p).First();
+                paras.Value = Switch1.IsChecked == true ? 1 : 0;
+                manager.ConstractMessage(paras, CANFrameType.Control);
+                manager.RaiseSendQueueChanged();
+            }
+        }
+
+        private void Switch2_Click(object sender, RoutedEventArgs e)
+        {
+            if (CANController.m_canstart == 1 )
+            {
+                CANQueueManager manager = CANQueueManager.GetInstance();
+                var paras = (from p in ParasListVM.parasList where p.Index == 33 select p).First();
+                paras.Value = Switch2.IsChecked == true ? 1 : 0;
+                manager.ConstractMessage(paras, CANFrameType.Control);
+                manager.RaiseSendQueueChanged();
+            }
+
+        }
+
+        private void Switch3_Click(object sender, RoutedEventArgs e)
+        {
+            if (CANController.m_canstart == 1 )
+            {
+                CANQueueManager manager = CANQueueManager.GetInstance();
+                var paras = (from p in ParasListVM.parasList where p.Index == 34 select p).First();
+                paras.Value = Switch3.IsChecked == true ? 1 : 0;
+                manager.ConstractMessage(paras, CANFrameType.Control);
+                manager.RaiseSendQueueChanged();
+            }
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CANController.m_canstart == 1)
+            {
+                CANQueueManager manager = CANQueueManager.GetInstance();
+                ParaModel m = (from p in ParasListVM.parasList where p.Name == "Reset" select p).First();
+                m.Value = 1;
+                manager.ConstractMessage(m, CANFrameType.Control);
+                manager.RaiseSendQueueChanged();
+            }
+        }
+
+        private void RunModeSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CANController.m_canstart == 1)
+            {
+                canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[4], CANFrameType.Control);
+                canQueueManager.RaiseSendQueueChanged();
+            }
+        }
+
+        private void OpenAC_Click(object sender, RoutedEventArgs e)
+        {
+            AutoControlWindow.Show();
         }
     }
 }

@@ -1,0 +1,46 @@
+﻿<Window x:Class="Monitor2.AutoControlWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Monitor2"
+        mc:Ignorable="d"
+        Title="AutoControlWindow" Height="300" Width="300">
+    <Grid>
+        <Grid Name="PageGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Name="ButtonPanel" Grid.Row="0">
+                <Button Name="SwitchGenModeButton" Content="切换发电模式（从转速模式）" 
+                        Click="SwitchGenModeButton_Click"
+                        DockPanel.Dock="Top"
+                        Height="40"
+                        IsEnabled="{Binding IsActionOver}"/>
+                <Button Name="StartUpButton" Content="2分钟启动"
+                        Click="StartUpButton_Click"
+                        DockPanel.Dock="Top"
+                        Height="40"
+                        IsEnabled="{Binding IsActionOver}"/>
+                <Button Name="StartGenerateButton" Content="启动发电模式（从停止状态）"
+                        Click="StartGenerateButton_Click"
+                        Height="40"
+                        IsEnabled="{Binding IsActionOver}"/>
+                <Button Name="LocationButton" Content="电机定位（请确保无负载)"
+                        Click="LocationButton_Click"
+                        Height="40"
+                        IsEnabled="{Binding IsActionOver}"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <Button Name="CancelButton" Content="停止"
+                        Click="CancelButton_Click"
+                        Height="50"/>
+            </StackPanel>
+            <ProgressBar Name="ActionProgress" DockPanel.Dock="Bottom"
+                         Height="10" Grid.Row="2"
+                         Value="{Binding ActionProgress}"/>
+        </Grid>
+    </Grid>
+</Window>

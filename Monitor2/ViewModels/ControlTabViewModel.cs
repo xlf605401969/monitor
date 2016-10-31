@@ -113,6 +113,7 @@ namespace Monitor2.ViewModels
 
             StatusParasList = new ObservableCollection<ParaModel>();
 
+            IsAutoCheckStatus = true;
             AutoCheckTimer.Elapsed += AutoCheckTimer_Elapsed;
             AutoCheckTimer.AutoReset = true;
         }
@@ -121,20 +122,20 @@ namespace Monitor2.ViewModels
         {
             if (CANController.m_canstart == 1)
             {
-                AutoCheckTimer.Stop();
-                if (missCount != 0)
-                {
-                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        ConnectStatus = 1;
-                    }));
-                }
-                missCount = 1;
-                CANQueueManager manager = CANQueueManager.GetInstance();
-                manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
-                manager.RaiseSendQueueChanged();
                 if (IsAutoCheckStatus)
                 {
+                    AutoCheckTimer.Stop();
+                    if (missCount != 0)
+                    {
+                        App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            ConnectStatus = 1;
+                        }));
+                    }
+                    missCount = 1;
+                    CANQueueManager manager = CANQueueManager.GetInstance();
+                    manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
+                    manager.RaiseSendQueueChanged();
                     AutoCheckTimer.Start();
                 }
             }
@@ -142,17 +143,14 @@ namespace Monitor2.ViewModels
 
         public void ReveicedACK(CANFrame frame)
         {
-            AutoCheckTimer.Stop();
-//            if ((CANACKIndex)frame.FrameIndex == CANACKIndex.Status)
-//            {
+            if (IsAutoCheckStatus)
+            {
+                AutoCheckTimer.Stop();
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ConnectStatus = 0;
                 }));
                 missCount = 0;
-//            }
-            if (IsAutoCheckStatus)
-            {
                 AutoCheckTimer.Start();
             }
         }

@@ -79,10 +79,60 @@ namespace Monitor2.Models
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertityChanged(string propertityName)
         {
-            if (PropertyChanged != null)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
+        }
+    }
+
+    public class ParaModelWarningLevel:INotifyPropertyChanged
+    {
+        private byte _paraIndex = 1;
+        private string _paraName = "test";
+        private float _paraValue = 2.3f;
+
+        public byte Index
+        {
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertityName));
+                return _paraIndex;
             }
+            set
+            {
+                _paraIndex = value;
+                OnPropertityChanged("Index");
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _paraName;
+            }
+            set
+            {
+                _paraName = value;
+                OnPropertityChanged("Name");
+            }
+        }
+
+        public float WarnningValue
+        {
+            get
+            {
+                return _paraValue;
+            }
+            set
+            {
+                _paraValue = value;
+                OnPropertityChanged("WarnningValue");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertityChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 
