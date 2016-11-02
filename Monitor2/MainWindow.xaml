@@ -120,7 +120,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="5"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="0"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -352,6 +352,7 @@
                                             Margin="50,0,0,0"
                                             Click="ResetButton_Click"/>
                                     <Button Name="OpenAC" Content="打开自动控制菜单"
+                                            Margin="10,0,0,0"
                                             Click="OpenAC_Click"/>
                                 </StackPanel>
                             </Grid>
@@ -499,10 +500,10 @@
                     </Grid>
 
                 </TabItem>
-                <TabItem Header="图像">
+                <TabItem Header="图像"  Visibility="Hidden">
 
                 </TabItem>
-                <TabItem Name="LogTable" Header="日志">
+                <TabItem Name="LogTable" Header="日志" Visibility="Hidden">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

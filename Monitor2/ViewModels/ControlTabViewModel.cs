@@ -31,7 +31,7 @@ namespace Monitor2.ViewModels
         public Timer AutoCheckTimer = new Timer(300);
 
 
-        private bool _isAutoSend;
+        private bool _isAutoSend = true;
         public bool IsAutoSend
         {
             get

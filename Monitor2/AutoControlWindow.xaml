@@ -14,9 +14,8 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <StackPanel Name="ButtonPanel" Grid.Row="0">
-                <Button Name="SwitchGenModeButton" Content="切换发电模式（从转速模式）" 
-                        Click="SwitchGenModeButton_Click"
-                        DockPanel.Dock="Top"
+                <Button Name="LocationButton" Content="电机定位（请确保无负载)"
+                        Click="LocationButton_Click"
                         Height="40"
                         IsEnabled="{Binding IsActionOver}"/>
                 <Button Name="StartUpButton" Content="2分钟启动"
@@ -24,12 +23,13 @@
                         DockPanel.Dock="Top"
                         Height="40"
                         IsEnabled="{Binding IsActionOver}"/>
-                <Button Name="StartGenerateButton" Content="启动发电模式（从停止状态）"
-                        Click="StartGenerateButton_Click"
+                <Button Name="SwitchGenModeButton" Content="切换发电模式（从转速模式）" 
+                        Click="SwitchGenModeButton_Click"
+                        DockPanel.Dock="Top"
                         Height="40"
                         IsEnabled="{Binding IsActionOver}"/>
-                <Button Name="LocationButton" Content="电机定位（请确保无负载)"
-                        Click="LocationButton_Click"
+                <Button Name="StartGenerateButton" Content="启动发电模式（从停止状态）"
+                        Click="StartGenerateButton_Click"
                         Height="40"
                         IsEnabled="{Binding IsActionOver}"/>
             </StackPanel>

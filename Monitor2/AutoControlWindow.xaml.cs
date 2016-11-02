@@ -89,6 +89,16 @@ namespace Monitor2
         {
             ParaModel model = new ParaModel();
             model.Index = 33;
+            model.Type = 2;
+            model.Value = status ? 1 : 0;
+            manager.ConstractMessage(model, CANFrameType.Control);
+            manager.RaiseSendQueueChanged();
+        }
+
+        public void DissRelay(bool status)
+        {
+            ParaModel model = new ParaModel();
+            model.Index = 34;
             model.Type = 1;
             model.Value = status ? 1 : 0;
             manager.ConstractMessage(model, CANFrameType.Control);
@@ -98,7 +108,7 @@ namespace Monitor2
         public void ChangeRefMode(RefMode mode)
         {
             ParaModel model = new Models.ParaModel();
-            model.Index = 14;
+            model.Index = 20;
             model.Type = 1;
             model.Value = (int) mode;
             manager.ConstractMessage(model, CANFrameType.Control);
@@ -117,7 +127,7 @@ namespace Monitor2
 
         public void QueryParas()
         {
-            manager.ConstractMessage(CANFrameType.Para);
+            manager.ConstractMessage(CANFrameType.Query);
             manager.RaiseSendQueueChanged();
         }
 
@@ -138,6 +148,10 @@ namespace Monitor2
             ChangetoGenerate = new Action(() =>
             {
                 ActionStart();
+                DissRelay(false);
+                Thread.Sleep(10);
+                SetRunMode(false);
+                Thread.Sleep(10);
                 DCRelay(false);
                 ActionProgressValue(30);
                 Thread.Sleep(500);
@@ -145,11 +159,16 @@ namespace Monitor2
                 ActionProgressValue(60);
                 Thread.Sleep(500);
                 ChangeRefMode(RefMode.Generate);
+                Thread.Sleep(10);
+                SetRunMode(true);
+                ActionProgressValue(90);
                 ActionEnd();
             });
             StartUp = new Action(() =>
             {
                 ActionStart();
+                DissRelay(false);
+                Thread.Sleep(10);
                 ChangeRefMode(RefMode.Speed);
                 Thread.Sleep(10);
                 LoadRelay(false);
@@ -176,11 +195,14 @@ namespace Monitor2
                 ActionProgressValue(50);
                 LoadRelay(false);
                 Thread.Sleep(300);
+                DissRelay(false);
                 ActionEnd();
             });
             StartGenerate = new Action(() =>
             {
                 ActionStart();
+                DissRelay(false);
+                Thread.Sleep(10);
                 DCRelay(false);
                 ActionProgressValue(30);
                 Thread.Sleep(500);
@@ -195,6 +217,8 @@ namespace Monitor2
             Relocation = new Action(() =>
             {
                 ActionStart();
+                DissRelay(false);
+                Thread.Sleep(10);
                 LoadRelay(false);
                 Thread.Sleep(10);
                 DCRelay(true);
@@ -210,6 +234,7 @@ namespace Monitor2
                 DCRelay(false);
                 Thread.Sleep(10);
                 QueryParas();
+                Thread.Sleep(1000);
                 var value = ((from m in ParaList where m.Index == 35 select m).First() as ParaModel)?.Value;
                 if (value > 900 || value < 890)
                 {
