@@ -1,0 +1,60 @@
+﻿<Window x:Class="Monitor2ng.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Monitor2ng"
+        xmlns:vm="clr-namespace:Monitor2ng.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="12"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="微软雅黑"
+        mc:Ignorable="d"
+        d:DataContext="{StaticResource SampleMainVM}"
+        Closing="Window_Closing"
+        Title="MainWindow" Width="530" Height="200">
+    <Window.Resources>
+        <vm:TabVisiablityConverter x:Key="TabVisiablityConverter"/>
+    </Window.Resources>
+    <Grid x:Name="baseGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="mainConfigPanel">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" MinWidth="186">
+                <Label Content="设备：" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                <ComboBox x:Name="deviceComboBox" Width="120" Margin="5,5,15,5" HorizontalAlignment="Center" VerticalAlignment="Center" IsReadOnly="True" ItemsSource="{Binding MonitorConfigModel.Devices}" SelectedIndex="{Binding MonitorConfigModel.SelectedDeviceIndex}"/>
+            </StackPanel>
+            <StackPanel x:Name="stackPanel" Grid.Column="1" Orientation="Horizontal" MinWidth="244">
+                <Label Content="配置文件：" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,5,5,5"/>
+                <ComboBox Width="120" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" ItemsSource="{Binding MonitorConfigModel.ConfigFiles}" SelectedIndex="{Binding MonitorConfigModel.SelectedConfigFileIndex}"/>
+                <Button Style="{DynamicResource RoundButton}" Content="Button" Height="24" Width="24" Margin="5,5,15,5" Background="White" BorderBrush="#FF031049" BorderThickness="0,0,0,0" Foreground="#FF49A7E8" Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+            <Button Content="启动" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5" MinWidth="60" Width="60" Command="{Binding StartCommand}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" Grid.Column="2"/>
+        </Grid>
+        <Grid x:Name="deviceConfigPanel" Grid.Row="1">
+            <GroupBox Header="PCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=0, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="通道：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                    <ComboBox Width="110" ItemsSource="{Binding PeakCanConfigModel.Channels}" SelectedIndex="{Binding PeakCanConfigModel.SelectedChannelIndex}" Margin="5,5,15,5"/>
+                    <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                    <ComboBox Width="80" ItemsSource="{Binding PeakCanConfigModel.Baudrates}" SelectedIndex="{Binding PeakCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,15,5"/>
+                    <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,15,5" Text="{Binding PeakCanConfigModel.CommunicationId}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="USBCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=1, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,7"/>
+        </Grid>
+
+    </Grid>
+</Window>

@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Monitor2.ViewModels;
 using Monitor2.Models;
 using Monitor2.CAN;
+using InteractiveDataDisplay.WPF;
 
 namespace Monitor2
 {
@@ -25,6 +26,11 @@ namespace Monitor2
     {
         public ParasListViewModel ParasListVM { get; set; }
         public ControlTabViewModel ControlTabVM { get; set; }
+
+        public GraphTabViewModel GraphTabVM { get; set; }
+
+        public Dictionary<int,double> GraphXY { get; set; }
+        private LineGraph ScopeLine = new LineGraph();
 
         CANQueueManager canQueueManager = new CANQueueManager();
         AutoControlWindow AutoControlWindow = new Monitor2.AutoControlWindow();
@@ -41,6 +47,8 @@ namespace Monitor2
             ControlTabVM.LoadControlParasList("Command.config");
             ControlTabVM.LoadStatusParasList("Status.config");
 
+            GraphTabVM = new GraphTabViewModel();
+
             AutoControlWindow.ParaList = ParasListVM.parasList.ToList();
             AutoControlWindow.StatusList = ControlTabVM.StatusParasList.ToList();
 
@@ -51,11 +59,17 @@ namespace Monitor2
 
             SwitchStackPanel.DataContext = ParasListVM;
 
+            GraphTabView.DataContext = GraphTabVM;
+
             //绑定日志面板
             LogTable.DataContext = canQueueManager;
 
+            GraphXY = new Dictionary<int, double>();
+            ScopeLine.Stroke = new SolidColorBrush(Color.FromRgb(29, 80, 162));
+            GraphScope.Content = ScopeLine;
+
             //设置波特率选项
-            foreach(string s in CANController.BaudrateDic.Keys)
+            foreach (string s in ControlCAN.BaudrateDic.Keys)
             {
                 BaudRateSelection.Items.Add(s);
             }
@@ -63,52 +77,34 @@ namespace Monitor2
 
             //绑定接受队列事件处理程序
             canQueueManager.OnReceiveQueueChanged += HandleReceiveMessage;
+            GraphTabVM.ChannelData.CollectionChanged += ChannelData_CollectionChanged;
+        }
+
+        private void ChannelData_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateGraph();
         }
 
         private void ConnectDeviceButton_Click(object sender, RoutedEventArgs e)
         {
-            //操作硬件前需先获得互斥信号量，以避免冲突
-            CANController.CANControllerMutex.WaitOne();
-            if (CANController.m_bOpen == 1)
+            CANController.FilterId = AccCodeInput.Text;
+            CANController.FilterMask = AccMaskInput.Text;
+            CANController.TargetMode = (CanMode)ModeSelection.SelectedIndex;
+            CANController.MessageId = IDInput.Text;
+            CANController.Baudrate = BaudRateSelection.Text;
+            
+            if (!CANController.Initialized)
             {
-                CANController.VCI_CloseDevice(CANController.m_devtype, CANController.m_devind);
-                CANController.m_bOpen = 0;
+                CANController.Initialize();
+                CANController.Configuration();
             }
             else
             {
-                CANController.m_canind = (UInt32)PortSelection.SelectedIndex;
-                if (CANController.VCI_OpenDevice(CANController.m_devtype, CANController.m_devind, 0) != 0)
-                {
-                    CANController.m_bOpen = 1;
-                    CANController.VCI_INIT_CONFIG config = new CANController.VCI_INIT_CONFIG();
-                    try
-                    {
-                        config.AccCode = System.Convert.ToUInt32(AccCodeInput.Text, 16);
-                        config.AccMask = System.Convert.ToUInt32(AccMaskInput.Text, 16);
-                        config.Filter = (Byte)1;
-                        config.Mode = (Byte)ModeSelection.SelectedIndex;
-                        config.Timing0 = CANController.BaudrateDic[BaudRateSelection.SelectedItem as string][0];
-                        config.Timing1 = CANController.BaudrateDic[BaudRateSelection.SelectedItem as string][1];
-                        CANController.VCI_InitCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind, ref config);
-                    }
-                    catch (Exception exception)
-                    {
-                        MessageBox.Show("初始化设备失败,请检参数是否正确", "错误",
-                                MessageBoxButton.OK);
-                        CANController.VCI_CloseDevice(CANController.m_devtype, CANController.m_devind);
-                        CANController.m_bOpen = 0;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("打开设备失败，请检查设备类型及索引号是否正确", "错误",
-                        MessageBoxButton.OK);
-                }
+                CANController.Close();
             }
-            CANController.CANControllerMutex.ReleaseMutex();
 
             //当设备处于连接状态时无法更改参数
-            if (CANController.m_bOpen == 0)
+            if (CANController.Initialized == false)
             {
                 ConnectDeviceButton.Content = "连接";
                 DeviceSelection.IsEnabled = true;
@@ -130,46 +126,25 @@ namespace Monitor2
                 AccMaskInput.IsEnabled = false;
                 BaudRateSelection.IsEnabled = false;
             }
-            ConnectDeviceButton.Foreground = CANController.m_bOpen == 0 ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Red);
+            ConnectDeviceButton.Foreground = ControlCAN.m_bOpen == 0 ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Red);
             StartCANButton_Click(sender, e);
         }
 
         private void StartCANButton_Click(object sender, RoutedEventArgs e)
         {
-            //获取互斥信号量
-            CANController.CANControllerMutex.WaitOne();
-            if (CANController.m_bOpen == 0)
+            if (!CANController.Started)
             {
-                CANController.m_canstart = 0;
-
-                //设备启动时无法更改发送参数
-                IDInput.IsEnabled = true;
+                if (CANController.Start() == 0)
+                { 
+                    StartCANButton.Content = "停止";
+                }
             }
             else
             {
-                if (CANController.m_canstart == 0)
+                if (CANController.Stop() == 0)
                 {
-                    CANController.VCI_StartCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind);
-                    CANController.m_canstart = 1;
-                    IDInput.IsEnabled = false;
-
+                    StartCANButton.Content = "启动";
                 }
-                else
-                {
-                    CANController.VCI_ResetCAN(CANController.m_devtype, CANController.m_devind, CANController.m_canind);
-                    CANController.m_canstart = 0;
-                    IDInput.IsEnabled = true;
-                }
-            }
-            CANController.CANControllerMutex.ReleaseMutex();
-            StartCANButton.Content = CANController.m_canstart == 0 ? "启动" : "停止";
-            if (CANController.m_bOpen == 1 && CANController.m_canstart == 1)
-            {
-                CANController.ReceiveTimer.Enabled = true;
-            }
-            else
-            {
-                CANController.ReceiveTimer.Enabled = false;
             }
         }
 
@@ -178,27 +153,44 @@ namespace Monitor2
             switch (DeviceSelection.SelectedIndex)
             {
                 case 0:
-                    CANController.m_devtype = CANController.DEV_USBCAN;
+                    CANController.TargetDevice = CanDevice.CANUSB;
+                    AccCodeInput.Text = "0x20000000";
+                    AccMaskInput.Text = "0x00000000";
                     break;
                 case 1:
-                    CANController.m_devtype = CANController.DEV_USBCAN2;
+                    CANController.TargetDevice = CanDevice.CANUSB2;
+                    if (AccCodeInput != null)
+                    {
+                        AccCodeInput.Text = "0x20000000";
+                        AccMaskInput.Text = "0x00000000";
+                    }
+                    break;
+                case 2:
+                    CANController.TargetDevice = CanDevice.PCAN;
+                    AccCodeInput.Text = "0x04000000";
+                    AccMaskInput.Text = "0x00000000";
                     break;
             } 
         }
 
         private void PortSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CANController.m_canind = (uint)PortSelection.SelectedIndex;
+            switch (PortSelection.SelectedIndex)
+            {
+                case 0:
+                    CANController.DeviceId = 0;
+                    break;
+            }
         }
 
         private void IndexSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CANController.m_devind = (uint)IndexSelection.SelectedIndex;
+            CANController.ChannelId = (uint)IndexSelection.SelectedIndex;
         }
 
         private void UpdateParaListButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 int count = 0;
                 foreach (Models.ParaModel m in ParasListVM.parasList)
@@ -223,12 +215,12 @@ namespace Monitor2
 
         private void IDInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CANController.m_ID = Convert.ToUInt32(IDInput.Text, 16);
+            
         }
 
         private void ReadParaListButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 canQueueManager.ConstractMessage(CANFrameType.Query);
                 canQueueManager.RaiseSendQueueChanged();
@@ -252,7 +244,7 @@ namespace Monitor2
             while(canQueueManager.ReceiveQueue.Count != 0)
             {
                 CANFrame frame = canQueueManager.ReceiveQueue.Dequeue();
-                if (CANController.m_canmode != 2)
+                if (ControlCAN.m_canmode != 2)
                 {
                     HandleCANFrame(frame);
                 }
@@ -310,7 +302,26 @@ namespace Monitor2
                     }));
                     break;
                 case CANFrameType.Graph:
-                    throw new NotImplementedException();
+                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        int index = ((frame.FrameIndex & 0x0f) << 8) + frame.IndexValue;
+                        if (index == 0)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            if (frame.DataType == 0x02)
+                            {
+                                GraphTabVM.ChannelData.Add(new GraphDataModel(index, frame.Value));
+                            }
+                            else if (frame.DataType == 0x03)
+                            {
+                                GraphTabVM.ChannelData.Add(new GraphDataModel(index, frame.IntValue));
+                            }
+                        }
+                    }));
+                    break;
                 case CANFrameType.Control:
                     throw new NotImplementedException();
                 case CANFrameType.Query:
@@ -339,7 +350,7 @@ namespace Monitor2
             {
                 m.Value -= m.ValueChangeStep;
             }
-            if(ControlTabVM.IsAutoSend && CANController.m_canstart == 1)
+            if(ControlTabVM.IsAutoSend && CANController.Started)
             {
                 canQueueManager.ConstractMessage(m, CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
@@ -355,7 +366,7 @@ namespace Monitor2
             {
                 m.Value += m.ValueChangeStep;
             }
-            if(ControlTabVM.IsAutoSend && CANController.m_canstart == 1)
+            if(ControlTabVM.IsAutoSend && CANController.Started)
             {
                 canQueueManager.ConstractMessage(m, CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
@@ -371,7 +382,7 @@ namespace Monitor2
 
         private void ParasPanelConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 int count = 0;
                 foreach (Models.ParaModel m in ControlTabVM.ControlParasList)
@@ -396,12 +407,12 @@ namespace Monitor2
 
         private void ModeSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CANController.m_canmode = (uint)ModeSelection.SelectedIndex;
+            ControlCAN.m_canmode = (uint)ModeSelection.SelectedIndex;
         }
 
         private void MotorStartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 canQueueManager.ConstractMessage(CANFrameType.Start);
                 canQueueManager.RaiseSendQueueChanged();
@@ -414,7 +425,7 @@ namespace Monitor2
 
         private void MotorStopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 canQueueManager.ConstractMessage(CANFrameType.Stop);
                 canQueueManager.RaiseSendQueueChanged();
@@ -427,7 +438,7 @@ namespace Monitor2
 
         private void RunModeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[4], CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
@@ -440,7 +451,7 @@ namespace Monitor2
 
         private void StatusCheckButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 CANQueueManager manager = CANQueueManager.GetInstance();
                 manager.ConstractMessage(CANFrameType.Status, index: (byte)CANACKIndex.Status);
@@ -451,46 +462,10 @@ namespace Monitor2
                 MessageBox.Show("请先启动CAN控制器", "错误");
             }
         }
-        private void Switch1_Click(object sender, RoutedEventArgs e)
-        {
-            if (CANController.m_canstart == 1 )
-            {
-                CANQueueManager manager = CANQueueManager.GetInstance();
-                var paras = (from p in ParasListVM.parasList where p.Index == 32 select p).First();
-                paras.Value = Switch1.IsChecked == true ? 1 : 0;
-                manager.ConstractMessage(paras, CANFrameType.Control);
-                manager.RaiseSendQueueChanged();
-            }
-        }
-
-        private void Switch2_Click(object sender, RoutedEventArgs e)
-        {
-            if (CANController.m_canstart == 1 )
-            {
-                CANQueueManager manager = CANQueueManager.GetInstance();
-                var paras = (from p in ParasListVM.parasList where p.Index == 33 select p).First();
-                paras.Value = Switch2.IsChecked == true ? 1 : 0;
-                manager.ConstractMessage(paras, CANFrameType.Control);
-                manager.RaiseSendQueueChanged();
-            }
-
-        }
-
-        private void Switch3_Click(object sender, RoutedEventArgs e)
-        {
-            if (CANController.m_canstart == 1 )
-            {
-                CANQueueManager manager = CANQueueManager.GetInstance();
-                var paras = (from p in ParasListVM.parasList where p.Index == 34 select p).First();
-                paras.Value = Switch3.IsChecked == true ? 1 : 0;
-                manager.ConstractMessage(paras, CANFrameType.Control);
-                manager.RaiseSendQueueChanged();
-            }
-        }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 CANQueueManager manager = CANQueueManager.GetInstance();
                 ParaModel m = (from p in ParasListVM.parasList where p.Name == "Reset" select p).First();
@@ -502,7 +477,7 @@ namespace Monitor2
 
         private void RunModeSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 canQueueManager.ConstractMessage(ControlTabVM.ControlParasList[4], CANFrameType.Control);
                 canQueueManager.RaiseSendQueueChanged();
@@ -512,6 +487,60 @@ namespace Monitor2
         private void OpenAC_Click(object sender, RoutedEventArgs e)
         {
             AutoControlWindow.Show();
+        }
+
+        private void ReadGraph_Click(object sender, RoutedEventArgs e)
+        {
+            canQueueManager.ConstractGraphMessage(GraphTabVM.SelectedChannel, GraphCmd.Read);
+            canQueueManager.RaiseSendQueueChanged();
+            GraphTabVM.ChannelData.Clear();
+        }
+
+        private void LockGraph_Click(object sender, RoutedEventArgs e)
+        {
+            canQueueManager.ConstractGraphMessage(GraphTabVM.SelectedChannel, GraphCmd.Lock);
+            canQueueManager.RaiseSendQueueChanged();
+        }
+
+        private void UnlockGraph_Click(object sender, RoutedEventArgs e)
+        {
+            canQueueManager.ConstractGraphMessage(GraphTabVM.SelectedChannel, GraphCmd.Unlock);
+            canQueueManager.RaiseSendQueueChanged();
+        }
+
+        private void SaveGraphData_Click(object sender, RoutedEventArgs e)
+        {
+            GraphTabVM.SaveGraphData();
+        }
+
+        private void GraphScale_Click(object sender, RoutedEventArgs e)
+        {
+            //double marginX, marginY, minX, minY, maxX, maxY;
+            //marginX = Math.Abs(GraphXY.Keys.Max() - GraphXY.Keys.Min()) * 0.05;
+            //marginY = Math.Abs(GraphXY.Values.Max() - GraphXY.Values.Min()) * 0.05;
+            //minX = GraphXY.Keys.Min() - marginX;
+            //minY = GraphXY.Values.Min() - marginY;
+            //maxX = GraphXY.Keys.Max() + marginX;
+            //maxY = GraphXY.Values.Max() + marginY;
+            //ScopeLine.SetPlotRect(new DataRect(minX, minY, maxX, maxY));
+            ScopeLine.IsAutoFitEnabled = true;
+        }
+
+        private void UpdateGraph()
+        {
+            GraphXY.Clear();
+            foreach (var m in GraphTabVM.ChannelData)
+            {
+                GraphXY.Add(m.Index, m.Value);
+            }
+            if (GraphXY.Count == 0)
+            {
+                ScopeLine.IsAutoFitEnabled = true;
+            }
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ScopeLine.Plot(GraphXY.Keys, GraphXY.Values);
+            }));
         }
     }
 }

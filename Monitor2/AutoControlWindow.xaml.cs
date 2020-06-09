@@ -44,7 +44,7 @@ namespace Monitor2
 
         private void SwitchGenModeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.Started || true)
             {
                 //CurrentTask = Task.Run(ChangetoGenerate);
                 Task tmp = new Task(ChangetoGenerate);
@@ -55,7 +55,7 @@ namespace Monitor2
 
         private void StartUpButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.Started || true)
             {
                 //CurrentTask = Task.Run(StartUp);
                 Task tmp = new Task(StartUp);
@@ -66,7 +66,7 @@ namespace Monitor2
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.Started || true)
             {
                 //CurrentTask = Task.Run(StartUp);
                 Task tmp = new Task(Cancel);
@@ -77,50 +77,60 @@ namespace Monitor2
 
         public void DCRelay(bool status)
         {
-            ParaModel model = new ParaModel();
-            model.Index = 32;
-            model.Type = 1;
-            model.Value = status ? 1 : 0;
+            ParaModel model = new ParaModel
+            {
+                Index = 32,
+                Type = 1,
+                Value = status ? 1 : 0
+            };
             manager.ConstractMessage(model, CANFrameType.Control);
             manager.RaiseSendQueueChanged();
         }
 
         public void LoadRelay(bool status)
         {
-            ParaModel model = new ParaModel();
-            model.Index = 33;
-            model.Type = 2;
-            model.Value = status ? 1 : 0;
+            ParaModel model = new ParaModel
+            {
+                Index = 33,
+                Type = 2,
+                Value = status ? 1 : 0
+            };
             manager.ConstractMessage(model, CANFrameType.Control);
             manager.RaiseSendQueueChanged();
         }
 
         public void DissRelay(bool status)
         {
-            ParaModel model = new ParaModel();
-            model.Index = 34;
-            model.Type = 1;
-            model.Value = status ? 1 : 0;
+            ParaModel model = new ParaModel
+            {
+                Index = 34,
+                Type = 1,
+                Value = status ? 1 : 0
+            };
             manager.ConstractMessage(model, CANFrameType.Control);
             manager.RaiseSendQueueChanged();
         }
 
         public void ChangeRefMode(RefMode mode)
         {
-            ParaModel model = new Models.ParaModel();
-            model.Index = 20;
-            model.Type = 1;
-            model.Value = (int) mode;
+            ParaModel model = new Models.ParaModel
+            {
+                Index = 20,
+                Type = 1,
+                Value = (int)mode
+            };
             manager.ConstractMessage(model, CANFrameType.Control);
             manager.RaiseSendQueueChanged();
         }
 
         public void SetSpeed(double speed)
         {
-            ParaModel model = new ParaModel();
-            model.Index = 19;
-            model.Type = 2;
-            model.Value = (float)speed;
+            ParaModel model = new ParaModel
+            {
+                Index = 19,
+                Type = 2,
+                Value = (float)speed
+            };
             manager.ConstractMessage(model, CANFrameType.Control);
             manager.RaiseSendQueueChanged();
         }
@@ -242,9 +252,11 @@ namespace Monitor2
                 }
                 ActionEnd();
             });
-            statusModel = new Monitor2.StatusModel();
-            statusModel.IsActionOver = true;
-            statusModel.ActionProgress = 0;
+            statusModel = new Monitor2.StatusModel
+            {
+                IsActionOver = true,
+                ActionProgress = 0
+            };
         }
 
         public void ActionProgressValue(double value)
@@ -273,7 +285,7 @@ namespace Monitor2
 
         private void StartGenerateButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.Started || true)
             {
                 //CurrentTask = Task.Run(StartUp);
                 Task tmp = new Task(StartGenerate);
@@ -284,7 +296,7 @@ namespace Monitor2
 
         private void LocationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CANController.m_canstart == 1 || true)
+            if (CANController.Started || true)
             {
                 //CurrentTask = Task.Run(StartUp);
                 Task tmp = new Task(Relocation);

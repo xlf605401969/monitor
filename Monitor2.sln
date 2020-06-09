@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor2", "Monitor2\Monitor2.csproj", "{947294AC-6ACD-4E45-A913-4C0995906A57}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorV3", "MonitorV3\MonitorV3.csproj", "{5CD8C792-9379-4A57-AD54-1C0DA3BD6858}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CANDSPStringHandler", "CANDSPStringHandler\CANDSPStringHandler.vcxproj", "{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor2ng", "Monitor2ng\Monitor2ng.csproj", "{D2BACBBD-14FE-4433-91EB-4D23450C2A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,8 +69,23 @@ Global
 		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x64.Build.0 = Release|x64
 		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x86.ActiveCfg = Release|Win32
 		{7D5D8FBF-0BC8-40A1-A82C-425586A2648B}.Release|x86.Build.0 = Release|Win32
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|x64.Build.0 = Release|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2BACBBD-14FE-4433-91EB-4D23450C2A50}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F08A9DA3-E3BE-43C8-8D4D-8A4F54366DD1}
 	EndGlobalSection
 EndGlobal

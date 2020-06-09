@@ -37,9 +37,6 @@ namespace Monitor2.ViewModels
                     m.IsValueChanged = false;
                 }
             }
-            DCRelay = (from p in parasList where p.Index == 32 select p).First() as ParaModel;
-            LoadRelay = (from p in parasList where p.Index == 33 select p).First() as ParaModel;
-            DisRelay = (from p in parasList where p.Index == 34 select p).First() as ParaModel;
         }
 
         public void SaveParasList(string fileName)

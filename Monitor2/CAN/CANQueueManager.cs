@@ -58,7 +58,7 @@ namespace Monitor2.CAN
         private int _errCount;
         public int ErrCount
         {
-            get { return _sendCount; }
+            get { return _errCount; }
             set
             {
                 _errCount = value;
@@ -92,10 +92,12 @@ namespace Monitor2.CAN
         {
             if (type == CANFrameType.Control)
             {
-                CANFrame message = new CANFrame();
-                message.FrameType = (byte)type;
-                message.FrameIndex = para.Index;
-                message.DataType = para.Type;
+                CANFrame message = new CANFrame
+                {
+                    FrameType = (byte)type,
+                    FrameIndex = para.Index,
+                    DataType = para.Type
+                };
                 if (para.Type == 1)
                     message.IndexValue = (byte)Math.Round(para.Value);
                 else if (para.Type == 2)
@@ -124,58 +126,60 @@ namespace Monitor2.CAN
             }
         }
 
+        public void ConstractGraphMessage(int channel, GraphCmd cmd)
+        {
+            CANFrame frame = new CANFrame
+            {
+                FrameType = (byte)CANFrameType.Graph,
+                FrameIndex = (byte)(channel << 4),
+                IndexValue = (byte)cmd
+            };
+
+            SendQueue.Enqueue(frame);
+        }
+
         public void RaiseSendQueueChanged()
         {
-            if (OnSendQueueChanged != null)
-            {
-                OnSendQueueChanged(this, null);
-            }
+            OnSendQueueChanged?.Invoke(this, null);
         }
 
         public void SendMessage(object sender, EventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            while (SendQueue.Count != 0)
             {
-                CANController.CANControllerMutex.WaitOne();
-                CANController.ReceiveTimer.Enabled = false;
-                while (SendQueue.Count != 0)
+                int res = CANController.Write(SendQueue.Dequeue());
+                if (res != 0)
                 {
-                    CANController.VCI_CAN_OBJ obj = CANController.ConvertCANFrameToCANObj(SendQueue.Dequeue());
-                    if (CANController.VCI_Transmit(CANController.m_devtype, CANController.m_devind, CANController.m_canind,
-                        ref obj, 1) == 0)
-                    {
-                        App.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            ErrCount++;
-                        }));
-                        //MessageBox.Show("发送失败", "错误", MessageBoxButton.OK);
-                    }
-
                     App.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        SendCount++;
+                        ErrCount++;
                     }));
-
                 }
-                CANController.ReceiveTimer.Enabled = true;
-                CANController.CANControllerMutex.ReleaseMutex();
+                App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SendCount++;
+                }));
             }
         }
 
         public void ConstractMessage(CANFrameType type, byte index = 0xff)
         {
-            CANFrame message = new CANFrame();
-            message.FrameType = (byte)type;
-            message.FrameIndex = index;
+            CANFrame message = new CANFrame
+            {
+                FrameType = (byte)type,
+                FrameIndex = index
+            };
             SendQueue.Enqueue(message);
         }
 
         public void ConstractMessage(ParaModel model, DeviceModeIndex modeIndex)
         {
-            CANFrame message = new CANFrame();
-            message.FrameType = (byte)CANFrameType.Control;
-            message.FrameIndex = model.Index;
-            message.IndexValue = (byte)modeIndex;
+            CANFrame message = new CANFrame
+            {
+                FrameType = (byte)CANFrameType.Control,
+                FrameIndex = model.Index,
+                IndexValue = (byte)modeIndex
+            };
             SendQueue.Enqueue(message);
         }
 
@@ -238,36 +242,25 @@ namespace Monitor2.CAN
 
         public void ReceiveMessage(object sender, EventArgs e)
         {
-            CANController.CANControllerMutex.WaitOne();
-            for (int i = 0; i < CANController.recobj_count; i++)
+            while (CANController.ReadBuffered(out CANFrame frame) != -1)
             {
-                CANFrame frame = CANController.ConvertCANObjToCANFrame(CANController.m_recobj[i]);
-                //Console.WriteLine(CANController.LogCANObj(CANController.m_recobj[i]));
-                //Console.WriteLine(LogCANFrame(frame));
-
+                CANFrame frame1 = frame;
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     if (IsLogEnable)
                     {
-                        LogList.Add(new LogModel(LogCANFrame(frame)));
+                        LogList.Add(new LogModel(LogCANFrame(frame1)));
                     }
                     ReceiveCount++;
                 }));
                 this.ReceiveQueue.Enqueue(frame);
             }
-            CANController.CANControllerMutex.ReleaseMutex();
-            if (OnReceiveQueueChanged != null)
-            {
-                OnReceiveQueueChanged(this, null);
-            }
+            OnReceiveQueueChanged?.Invoke(this, null);
         }
 
         private void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public static CANQueueManager GetInstance()
@@ -299,10 +292,7 @@ namespace Monitor2.CAN
 
         private void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public LogModel() { }

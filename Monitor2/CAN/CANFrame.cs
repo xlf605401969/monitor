@@ -96,4 +96,11 @@ namespace Monitor2.CAN
         CW = 1,
         CCW,
     }
+
+    public enum GraphCmd
+    {
+        Read = 0,
+        Lock = 1,
+        Unlock = 2,
+    }
 }

@@ -103,13 +103,15 @@ namespace Monitor2.ViewModels
             ParaDirection = new ParaModelWithCommandAndReturn();
             ParaMode = new ParaModelWithCommandAndReturn();
 
-            ControlParasList = new List<ParaModelWithCommandAndReturn>();
-            ControlParasList.Add(Para1);
-            ControlParasList.Add(Para2);
-            ControlParasList.Add(Para3);
-            ControlParasList.Add(Para4);
-            ControlParasList.Add(ParaDirection);
-            ControlParasList.Add(ParaMode);
+            ControlParasList = new List<ParaModelWithCommandAndReturn>
+            {
+                Para1,
+                Para2,
+                Para3,
+                Para4,
+                ParaDirection,
+                ParaMode
+            };
 
             StatusParasList = new ObservableCollection<ParaModel>();
 
@@ -120,7 +122,7 @@ namespace Monitor2.ViewModels
 
         private void AutoCheckTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (CANController.m_canstart == 1)
+            if (CANController.Started)
             {
                 if (IsAutoCheckStatus)
                 {
@@ -186,10 +188,7 @@ namespace Monitor2.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertityChanged(string propertityName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertityName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }
     }
 
@@ -253,12 +252,12 @@ namespace Monitor2.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToInt32(value) - 1;
+            return System.Convert.ToInt32(value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToSingle(value) + 1;
+            return System.Convert.ToSingle(value);
         }
     }
 
