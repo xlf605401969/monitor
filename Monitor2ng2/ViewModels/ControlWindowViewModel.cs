@@ -224,7 +224,7 @@ namespace Monitor2ng.ViewModels
             {
                 GraphDataModel.AddChannel(string.Format("Channel: {0}", 0));
             }
-            graphReadTimer.Interval = configFile.GraphReadingTimeout;
+            graphReadTimer.Interval = configFile.GraphReadingTimeOut;
             GraphDataModel.PropertyChanged += GraphDataModel_PropertyChanged;
         }
 

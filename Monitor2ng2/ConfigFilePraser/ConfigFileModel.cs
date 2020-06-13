@@ -11,7 +11,7 @@ namespace Monitor2ng.ConfigFilePraser
         public int MaxGraphChannel { get; set; }
 
         [DefaultValue(3000)]
-        public int GraphReadingTimeout { get; set; }
+        public int GraphReadingTimeOut { get; set; }
 
         public int StateCheckInterval { get; set; }
         public int StateVariableId { get; set; }

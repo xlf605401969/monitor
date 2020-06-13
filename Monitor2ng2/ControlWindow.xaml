@@ -14,7 +14,7 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="Microsoft YaHei UI"
+        FontFamily="微软雅黑"
         mc:Ignorable="d"
         d:DataContext="{StaticResource SampleControlVM}"
         Title="{Binding WindowTitle}" Height="580" Width="900" Closing="Window_Closing">
@@ -25,7 +25,7 @@
                     <ColumnDefinition Width="Auto" MinWidth="120"/>
                     <ColumnDefinition Width="0.6*"/>
                     <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="0.6*"/>
+                    <ColumnDefinition Width="0.7*"/>
                 </Grid.ColumnDefinitions>
                 <Label Content="{Binding Name}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
                 <TextBox Text="{Binding Value}" Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="{Binding IsValueModified, Converter={StaticResource ValueModificationConverter}}"/>
@@ -275,14 +275,17 @@
         <SolidColorBrush x:Key="TabItem.Selected.Border1" Color="#ACACAC"/>
     </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" MinWidth="180"/>
         </Grid.ColumnDefinitions>
-        <GridSplitter Width="3" Grid.Column="1" HorizontalAlignment="Left"/>
-        <GroupBox Header="状态" Grid.Column="1" Grid.RowSpan="2" Margin="8,5,5,5">
+        <GroupBox Header="运行状态" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5,5,5,5">
             <Grid>
-                <DataGrid ItemsSource="{Binding States}" AutoGenerateColumns="False">
+                <DataGrid ItemsSource="{Binding States}" AutoGenerateColumns="False" HeadersVisibility="None">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="状态" Binding="{Binding Name, Mode=OneWay}"/>
                         <DataGridTextColumn Header="值" Binding="{Binding ReturnValue, Mode=OneWay}"/>
@@ -290,7 +293,9 @@
                 </DataGrid>
             </Grid>
         </GroupBox>
-        <GroupBox Header="控制面板" Grid.Column="0" Margin="5,5,5,5">
+        <GroupBox Header="控制面板"
+            Grid.Row="2" Grid.Column="0"
+                  Margin="5,5,5,5">
             <TabControl BorderBrush="{DynamicResource PrimaryHueMidBrush}" ItemContainerStyle="{DynamicResource TabControlItemContainerStyle1}">
                 <TabControl.Background>
                     <ImageBrush/>
@@ -304,7 +309,7 @@
                         </Grid.ColumnDefinitions>
                         <GroupBox Header="控制"
                                   Grid.Column="0"
-                                  Margin="5,5,8,5">
+                                  Margin="5,5,5,5">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.8*"/>
@@ -384,7 +389,6 @@
                                 <Button x:Name="StatusCheckButton_Copy" Content="发送" MinWidth="25" MinHeight="20" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" Command="{Binding SendControlCommand, Mode=OneWay}"/>
                             </Grid>
                         </GroupBox>
-                        <GridSplitter Width="3"/>
                         <GroupBox Header="参数" Margin="5,5,5,5" Grid.Column="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -396,8 +400,8 @@
                                         <DataTemplate>
                                             <Grid Margin="0,2,0,2">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="0.9*"/>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="65"/>
+                                                    <ColumnDefinition Width="70"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="{Binding Name}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
                                                 <TextBox Text="{Binding Value}" Grid.Column="1" VerticalContentAlignment="Center" Margin="0,0,3,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="{Binding IsValueModified, Converter={StaticResource ValueModificationConverter}}"/>
@@ -430,13 +434,12 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="数据：" HorizontalContentAlignment="Center" Padding="5,5,5,0" FontSize="14" Visibility="Collapsed"/>
-                        <DataGrid Grid.Row="1" Grid.RowSpan="2" AutoGenerateColumns="False" ItemsSource="{Binding GraphDataModel.DisplayChannelData, Mode=OneWay}" Margin="0,0,8,0">
+                        <DataGrid Grid.Row="1" Grid.RowSpan="2" AutoGenerateColumns="False" ItemsSource="{Binding GraphDataModel.DisplayChannelData, Mode=OneWay}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="序号" Binding="{Binding Item1, Mode=OneWay}" Width="55"/>
-                                <DataGridTextColumn Header="值" Binding="{Binding Item2, Mode=OneWay}" Width="130"/>
+                                <DataGridTextColumn Header="值" Binding="{Binding Item2, Mode=OneWay}" Width="65"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <GridSplitter Grid.Row="0" Grid.RowSpan="2" Width="3"/>
                         <d3:Chart x:Name="GraphScope" Grid.Column="1" Grid.RowSpan="2" Margin="5,5,5,5">
                             <d3:Chart.Title>
                                 <StackPanel Orientation="Horizontal">
@@ -482,7 +485,7 @@
                                 <Button Name="ReadGraph" Content="读取数据" Margin="0,5,0,5" Command="{Binding GraphReadCommand, Mode=OneWay}"/>
                                 <Button Name="LockGraph" Content="锁定记录" Margin="0,5,0,5" Command="{Binding GraphLockCommand, Mode=OneWay}"/>
                                 <Button Name="UnlockGraph" Content="解锁记录" Margin="0,5,0,5" Command="{Binding GraphUnLockCommand, Mode=OneWay}"/>
-                                <Button Name="SaveGraphData" Content="保存" Margin="0,5,0,5" Visibility="Visible" IsEnabled="False"/>
+                                <Button Name="SaveGraphData" Content="保存" Margin="0,5,0,5" Visibility="Visible"/>
                             </StackPanel>
                             <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="5,5,5,5" Visibility="Collapsed">
                                 <Label Content="图像操作" HorizontalAlignment="Center" FontSize="14"/>
@@ -504,17 +507,14 @@
                             </Grid.RowDefinitions>
                             <DataGrid ItemsSource="{Binding LogModel.SentFrames}" AutoGenerateColumns="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="发送时间" Binding="{Binding Item1.TimeOfDay}"/>
-                                    <DataGridTextColumn Header="帧类型" Binding="{Binding Item2.Type}"/>
-                                    <DataGridTextColumn Header="帧数据" Binding="{Binding Item2.RawData}"/>
+                                    <DataGridTextColumn Header="帧类型" Binding="{Binding Type}"/>
+                                    <DataGridTextColumn Header="帧数据" Binding="{Binding RawData}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Height="3"/>
-                            <DataGrid ItemsSource="{Binding LogModel.ReceivedFrames}" Grid.Row="1" AutoGenerateColumns="False" Margin="0,8,0,0">
+                            <DataGrid ItemsSource="{Binding LogModel.ReceivedFrames}" Grid.Row="1" AutoGenerateColumns="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="接收时间" Binding="{Binding Item1.TimeOfDay}"/>
-                                    <DataGridTextColumn Header="帧类型" Binding="{Binding Item2.Type}"/>
-                                    <DataGridTextColumn Header="帧数据" Binding="{Binding Item2.RawData}"/>
+                                    <DataGridTextColumn Header="帧类型" Binding="{Binding Type}"/>
+                                    <DataGridTextColumn Header="帧数据" Binding="{Binding RawData}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>

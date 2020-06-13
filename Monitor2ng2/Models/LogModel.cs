@@ -3,16 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Text;
-using System.Windows.Data;
 
 namespace Monitor2ng.Models
 {
     public class LogModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Tuple<DateTime,MonitorFrame>> ReceivedFrames { get; set; }
-        public ObservableCollection<Tuple<DateTime, MonitorFrame>> SentFrames { get; set; }
+        public ObservableCollection<MonitorFrame> ReceivedFrames { get; set; }
+        public ObservableCollection<MonitorFrame> SentFrames { get; set; }
         public bool EnableLog
         {
             get => enableLog;
@@ -63,7 +61,7 @@ namespace Monitor2ng.Models
             {
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    ReceivedFrames.Add(new Tuple<DateTime, MonitorFrame>(DateTime.Now, frame));
+                    ReceivedFrames.Add(frame);
                 }));
             }
             ReceiveCount += 1;
@@ -79,7 +77,7 @@ namespace Monitor2ng.Models
             {
                 App.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    SentFrames.Add(new Tuple<DateTime, MonitorFrame>(DateTime.Now, frame));
+                    SentFrames.Add(frame);
                 }));
             }
             SendCount += 1;
@@ -100,8 +98,8 @@ namespace Monitor2ng.Models
 
         public LogModel()
         {
-            ReceivedFrames = new ObservableCollection<Tuple<DateTime, MonitorFrame>>();
-            SentFrames = new ObservableCollection<Tuple<DateTime, MonitorFrame>>();
+            ReceivedFrames = new ObservableCollection<MonitorFrame>();
+            SentFrames = new ObservableCollection<MonitorFrame>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

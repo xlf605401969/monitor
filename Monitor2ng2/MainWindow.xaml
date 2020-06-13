@@ -12,11 +12,11 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="Microsoft YaHei UI"
+        FontFamily="微软雅黑"
         mc:Ignorable="d"
         d:DataContext="{StaticResource SampleMainVM}"
         Closing="Window_Closing"
-        Title="连接管理" Width="530" Height="200">
+        Title="MainWindow" Width="530" Height="200">
     <Window.Resources>
         <vm:TabVisiablityConverter x:Key="TabVisiablityConverter"/>
         <Style x:Key="RoundButton" TargetType="{x:Type Button}">

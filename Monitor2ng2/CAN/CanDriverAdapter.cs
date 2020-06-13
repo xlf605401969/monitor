@@ -1,4 +1,4 @@
-﻿#define NO_DEVICE_TEST
+﻿//#define NO_DEVICE_TEST
 
 using System;
 using System.Collections.Generic;
@@ -232,10 +232,10 @@ namespace Monitor2ng.CAN
             {
                 Debug.WriteLine("Send: " + frame.ToString());
                 TPCANMsg msg = ConvertToPcanMessage(frame);
-#if !NO_DEVICE_TEST
                 lock (channelLock)
                 {
                     var res = PCANBasic.Write(CurrentChannel, ref msg);
+
                     if (res == TPCANStatus.PCAN_ERROR_OK)
                     {
                         return 0;
@@ -245,9 +245,8 @@ namespace Monitor2ng.CAN
                         return -1;
                     }
                 }
-#else
+#if NO_DEVICE_TEST
                 testController.ReceiveFrame(frame);
-                return -1;
 #endif
             }
             else
@@ -266,10 +265,10 @@ namespace Monitor2ng.CAN
         {
             if (IsStarted)
             {
-#if !NO_DEVICE_TEST
                 lock (channelLock)
                 {
                     var res = PCANBasic.Read(CurrentChannel, out TPCANMsg msg);
+
                     if (res == TPCANStatus.PCAN_ERROR_OK)
                     {
                         frame = ConvertToRawCanFrame(msg);
@@ -281,22 +280,22 @@ namespace Monitor2ng.CAN
                         return -1;
                     }
                 }
-#else
-                lock (testController.SendQueue)
+#if NO_DEVICE_TEST
+            lock (testController.SendQueue)
+            {
+                if (testController.SendQueue.Count > 0)
                 {
-                    if (testController.SendQueue.Count > 0)
-                    {
-                        RawCanFrame tmp = testController.SendQueue.Dequeue();
-                        tmp.id = testController.CommunicationId;
-                        frame = tmp;
-                        return 0;
-                    }
-                    else
-                    {
-                        frame = null;
-                        return -1;
-                    }
+                    RawCanFrame tmp = testController.SendQueue.Dequeue();
+                    tmp.id = testController.CommunicationId;
+                    frame = tmp;
+                    return 0;
                 }
+                else
+                {
+                    frame = null;
+                    return -1;
+                }
+            }
 #endif
             }
             else
