@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Monitor2ng.Models
@@ -23,6 +24,15 @@ namespace Monitor2ng.Models
                 else
                 {
                     return 0;
+                }
+            }
+            set
+            {
+                var res = from v in ModeDict where v.Value == value select v;
+                if (res.Count() > 0)
+                {
+                    var first = res.First();
+                    SelectedModeIndex = Modes.IndexOf(first.Key);
                 }
             }
         }

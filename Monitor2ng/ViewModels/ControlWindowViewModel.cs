@@ -221,6 +221,11 @@ namespace Monitor2ng.ViewModels
             }
             
             ControlModel.PropertyChanged += ControlModel_PropertyChanged;
+            var res = from v in configFile.Variables where v.Id == configFile.ModeVariableId select v.Value;
+            if (res.Count() > 0)
+            {
+                ControlModel.SelectedModeValue = (int)res.First();
+            }
 
             GraphDataModel.BindVariables(States);
             if (configFile.MaxGraphChannel > 0)

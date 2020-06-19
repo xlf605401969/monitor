@@ -1,10 +1,17 @@
 ﻿{
+  //！！新的上位机需要搭配新的DSP程序使用，将原有程序文件替换为新的即可，注意初始化函数部分有少许变化
   "Name": "测试控制器",
+  //绘图通道数量
   "MaxGraphChannel": 8,
+  //自动查询电机状态的间隔
   "StateCheckInterval": 300,
+  //读取图像超时时间
   "GraphReadingTimeout": 5000,
+  //电机运行状态对应的变量Id
   "StateVariableId": 1,
+  //电机运行模式对应的变量Id
   "ModeVariableId": 11,
+  //电机运行模式对应的变量值
   "Modes": {
     "电流": 0,
     "转矩": 1,
@@ -12,6 +19,15 @@
     "电压": 3,
     "母线电压": 4
   },
+
+  //上位机控制的变量
+  //变量名称（Name）为上位机中显示的名称，可以任意设定
+  //变量Id从1开始可以任意设置，注意不要超过DSP程序中定义的Id最大值
+  //变量的类型（Type）分为State，Command，Parameter三类，注意大写，写错将使得变量不显示，不写代表则默认为State
+  //变量的值类型（ValueType）有IntIndex，Int16，Int32，Flaot32四种，需要和DSP程序对应
+  //(可省略)变量的值（Value）为Command和Parameter的初始值，不设置则为0
+  //(可省略)变量的返回值（ReturnValue）为State的初始值，不设置则为0
+  //(可省略)变量的变化步长（DeltaStep）为Command的变化步长，不设置则为0
   "Variables": [
     {
       "Name": "Run",
@@ -53,7 +69,7 @@
       "Id": 11,
       "Type": "Command",
       "ValueType": "IntIndex",
-      "Value": 0,
+      "Value": 2,
       "ReturnValue": 0,
       "DeltaStep": 5
     },
