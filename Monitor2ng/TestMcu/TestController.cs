@@ -172,7 +172,7 @@ namespace Monitor2ng.TestMcu
         public void LoadDefault()
         {
             string json = File.ReadAllText("./config1.json");
-            configFile = JsonConvert.DeserializeObject<ConfigFileModel>(json, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+            configFile = JsonConvert.DeserializeObject<ConfigFileModel>(json, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Populate });
 
             foreach (var v in configFile.Variables)
             {

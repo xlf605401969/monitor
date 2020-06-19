@@ -13,6 +13,7 @@ namespace Monitor2ng.ConfigFilePraser
         [DefaultValue(3000)]
         public int GraphReadingTimeout { get; set; }
 
+        [DefaultValue(300)]
         public int StateCheckInterval { get; set; }
         public int StateVariableId { get; set; }
         public int ModeVariableId { get; set; }
@@ -40,9 +41,13 @@ namespace Monitor2ng.ConfigFilePraser
 
     public class MachineVariableBase
     {
+        [DefaultValue("Variable")]
         public virtual string Name { get => name; set => name = value; }
+        [DefaultValue(0xff)]
         public virtual int Id { get => id; set => id = value; }
+        [DefaultValue("State")]
         public virtual string Type { get => type; set => type = value; }
+        [DefaultValue("IntIndex")]
         public virtual string ValueType { get => valueType; set => valueType = value; }
         public virtual float Value { get => pvalue; set => pvalue = value; }
         public virtual float ReturnValue { get => returnValue; set => returnValue = value; }

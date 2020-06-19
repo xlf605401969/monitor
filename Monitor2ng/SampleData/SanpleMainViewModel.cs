@@ -11,7 +11,7 @@ namespace Monitor2ng.SampleData
         public SampleMainViewModel() : base()
         {
             MonitorConfigModel = new MonitorConfigModel();
-            MonitorConfigModel.SelectedDeviceIndex = 1;
+            MonitorConfigModel.SelectedDeviceIndex = 0;
         }
     }
 }

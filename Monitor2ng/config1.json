@@ -2,6 +2,7 @@
   "Name": "测试控制器",
   "MaxGraphChannel": 8,
   "StateCheckInterval": 300,
+  "GraphReadingTimeout": 5000,
   "StateVariableId": 1,
   "ModeVariableId": 11,
   "Modes": {
@@ -114,6 +115,9 @@
       "ValueType": "Float32",
       "Value": 345,
       "ReturnValue": 0.0
-    }
+    },
+    {
+      "Name": "test"
+	}
   ]
 }

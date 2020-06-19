@@ -1,25 +1,34 @@
-﻿using Monitor2ng.CAN;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Dynamic;
 using System.Text;
 using System.Threading.Channels;
 
 namespace Monitor2ng.Models
 {
-    public class PeakCanConfigModel : INotifyPropertyChanged
+    public class UsbCanConfigModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<string> Devices { get; private set; }
+        public int SelectedDeviceIndex
+        {
+            get => selectedDeviceIndex;
+            set
+            {
+                selectedDeviceIndex = value;
+                OnPropertityChanged("SelectedDeviceIndex");
+            }
+        }
+        private int selectedDeviceIndex;
+        public string SelectedDevice { get => Devices[SelectedDeviceIndex]; }
 
         public ObservableCollection<string> Channels { get; private set; }
         public int SelectedChannelIndex
         {
-            get
-            {
-                return selectedChannelIndex;
-            }
+            get => selectedChannelIndex;
             set
             {
                 selectedChannelIndex = value;
@@ -27,7 +36,7 @@ namespace Monitor2ng.Models
             }
         }
         private int selectedChannelIndex;
-        public string SelectedChannel { get { return Channels[selectedChannelIndex]; } }
+        public string SelectedChannel { get => Channels[selectedChannelIndex]; }
 
         public ObservableCollection<string> Baudrates { get; private set; }
         public int SelectedBaudrateIndex
@@ -45,8 +54,8 @@ namespace Monitor2ng.Models
         private int selectedBaudrateIndex;
         public string SelectedBaudrate { get { return Baudrates[SelectedBaudrateIndex]; } }
 
-        public string CommunicationId 
-        { 
+        public string CommunicationId
+        {
             get
             {
                 return communicationId;
@@ -59,18 +68,24 @@ namespace Monitor2ng.Models
         }
         private string communicationId;
 
-        public PeakCanConfigModel()
+        public UsbCanConfigModel()
         {
-            Channels = new ObservableCollection<string>();
-            Channels.Add("PCAN_USBBUS1");
-            Channels.Add("PCAN_USBBUS2");
-            Channels.Add("PCAN_USBBUS3");
-            Channels.Add("PCAN_USBBUS4");
+            Devices = new ObservableCollection<string>();
+            Devices.Add("0");
+            Devices.Add("1");
+            Devices.Add("2");
+            Devices.Add("3");
 
+            Channels = new ObservableCollection<string>();
+            Channels.Add("0");
+            Channels.Add("1");
 
             Baudrates = new ObservableCollection<string>();
+            Baudrates.Add("50 kbps");
+            Baudrates.Add("100 kbps");
             Baudrates.Add("250 kbps");
             Baudrates.Add("500 kbps");
+            Baudrates.Add("1 Mbps");
 
             SelectedBaudrateIndex = Baudrates.IndexOf("500 kbps");
 
@@ -81,5 +96,6 @@ namespace Monitor2ng.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertityName));
         }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿#define NO_DEVICE_TEST
+﻿//#define NO_DEVICE_TEST
 
 using System;
 using System.Collections.Generic;
@@ -466,6 +466,8 @@ namespace Monitor2ng.CAN
 
         public static Dictionary<uint, int> DeviceUseCount { get; set; } = new Dictionary<uint, int>();
 
+        private static Dictionary<uint, object> deviceLocks = new Dictionary<uint, object>();
+
         public static UsbCanDriverAdapter GetChannelDriverInstance(Tuple<uint,uint> ids)
         {
             lock (UsbCanInstances)
@@ -477,11 +479,13 @@ namespace Monitor2ng.CAN
                 else
                 {
                     UsbCanDriverAdapter tmp = new UsbCanDriverAdapter();
-                    tmp.deviceId = ids.Item1;
-                    tmp.channelId = ids.Item2;
+                    tmp.deviceId = (uint)ids.Item1;
+                    tmp.channelId = (uint)ids.Item2;
                     tmp.Configs.Add("DeviceId", ids.Item1.ToString());
                     tmp.Configs.Add("ChannelId", ids.Item2.ToString());
+                    UsbCanInstances.Add(ids, tmp);
                     DeviceUseCount.Add(ids.Item1, 0);
+                    deviceLocks.Add(ids.Item1, new object());
                     return tmp;
                 }
             }
@@ -510,6 +514,8 @@ namespace Monitor2ng.CAN
         private ControlCAN.VCI_CAN_OBJ[] receiveBuffer = new ControlCAN.VCI_CAN_OBJ[2500];
         private Queue<RawCanFrame> ReceiveQueue { get; set; }
         private Timer receiveQueryTimer;
+
+        private TestController testController = new TestController();
 
         private static Dictionary<string, byte[]> baudrateDic = new Dictionary<string, byte[]>
         {
@@ -551,7 +557,7 @@ namespace Monitor2ng.CAN
                 {
                     if (Configs[key] != value)
                     {
-                        MessageBox.Show("PeakCAN运行时无法修改通道设置!");
+                        MessageBox.Show("UsbCAN运行时无法修改通道设置!");
                     }
                 }
             }
@@ -561,48 +567,55 @@ namespace Monitor2ng.CAN
         {
             if (!IsInitialized)
             {
-                if (!DeviceUseCount.ContainsKey(deviceId))
+                lock (deviceLocks[deviceId])
                 {
-                    DeviceUseCount.Add(deviceId, 0);
-                }
-                var useCount = DeviceUseCount[deviceId];
-                if (useCount == 0)
-                {
-                    var res = ControlCAN.VCI_OpenDevice(deviceType, deviceId, 0);
-                    if (res != 0)
+                    if (!DeviceUseCount.ContainsKey(deviceId))
                     {
+                        DeviceUseCount.Add(deviceId, 0);
+                    }
+                    var useCount = DeviceUseCount[deviceId];
+                    if (useCount == 0)
+                    {
+#if !NO_DEVICE_TEST
+                        var res = ControlCAN.VCI_OpenDevice(deviceType, deviceId, 0);
+                        if (res != 0)
+                        {
 
+                        }
+                        else
+                        {
+                            MessageBox.Show("设备连接错误");
+                            return;
+                        }
+#endif
+                    }
+
+                    var baudRateConfig = baudrateDic[Configs["Baudrate"]];
+                    ControlCAN.VCI_INIT_CONFIG config = new ControlCAN.VCI_INIT_CONFIG();
+                    config.AccCode = 0;
+                    if (EnableHardwareFilter)
+                    {
+                        config.AccMask = 0;
                     }
                     else
                     {
-                        MessageBox.Show("设备连接错误");
+                        config.AccMask = 0xffffffff;
+                    }
+                    config.Filter = 2;
+                    config.Mode = (Byte)0;
+                    config.Timing0 = baudRateConfig[0];
+                    config.Timing1 = baudRateConfig[1];
+#if !NO_DEVICE_TEST
+                    var res2 = ControlCAN.VCI_InitCAN(deviceType, deviceId, channelId, ref config);
+                    if (res2 != 1)
+                    {
+                        MessageBox.Show("设备初始化错误");
                         return;
                     }
+#endif
+                    DeviceUseCount[deviceId] += 1;
+                    IsInitialized = true;
                 }
-
-                var baudRateConfig = baudrateDic["Baudrate"];
-                ControlCAN.VCI_INIT_CONFIG config = new ControlCAN.VCI_INIT_CONFIG();
-                config.AccCode = 0;
-                if (EnableHardwareFilter)
-                {
-                    config.AccMask = 0;
-                }
-                else
-                {
-                    config.AccMask = 0xffffffff;
-                }
-                config.Filter = 2;
-                config.Mode = (Byte)0;
-                config.Timing0 = baudRateConfig[0];
-                config.Timing1 = baudRateConfig[1];
-                var res2 = ControlCAN.VCI_InitCAN(deviceType, deviceId, channelId, ref config);
-                if (res2 != 1)
-                {
-                    MessageBox.Show("设备初始化错误");
-                    return;
-                }
-                DeviceUseCount[deviceId] += 1;
-                IsInitialized = true;
             }
         }
 
@@ -610,14 +623,22 @@ namespace Monitor2ng.CAN
         {
             if (IsInitialized)
             {
-                var res = ControlCAN.VCI_ResetCAN(deviceType, deviceId, channelId);
-                DeviceUseCount[deviceId] -= 1;
-                filterCode = 0;
-                filterMask = 0;
-                if (DeviceUseCount[deviceId] <= 0)
+                lock (deviceLocks[deviceId])
                 {
-                    DeviceUseCount[deviceId] = 0;
-                    ControlCAN.VCI_CloseDevice(deviceType, deviceId);
+#if !NO_DEVICE_TEST
+                    var res = ControlCAN.VCI_ResetCAN(deviceType, deviceId, channelId);
+#endif
+                    DeviceUseCount[deviceId] -= 1;
+                    filterCode = 0;
+                    filterMask = 0;
+                    if (DeviceUseCount[deviceId] <= 0)
+                    {
+                        DeviceUseCount[deviceId] = 0;
+#if !NO_DEVICE_TEST
+                        ControlCAN.VCI_CloseDevice(deviceType, deviceId);
+#endif
+                    }
+                    IsInitialized = false;
                 }
             }
         }
@@ -647,9 +668,12 @@ namespace Monitor2ng.CAN
 
             FrameDispatchTable.Add(guid, new Tuple<CanFrameFilter, ICanDriver.FrameHandler>(filter, handler));
 #if !NO_DEVICE_TEST
-            if (EnableHardwareFilter)
+            lock (deviceLocks[deviceId])
             {
-                UpdateFilter(filter.FromId, filter.ToId);
+                if (EnableHardwareFilter)
+                {
+                    UpdateFilter(filter.FromId, filter.ToId);
+                }
             }
 #endif
             return guid;
@@ -665,48 +689,117 @@ namespace Monitor2ng.CAN
 
         public void Start()
         {
-            if (IsInitialized)
+            if (IsInitialized && !IsStarted)
             {
+                lock (deviceLocks[deviceId])
+                {
+#if !NO_DEVICE_TEST
+                    ControlCAN.VCI_StartCAN(deviceType, deviceId, channelId);
+#endif
+                    IsStarted = true;
+                }
+            }
+        }
 
+        public void Stop()
+        {
+            if (IsInitialized && IsStarted)
+            {
+                lock (deviceLocks[deviceId])
+                {
+#if !NO_DEVICE_TEST
+                    ControlCAN.VCI_ResetCAN(deviceType, deviceId, channelId);
+#endif
+                    IsStarted = false;
+                }
             }
         }
 
         public void StartListen()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Stop()
-        {
-            throw new NotImplementedException();
+            if (IsStarted)
+            {
+                if (!IsListening)
+                {
+                    receiveQueryTimer.Start();
+                    IsListening = true;
+                }
+            }
         }
 
         public void StopListen()
         {
-            throw new NotImplementedException();
+            if (IsListening)
+            {
+                receiveQueryTimer.Stop();
+                IsListening = false;
+            }
         }
 
         public int Transmit(RawCanFrame frame)
         {
-            throw new NotImplementedException();
+            if (IsStarted)
+            {
+                Debug.WriteLine("Send: " + frame.ToString());
+                ControlCAN.VCI_CAN_OBJ obj = ConverToCanObj(frame);
+#if !NO_DEVICE_TEST
+                lock (deviceLocks[deviceId])
+                {
+                    var res = ControlCAN.VCI_Transmit(deviceType, deviceId, channelId, ref obj, 1);
+                    if (res == 1)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+#else
+                testController.ReceiveFrame(frame);
+                return -1;
+#endif
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         private void ReceiveToBuffer()
         {
             if (IsStarted)
             {
-                var res = ControlCAN.VCI_GetReceiveNum(deviceType, deviceId, channelId);
-                if (res > 0)
+                lock (deviceLocks[deviceId])
                 {
-                    var objCount = res;
-                    res = ControlCAN.VCI_Receive(deviceType, deviceId, channelId, ref this.receiveBuffer[0], 2500, 10);
-                    lock (ReceiveQueue)
+#if !NO_DEVICE_TEST
+                    var res = ControlCAN.VCI_GetReceiveNum(deviceType, deviceId, channelId);
+                    if (res > 0)
                     {
-                        for (int i = 0; i < ControlCAN.recobj_count; i++)
+                        var objCount = res;
+                        res = ControlCAN.VCI_Receive(deviceType, deviceId, channelId, ref this.receiveBuffer[0], 2500, 10);
+                        lock (ReceiveQueue)
                         {
-                            ReceiveQueue.Enqueue(ConvertToRawFrame(receiveBuffer[i]));
+                            for (int i = 0; i < ControlCAN.recobj_count; i++)
+                            {
+                                ReceiveQueue.Enqueue(ConvertToRawFrame(receiveBuffer[i]));
+                            }
                         }
                     }
+#else
+                    lock (testController.SendQueue)
+                    {
+                        lock (ReceiveQueue)
+                        {
+                            while (testController.SendQueue.Count > 0)
+                            {
+                                RawCanFrame tmp = testController.SendQueue.Dequeue();
+                                tmp.id = testController.CommunicationId;
+                                ReceiveQueue.Enqueue(tmp);
+                            }
+                        }
+                    }
+#endif
                 }
             }
         }
@@ -725,19 +818,7 @@ namespace Monitor2ng.CAN
                 }
                 else
                 {
-                    var res = ControlCAN.VCI_GetReceiveNum(deviceType, deviceId, channelId);
-                    if (res > 0)
-                    {
-                        var objCount = res;
-                        res = ControlCAN.VCI_Receive(deviceType, deviceId, channelId, ref this.receiveBuffer[0], 2500, 20);
-                        lock (ReceiveQueue)
-                        {
-                            for (int i = 0; i < ControlCAN.recobj_count; i++)
-                            {
-                                ReceiveQueue.Enqueue(ConvertToRawFrame(receiveBuffer[i]));
-                            }
-                        }
-                    }
+                    ReceiveToBuffer();
                     if (ReceiveQueue.Count > 0)
                     {
                         lock (ReceiveQueue)
@@ -778,6 +859,24 @@ namespace Monitor2ng.CAN
             return frame;
         }
 
+        private unsafe ControlCAN.VCI_CAN_OBJ ConverToCanObj(RawCanFrame frame)
+        {
+            ControlCAN.VCI_CAN_OBJ obj = new ControlCAN.VCI_CAN_OBJ
+            {
+                ID = frame.id,
+                ExternFlag = 0,
+                RemoteFlag = 0,
+                DataLen = 0
+            };
+
+            for (int i = 0; i < 8; i++)
+            {
+                obj.Data[i] = frame.data[i];
+            }
+
+            return obj;
+        }
+
         private void UpdateFilter(UInt32 Id)
         {
             UInt32 laId = Id << 21;
@@ -804,8 +903,11 @@ namespace Monitor2ng.CAN
                 maskByteRevert[i] = maskByte[3 - i];
             }
 
-            ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 2, ref codeByte[0]);
-            ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 6, ref maskByte[0]);
+            lock (deviceLocks[deviceId])
+            {
+                ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 2, ref codeByte[0]);
+                ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 6, ref maskByte[0]);
+            }
         }
 
         private void UpdateFilter(UInt32 fromId, UInt32 toId)
@@ -838,8 +940,11 @@ namespace Monitor2ng.CAN
                 maskByteRevert[i] = maskByte[3 - i];
             }
 
-            ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 2, ref codeByte[0]);
-            ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 6, ref maskByte[0]);
+            lock (deviceLocks[deviceId])
+            {
+                ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 2, ref codeByte[0]);
+                ControlCAN.VCI_SetReference2(deviceType, deviceId, channelId, 6, ref maskByte[0]);
+            }
         }
 
         public UsbCanDriverAdapter()
@@ -869,6 +974,9 @@ namespace Monitor2ng.CAN
                     }
                 }
             });
+#if NO_DEVICE_TEST
+            testController.LoadDefault();
+#endif
         }
     }
 

@@ -16,7 +16,7 @@
         mc:Ignorable="d"
         d:DataContext="{StaticResource SampleMainVM}"
         Closing="Window_Closing"
-        Title="连接管理" Width="530" Height="200">
+        Title="连接管理" Width="535" Height="180">
     <Window.Resources>
         <vm:TabVisiablityConverter x:Key="TabVisiablityConverter"/>
         <Style x:Key="RoundButton" TargetType="{x:Type Button}">
@@ -85,15 +85,26 @@
         <Grid x:Name="deviceConfigPanel" Grid.Row="1">
             <GroupBox Header="PCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=0, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Label Content="通道：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5"/>
-                    <ComboBox Width="110" ItemsSource="{Binding PeakCanConfigModel.Channels}" SelectedIndex="{Binding PeakCanConfigModel.SelectedChannelIndex}" Margin="5,5,15,5"/>
-                    <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5"/>
-                    <ComboBox Width="80" ItemsSource="{Binding PeakCanConfigModel.Baudrates}" SelectedIndex="{Binding PeakCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,15,5"/>
-                    <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,5,5"/>
-                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,15,5" Text="{Binding PeakCanConfigModel.CommunicationId}"/>
+                    <Label Content="通道：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <ComboBox Width="110" ItemsSource="{Binding PeakCanConfigModel.Channels}" SelectedIndex="{Binding PeakCanConfigModel.SelectedChannelIndex}" Margin="5,5,0,5"/>
+                    <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <ComboBox Width="80" ItemsSource="{Binding PeakCanConfigModel.Baudrates}" SelectedIndex="{Binding PeakCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
+                    <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding PeakCanConfigModel.CommunicationId}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="USBCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=1, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,7"/>
+            <GroupBox Header="USBCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=1, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="设备号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="50" ItemsSource="{Binding UsbCanConfigModel.Devices, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedDeviceIndex}"/>
+                    <Label Content="通道号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="50" ItemsSource="{Binding UsbCanConfigModel.Channels, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedChannelIndex}"/>
+                    <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <ComboBox Width="80" ItemsSource="{Binding UsbCanConfigModel.Baudrates, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
+                    <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding UsbCanConfigModel.CommunicationId}"/>
+                </StackPanel>        
+            </GroupBox>
         </Grid>
 
     </Grid>

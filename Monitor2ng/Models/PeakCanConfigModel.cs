@@ -69,8 +69,10 @@ namespace Monitor2ng.Models
 
 
             Baudrates = new ObservableCollection<string>();
+            Baudrates.Add("100 kbps");
             Baudrates.Add("250 kbps");
             Baudrates.Add("500 kbps");
+            Baudrates.Add("1 Mbps");
 
             SelectedBaudrateIndex = Baudrates.IndexOf("500 kbps");
 

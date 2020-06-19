@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Collections.Specialized;
 using System.Collections;
 using InteractiveDataDisplay.WPF;
+using Microsoft.Win32;
 
 namespace Monitor2ng.ViewModels
 {
@@ -55,6 +56,8 @@ namespace Monitor2ng.ViewModels
         public RelayCommand GraphReadCommand { get; private set; }
         public RelayCommand GraphLockCommand { get; private set; }
         public RelayCommand GraphUnLockCommand { get; private set; }
+        public RelayCommand GraphSaveCommand { get; private set; }
+
         public RelayCommand ClearLogCommand { get; private set; }
 
         public bool IsGraphControlEnabled { get { return !GraphReadingFlag; } }
@@ -153,6 +156,7 @@ namespace Monitor2ng.ViewModels
             GraphReadCommand = new RelayCommand(GraphReadAction);
             GraphLockCommand = new RelayCommand(GraphLockAction);
             GraphUnLockCommand = new RelayCommand(GraphUnLockAction);
+            GraphSaveCommand = new RelayCommand(GraphSaveAction);
             tmpGraphData = new List<Tuple<int, float>>();
             LineGraph = new LineGraph();
             graphReadTimer.AutoReset = false;
@@ -182,31 +186,37 @@ namespace Monitor2ng.ViewModels
         {
             string json = File.ReadAllText(path);
             configFile = JsonConvert.DeserializeObject<ConfigFileModel>(json, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate });
-            foreach (var pairs in configFile.Modes)
+            if (configFile.Modes != null)
             {
-                ControlModel.Modes.Add(pairs.Key);
+                foreach (var pairs in configFile.Modes)
+                {
+                    ControlModel.Modes.Add(pairs.Key);
+                }
+                ControlModel.ModeDict = configFile.Modes;
             }
-            ControlModel.ModeDict = configFile.Modes;
 
             AutoCheckTimer.Interval = configFile.StateCheckInterval;
 
-            foreach (var v in configFile.Variables)
+            if (configFile.Variables != null)
             {
-                if (v.Type == "State")
+                foreach (var v in configFile.Variables)
                 {
-                    VariableModel model = new VariableModel(v);
-                    States.Add(model);
-                }
-                else if (v.Type == "Command")
-                {
-                    VariableModel model = new VariableModel(v);
-                    Commands.Add(model);
-                    model.PropertyChanged += Command_PropertyChanged;
-                }
-                else if (v.Type == "Parameter")
-                {
-                    VariableModel model = new VariableModel(v);
-                    Parameters.Add(model);
+                    if (v.Type == "State")
+                    {
+                        VariableModel model = new VariableModel(v);
+                        States.Add(model);
+                    }
+                    else if (v.Type == "Command")
+                    {
+                        VariableModel model = new VariableModel(v);
+                        Commands.Add(model);
+                        model.PropertyChanged += Command_PropertyChanged;
+                    }
+                    else if (v.Type == "Parameter")
+                    {
+                        VariableModel model = new VariableModel(v);
+                        Parameters.Add(model);
+                    }
                 }
             }
             
@@ -427,6 +437,46 @@ namespace Monitor2ng.ViewModels
         {
             MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.UnLock);
             CanClient.Transmit(frame, CommunicationId);
+        }
+
+        private void GraphSaveAction(object sender)
+        {
+            if (GraphDataModel.DisplayChannelData.Count > 0)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "csv files|*.csv";
+                dialog.DefaultExt = "csv";
+                if (dialog.ShowDialog() == true)
+                {
+                    string fileName = dialog.FileName;
+                    if (File.Exists(fileName))
+                    {
+                        try
+                        {
+                            File.Delete(fileName);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    using (StreamWriter writer = new StreamWriter(fileName, false))
+                    {
+                        try
+                        {
+                            foreach (var v in GraphDataModel.DisplayChannelData)
+                            {
+                                writer.WriteLine("{0},\t\t{1},", v.Item1, v.Item2);
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+            }
+            
         }
 
         private void GraphReadTimer_Elapsed(object sender, ElapsedEventArgs e)

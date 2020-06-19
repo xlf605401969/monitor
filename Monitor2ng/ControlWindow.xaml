@@ -482,7 +482,7 @@
                                 <Button Name="ReadGraph" Content="读取数据" Margin="0,5,0,5" Command="{Binding GraphReadCommand, Mode=OneWay}"/>
                                 <Button Name="LockGraph" Content="锁定记录" Margin="0,5,0,5" Command="{Binding GraphLockCommand, Mode=OneWay}"/>
                                 <Button Name="UnlockGraph" Content="解锁记录" Margin="0,5,0,5" Command="{Binding GraphUnLockCommand, Mode=OneWay}"/>
-                                <Button Name="SaveGraphData" Content="保存" Margin="0,5,0,5" Visibility="Visible" IsEnabled="False"/>
+                                <Button Name="SaveGraphData" Content="保存" Margin="0,5,0,5" Command="{Binding GraphSaveCommand, Mode=OneWay}" />
                             </StackPanel>
                             <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="5,5,5,5" Visibility="Collapsed">
                                 <Label Content="图像操作" HorizontalAlignment="Center" FontSize="14"/>

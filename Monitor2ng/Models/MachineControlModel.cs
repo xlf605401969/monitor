@@ -16,7 +16,14 @@ namespace Monitor2ng.Models
         {
             get
             {
-                return ModeDict[Modes[selectedModeIndex]];
+                if (selectedModeIndex != -1)
+                {
+                    return ModeDict[Modes[selectedModeIndex]];
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
