@@ -513,6 +513,7 @@ namespace Monitor2ng.ViewModels
                 var x = from v in GraphDataModel.SelectedChannelData select v.Item1;
                 var y = from v in GraphDataModel.SelectedChannelData select v.Item2;
                 LineGraph.Plot(x, y);
+                LineGraph.Description = GraphDataModel.SelectedChannel;
             }
         }
 
