@@ -19,6 +19,10 @@ using System.Collections.Specialized;
 using System.Collections;
 using InteractiveDataDisplay.WPF;
 using Microsoft.Win32;
+using NPOI;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Windows;
 
 namespace Monitor2ng.ViewModels
 {
@@ -63,7 +67,8 @@ namespace Monitor2ng.ViewModels
         public bool IsGraphControlEnabled { get { return !GraphReadingFlag; } }
         public bool GraphReadingFlag { get => graphReadingFlag; set { graphReadingFlag = value; OnPropertityChanged("GraphReadingFlag"); OnPropertityChanged("IsGraphControlEnabled"); } }
         private bool graphReadingFlag;
-        private List<Tuple<int, float>> tmpGraphData;
+        private Dictionary<string, List<Tuple<int, float>>> receivedGraphDataDic;
+        private Dictionary<string, bool> channelGraphReadingFlagDic;
         private Timer graphReadTimer = new Timer();
         public LineGraph LineGraph { get; set; }
 
@@ -113,6 +118,17 @@ namespace Monitor2ng.ViewModels
         }
         private ConnectionState connectionState;
 
+        public bool IsOnAllGraphChannel
+        {
+            get => isOnAllGraphChannel;
+            set
+            {
+                isOnAllGraphChannel = value;
+                OnPropertityChanged("IsOnAllGraphChannel");
+            }
+        }
+        private bool isOnAllGraphChannel;
+
         public RunState RunState
         {
             get
@@ -157,7 +173,8 @@ namespace Monitor2ng.ViewModels
             GraphLockCommand = new RelayCommand(GraphLockAction);
             GraphUnLockCommand = new RelayCommand(GraphUnLockAction);
             GraphSaveCommand = new RelayCommand(GraphSaveAction);
-            tmpGraphData = new List<Tuple<int, float>>();
+            receivedGraphDataDic = new Dictionary<string, List<Tuple<int, float>>>();
+            channelGraphReadingFlagDic = new Dictionary<string, bool>();
             LineGraph = new LineGraph();
             graphReadTimer.AutoReset = false;
             graphReadTimer.Elapsed += GraphReadTimer_Elapsed;
@@ -232,12 +249,18 @@ namespace Monitor2ng.ViewModels
             {
                 for (int i = 0; i < configFile.MaxGraphChannel; i++)
                 {
-                    GraphDataModel.AddChannel(string.Format("Channel: {0}", i));
+                    var channelName = string.Format("Channel {0}", i);
+                    GraphDataModel.AddChannel(channelName);
+                    receivedGraphDataDic.Add(channelName, new List<Tuple<int, float>>());
+                    channelGraphReadingFlagDic.Add(channelName, false);
                 }
             }
             else
             {
-                GraphDataModel.AddChannel(string.Format("Channel: {0}", 0));
+                var channelName = string.Format("Channel {0}", 0);
+                GraphDataModel.AddChannel(channelName);
+                receivedGraphDataDic.Add(channelName, new List<Tuple<int, float>>());
+                channelGraphReadingFlagDic.Add(channelName, false);
             }
             graphReadTimer.Interval = configFile.GraphReadingTimeout;
             GraphDataModel.PropertyChanged += GraphDataModel_PropertyChanged;
@@ -334,7 +357,7 @@ namespace Monitor2ng.ViewModels
                     case GraphCmd.DataInfo:
                         break;
                     case GraphCmd.EndOfData:
-                        EndGraphReading();
+                        EndGraphReading(frame);
                         break;
                 }
             }
@@ -344,11 +367,11 @@ namespace Monitor2ng.ViewModels
         {
             if (GraphReadingFlag)
             {
-                if (frame.Index == GraphDataModel.SelectedChannelIndex)
+                if (receivedGraphDataDic.ContainsKey(GraphDataModel.Channels[frame.Index]))
                 {
-                    lock (tmpGraphData)
+                    lock (receivedGraphDataDic)
                     {
-                        tmpGraphData.Add(new Tuple<int, float>(frame.GraphDataIndex, frame.GraphData));
+                        receivedGraphDataDic[GraphDataModel.Channels[frame.Index]].Add(new Tuple<int, float>(frame.GraphDataIndex, frame.GraphData));
                     }
                 }
             }
@@ -424,64 +447,208 @@ namespace Monitor2ng.ViewModels
         {
             if (GraphReadingFlag == false)
             {
-                GraphReadingFlag = true;
-                GraphDataModel.SelectedChannelData.Clear();
-                MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.Read);
-                CanClient.Transmit(frame, CommunicationId);
-                graphReadTimer.Start();
+                if (!isOnAllGraphChannel)
+                {
+                    GraphReadingFlag = true;
+                    channelGraphReadingFlagDic[GraphDataModel.Channels[GraphDataModel.SelectedChannelIndex]] = true;
+                    lock (receivedGraphDataDic)
+                    {
+                        receivedGraphDataDic[GraphDataModel.Channels[GraphDataModel.SelectedChannelIndex]].Clear();
+                        GraphDataModel.SelectedChannelData.Clear();
+                    }
+                    MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.Read);
+                    CanClient.Transmit(frame, CommunicationId);
+                    graphReadTimer.Start();
+                }
+                else
+                {
+                    GraphReadingFlag = true;
+                    foreach (var v in GraphDataModel.Channels)
+                    {
+                        channelGraphReadingFlagDic[v] = true;
+                        lock (receivedGraphDataDic)
+                        {
+                            receivedGraphDataDic[v].Clear();
+                            GraphDataModel.ChannelData[GraphDataModel.Channels.IndexOf(v)].Clear();
+                        }
+                        MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.Channels.IndexOf(v), GraphCmd.Read);
+                        CanClient.Transmit(frame, CommunicationId);
+                    }
+                    graphReadTimer.Start();
+                }
             }
         }
 
         private void GraphLockAction(object sender)
         {
-            MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.Lock);
-            CanClient.Transmit(frame, CommunicationId);
+            if (!isOnAllGraphChannel)
+            {
+                MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.Lock);
+                CanClient.Transmit(frame, CommunicationId);
+            }
+            else
+            {
+                foreach(var v in GraphDataModel.Channels)
+                {
+                    MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.Channels.IndexOf(v), GraphCmd.Lock);
+                    CanClient.Transmit(frame, CommunicationId);
+                }
+            }
         }
 
         private void GraphUnLockAction(object sender)
         {
-            MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.UnLock);
-            CanClient.Transmit(frame, CommunicationId);
+            if (!isOnAllGraphChannel)
+            {
+                MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.SelectedChannelIndex, GraphCmd.UnLock);
+                CanClient.Transmit(frame, CommunicationId);
+            }
+            else
+            {
+                foreach (var v in GraphDataModel.Channels)
+                {
+                    MonitorFrame frame = MonitorFrameBuilder.GraphControlFrame((byte)GraphDataModel.Channels.IndexOf(v), GraphCmd.UnLock);
+                    CanClient.Transmit(frame, CommunicationId);
+                }
+            }
         }
 
         private void GraphSaveAction(object sender)
         {
-            if (GraphDataModel.DisplayChannelData.Count > 0)
+            if (isOnAllGraphChannel)
             {
                 SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = "csv files|*.csv";
-                dialog.DefaultExt = "csv";
+                dialog.Filter = "xlsx files|*.xlsx";
+                dialog.DefaultExt = "xlsx";
                 if (dialog.ShowDialog() == true)
                 {
                     string fileName = dialog.FileName;
-                    if (File.Exists(fileName))
+                    try
                     {
-                        try
+                        if (File.Exists(fileName))
                         {
                             File.Delete(fileName);
                         }
-                        catch
-                        {
 
-                        }
-                    }
-                    using (StreamWriter writer = new StreamWriter(fileName, false))
-                    {
-                        try
+                        XSSFWorkbook workbook = new XSSFWorkbook();
+
+                        var sheetall = workbook.CreateSheet("Channel All");
+                        int channelIndex = 0;
+                        foreach (var name in GraphDataModel.Channels)
                         {
-                            foreach (var v in GraphDataModel.DisplayChannelData)
+                            var row = sheetall.GetRow(0);
+                            if (row == null)
                             {
-                                writer.WriteLine("{0},\t\t{1},", v.Item1, v.Item2);
+                                row = sheetall.CreateRow(0);
+                            }
+                            var cell = row.CreateCell(channelIndex);
+                            cell.SetCellValue(name);
+
+                            var index = GraphDataModel.Channels.IndexOf(name);
+                            var data = GraphDataModel.ChannelData[index];
+
+                            int rowIndex = 1;
+                            foreach (var v in data)
+                            {
+                                var rowdata = sheetall.GetRow(rowIndex);
+                                if (rowdata == null)
+                                {
+                                    rowdata = sheetall.CreateRow(rowIndex);
+                                }
+                                rowdata.CreateCell(channelIndex).SetCellValue(v.Item2);
+                                rowIndex += 1;
+                            }
+                            channelIndex += 1;
+                        }
+
+                        foreach (var name in GraphDataModel.Channels)
+                        {
+                            var index = GraphDataModel.Channels.IndexOf(name);
+                            var data = GraphDataModel.ChannelData[index];
+                            var sheet = workbook.CreateSheet(name);
+                            var info1 = sheet.CreateRow(0);
+                            info1.CreateCell(0).SetCellValue("Sample Ratio");
+                            info1.CreateCell(1).SetCellValue(GraphDataModel.ChannelSamplingRatio[index]);
+                            info1.CreateCell(2).SetCellValue("Sample Variable");
+                            if (GraphDataModel.ChannelLogVariableIndexes[index] == 0)
+                            {
+                                info1.CreateCell(3).SetCellValue("");
+                            }
+                            else
+                            {
+                                info1.CreateCell(3).SetCellValue(GraphDataModel.LogVariables[GraphDataModel.ChannelLogVariableIndexes[index]].Name);
+                            }
+
+                            for (int i = 0; i < data.Count; i++)
+                            {
+                                var row = sheet.CreateRow(i + 1);
+                                row.CreateCell(0).SetCellValue(data[i].Item1);
+                                row.CreateCell(1).SetCellValue(data[i].Item2);
                             }
                         }
-                        catch
-                        {
 
-                        }
+                        FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
+                        workbook.Write(fs);
+                        fs.Close();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("保存失败");
                     }
                 }
             }
-            
+            else
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "xlsx files|*.xlsx";
+                dialog.DefaultExt = "xlsx";
+                if (dialog.ShowDialog() == true)
+                {
+                    string fileName = dialog.FileName;
+                    try
+                    {
+                        if (File.Exists(fileName))
+                        {
+                            File.Delete(fileName);
+                        }
+
+                        XSSFWorkbook workbook = new XSSFWorkbook();
+
+                        var index = GraphDataModel.SelectedChannelIndex;
+                        var name = GraphDataModel.Channels[index];
+                        var data = GraphDataModel.ChannelData[index];
+                        var sheet = workbook.CreateSheet(name);
+                        var info1 = sheet.CreateRow(0);
+                        info1.CreateCell(0).SetCellValue("Sample Ratio");
+                        info1.CreateCell(1).SetCellValue(GraphDataModel.ChannelSamplingRatio[index]);
+                        info1.CreateCell(2).SetCellValue("Sample Variable");
+                        if (GraphDataModel.ChannelLogVariableIndexes[index] == 0)
+                        {
+                            info1.CreateCell(3).SetCellValue("");
+                        }
+                        else
+                        {
+                            info1.CreateCell(3).SetCellValue(GraphDataModel.LogVariables[GraphDataModel.ChannelLogVariableIndexes[index]].Name);
+                        }
+
+                        for (int i = 0; i < data.Count; i++)
+                        {
+                            var row = sheet.CreateRow(i + 1);
+                            row.CreateCell(0).SetCellValue(data[i].Item1);
+                            row.CreateCell(1).SetCellValue(data[i].Item2);
+                        }
+
+
+                        FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
+                        workbook.Write(fs);
+                        fs.Close();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("保存失败");
+                    }
+                }
+            }
         }
 
         private void GraphReadTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -489,22 +656,70 @@ namespace Monitor2ng.ViewModels
             EndGraphReading();
         }
 
-        private void EndGraphReading()
+        private void EndGraphReading(MonitorFrame frame)
         {
-            graphReadTimer.Stop();
+            var channelIndex = frame.IntIndexValue;
+            var channelName = GraphDataModel.Channels[frame.IntIndexValue];
+
+            channelGraphReadingFlagDic[channelName] = false;
+
+            lock (receivedGraphDataDic)
+            {
+                receivedGraphDataDic[channelName].Sort((x, y) => { return x.Item1.CompareTo(y.Item1); });
+            }
+
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                GraphReadingFlag = false;
-                lock (tmpGraphData)
+                foreach (var v in receivedGraphDataDic[channelName])
                 {
-                    tmpGraphData.Sort((x, y) => { return x.Item1.CompareTo(y.Item1); });
-
-                    foreach (var v in tmpGraphData)
-                    {
-                        GraphDataModel.SelectedChannelData.Add(v);
-                    }
-                    tmpGraphData.Clear();
+                    GraphDataModel.ChannelData[channelIndex].Add(v);
                 }
+            }));
+
+            if (!channelGraphReadingFlagDic.ContainsValue(true))
+            {
+                GraphReadingFlag = false;
+                graphReadTimer.Stop();
+                App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    var x = from v in GraphDataModel.SelectedChannelData select v.Item1;
+                    var y = from v in GraphDataModel.SelectedChannelData select v.Item2;
+                    LineGraph.Plot(x, y);
+                }));
+            }
+        }
+
+        private void EndGraphReading()
+        {
+            GraphReadingFlag = false;
+            graphReadTimer.Stop();
+
+            string[] keys = channelGraphReadingFlagDic.Keys.ToArray<string>();
+            foreach (var channelName in keys)
+            {
+                if (channelGraphReadingFlagDic[channelName] == true)
+                {
+                    channelGraphReadingFlagDic[channelName] = false;
+
+                    lock (receivedGraphDataDic)
+                    {
+                        receivedGraphDataDic[channelName].Sort((x, y) => { return x.Item1.CompareTo(y.Item1); });
+                    }
+
+                    var channelIndex = GraphDataModel.Channels.IndexOf(channelName);
+
+                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        foreach (var v in receivedGraphDataDic[channelName])
+                        {
+                            GraphDataModel.ChannelData[channelIndex].Add(v);
+                        }
+                    }));
+                }
+            }
+
+            App.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
                 var x = from v in GraphDataModel.SelectedChannelData select v.Item1;
                 var y = from v in GraphDataModel.SelectedChannelData select v.Item2;
                 LineGraph.Plot(x, y);

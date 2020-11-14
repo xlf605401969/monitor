@@ -2,7 +2,7 @@
   //！！新的上位机需要搭配新的DSP程序使用，将原有程序文件替换为新的即可，注意初始化函数部分有少许变化
   "Name": "测试控制器",
   //绘图通道数量
-  "MaxGraphChannel": 8,
+  "MaxGraphChannel": 2,
   //自动查询电机状态的间隔
   "StateCheckInterval": 300,
   //读取图像超时时间

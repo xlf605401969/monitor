@@ -157,7 +157,7 @@ namespace Monitor2ng.TestMcu
                         }
                         SendQueue.Enqueue(f);
                     }
-                    var f2 = MonitorFrameBuilder.GraphControlFrame(0, GraphCmd.EndOfData);
+                    var f2 = MonitorFrameBuilder.GraphControlFrame(frame.IntIndexValue, GraphCmd.EndOfData);
                     SendQueue.Enqueue(f2);
                     break;
                 case GraphCmd.SetRatio:
