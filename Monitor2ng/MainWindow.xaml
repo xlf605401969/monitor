@@ -105,6 +105,18 @@
                     <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding UsbCanConfigModel.CommunicationId}"/>
                 </StackPanel>        
             </GroupBox>
+            <GroupBox Header="ZLGCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=2, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="设备号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="50" ItemsSource="{Binding ZlgCanConfigModel.Devices, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedDeviceIndex}"/>
+                    <Label Content="通道号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="50" ItemsSource="{Binding ZlgCanConfigModel.Channels, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedChannelIndex}"/>
+                    <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <ComboBox Width="80" ItemsSource="{Binding ZlgCanConfigModel.Baudrates, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
+                    <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding ZlgCanConfigModel.CommunicationId}"/>
+                </StackPanel>
+            </GroupBox>
         </Grid>
 
     </Grid>

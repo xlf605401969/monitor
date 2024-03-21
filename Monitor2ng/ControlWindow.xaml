@@ -475,7 +475,7 @@
                                     <TextBox Grid.Column="1" Text="{Binding GraphDataModel.SamplingRatio}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                                 </Grid>
                                 <ComboBox Margin="0,5,0,5" ItemsSource="{Binding GraphDataModel.LogVariables}" SelectedIndex="{Binding GraphDataModel.SelectedLogVariableIndex}"/>
-                                <Button Content="确定" Command="{Binding GraphSettingCommand, Mode=OneWay}"/>
+                                <Button Content="确定" Command="{Binding GraphSettingCommand, Mode=OneWay}" Cursor="Hand"/>
                             </StackPanel>
                             <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="5,5,5,5">
                                 <Label Content="数据操作" FontSize="14" HorizontalContentAlignment="Center"/>

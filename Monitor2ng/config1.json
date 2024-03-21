@@ -10,14 +10,14 @@
   //电机运行状态对应的变量Id
   "StateVariableId": 1,
   //电机运行模式对应的变量Id
-  "ModeVariableId": 11,
+  "ModeVariableId": 2,
   //电机运行模式对应的变量值
   "Modes": {
-    "电流": 0,
-    "转矩": 1,
-    "转速": 2,
-    "电压": 3,
-    "母线电压": 4
+    "OFF": 0,
+    "电压环": 1,
+    "电流环": 2,
+    "转速环": 3,
+    "位置环": 4
   },
 
   //上位机控制的变量
@@ -30,110 +30,175 @@
   //(可省略)变量的变化步长（DeltaStep）为Command的变化步长，不设置则为0
   "Variables": [
     {
-      "Name": "Run",
+      "Name": "运行状态",
       "Id": 1,
       "Type": "State",
       "ValueType": "IntIndex",
       "ReturnValue": 0.0
     },
     {
-      "Name": "State1",
+      "Name": "运行模式",
       "Id": 2,
-      "Type": "State",
+      "Type": "Command",
       "ValueType": "IntIndex",
       "ReturnValue": 0.0
     },
     {
-      "Name": "State2",
-      "Id": 3,
-      "Type": "State",
-      "ValueType": "Int16",
-      "ReturnValue": 0.0
-    },
-    {
-      "Name": "State3",
-      "Id": 4,
-      "Type": "State",
-      "ValueType": "Int32",
-      "ReturnValue": 0.0
-    },
-    {
-      "Name": "State4",
-      "Id": 5,
-      "Type": "State",
-      "ValueType": "Float32",
-      "ReturnValue": 0.0
-    },
-    {
-      "Name": "Command1",
+      "Name": "位置指令",
       "Id": 11,
       "Type": "Command",
-      "ValueType": "IntIndex",
-      "Value": 2,
-      "ReturnValue": 0,
-      "DeltaStep": 5
+      "ValueType": "Float32",
+      "ReturnValue": 0.0
     },
     {
-      "Name": "Command2",
+      "Name": "速度指令",
       "Id": 12,
       "Type": "Command",
-      "ValueType": "Int16",
-      "Value": 0,
-      "ReturnValue": 0,
-      "DeltaStep": 5
+      "ValueType": "Float32",
+      "ReturnValue": 0.0
     },
     {
-      "Name": "Command3",
+      "Name": "电流指令",
       "Id": 13,
       "Type": "Command",
-      "ValueType": "Int32",
-      "Value": 0,
-      "ReturnValue": 0,
-      "DeltaStep": 5
-    },
-    {
-      "Name": "Command4",
-      "Id": 14,
-      "Type": "Command",
       "ValueType": "Float32",
-      "Value": 0,
-      "ReturnValue": 0,
-      "DeltaStep": 5
+      "ReturnValue": 0.0
     },
     {
-      "Name": "Parameter1",
+      "Name": "速度限制",
+      "Id": 20,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 2,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "加速度限制",
       "Id": 21,
       "Type": "Parameter",
-      "ValueType": "IntIndex",
-      "Value": 123,
-      "ReturnValue": 0.0
+      "ValueType": "Float32",
+      "Value": 2,
+      "ReturnValue": 0
     },
     {
-      "Name": "Parameter2",
-      "Id": 22,
-      "Type": "Parameter",
-      "ValueType": "Int16",
-      "Value": 234,
-      "ReturnValue": 0.0
-    },
-    {
-      "Name": "Parameter3",
-      "Id": 23,
-      "Type": "Parameter",
-      "ValueType": "Int32",
-      "Value": 345,
-      "ReturnValue": 0.0
-    },
-    {
-      "Name": "Parameter3",
-      "Id": 24,
+      "Name": "位置环Kp",
+      "Id": 30,
       "Type": "Parameter",
       "ValueType": "Float32",
-      "Value": 345,
-      "ReturnValue": 0.0
+      "Value": 2,
+      "ReturnValue": 0
     },
     {
-      "Name": "test"
-	}
+      "Name": "位置环Ki",
+      "Id": 31,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 2,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置环Kd",
+      "Id": 32,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置环Ke",
+      "Id": 33,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置环Kvfr",
+      "Id": 34,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置环Kafr",
+      "Id": 35,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置环Kvfrc",
+      "Id": 36,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环Kp",
+      "Id": 40,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环Ki",
+      "Id": 41,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环Kfr",
+      "Id": 42,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环滤波器模式",
+      "Id": 43,
+      "Type": "Parameter",
+      "ValueType": "Int32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环滤波器带宽",
+      "Id": 44,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "转速环滤波器中心频率",
+      "Id": 45,
+      "Type": "Parameter",
+      "ValueType": "Float32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置计数",
+      "Id": 50,
+      "Type": "State",
+      "ValueType": "Int32",
+      "Value": 0,
+      "ReturnValue": 0
+    },
+    {
+      "Name": "位置传感器故障",
+      "Id": 51,
+      "Type": "State",
+      "ValueType": "IntIndex",
+      "Value": 0,
+      "ReturnValue": 0
+    }
   ]
 }

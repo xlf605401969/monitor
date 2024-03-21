@@ -27,6 +27,9 @@ namespace Monitor2ng.ViewModels
 
         public UsbCanConfigModel UsbCanConfigModel { get; set; }
 
+        public ZlgCanConfigModel ZlgCanConfigModel { get; set; }
+
+
         public RelayCommand RefreshCommand { get; set; }
 
         public RelayCommand StartCommand { get; set; }
@@ -61,6 +64,7 @@ namespace Monitor2ng.ViewModels
             MonitorConfigModel = new MonitorConfigModel();
             PeakCanConfigModel = new PeakCanConfigModel();
             UsbCanConfigModel = new UsbCanConfigModel();
+            ZlgCanConfigModel = new ZlgCanConfigModel();
             RefreshConfigFiles();
 
             RefreshCommand = new RelayCommand((object o) =>
@@ -141,6 +145,41 @@ namespace Monitor2ng.ViewModels
 
                     CanClient client = new CanClient();
                     client.Connect(usbCanDriverAdapter);
+                    controlWindowViewModel.CanClient = client;
+                }
+                else if (MonitorConfigModel.SelectedDevice == "ZLGCAN-I")
+                {
+                    ZlgCanDriverAdapter zlgCanDriverAdapter = ZlgCanDriverAdapter.GetChannelDriverInstance(new Tuple<uint, uint>((uint)UsbCanConfigModel.SelectedDeviceIndex, (uint)UsbCanConfigModel.SelectedChannelIndex));
+                    zlgCanDriverAdapter.EditConfig("Baudrate", ZlgCanConfigModel.SelectedBaudrate);
+
+                    try
+                    {
+                        if (Regex.Match(ZlgCanConfigModel.CommunicationId, @"^0x.*").Success)
+                        {
+                            controlWindowViewModel.CommunicationId = Convert.ToUInt32(ZlgCanConfigModel.CommunicationId, 16);
+                        }
+                        else
+                        {
+                            controlWindowViewModel.CommunicationId = Convert.ToUInt32(ZlgCanConfigModel.CommunicationId, 10);
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        controlWindowViewModel.CommunicationId = 0x100;
+                        MessageBox.Show("Id格式错误，使用默认id:0x100");
+                    }
+                    finally
+                    {
+                        if (controlWindowViewModel.CommunicationId > 0x7ff)
+                        {
+                            controlWindowViewModel.CommunicationId = 0x100;
+                            MessageBox.Show("Id超出标准帧限制，使用默认id:0x100");
+                        }
+                    }
+                    controlWindowViewModel.WindowTitle = String.Format("{0}@{2}-[{1}]:0x{3}", MonitorConfigModel.SelectedDevice, MonitorConfigModel.SelectedConfigFile, PeakCanConfigModel.SelectedBaudrate, controlWindowViewModel.CommunicationId.ToString("X"));
+
+                    CanClient client = new CanClient();
+                    client.Connect(zlgCanDriverAdapter);
                     controlWindowViewModel.CanClient = client;
                 }
 

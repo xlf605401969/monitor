@@ -51,6 +51,7 @@ namespace Monitor2ng.Models
             Devices = new ObservableCollection<string>();
             Devices.Add("PCAN");
             Devices.Add("USBCAN");
+            Devices.Add("ZLGCAN-I");
 
             ConfigFiles = new ObservableCollection<string>();
         }

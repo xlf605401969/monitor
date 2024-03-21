@@ -1056,6 +1056,8 @@ namespace Monitor2ng.CAN
         public void Stop()
         {
             IsStarted = false;
+            targetDriver.Stop();
+            targetDriver.StopListen();
         }
     }
 }

@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,6 +18,70 @@
 
   <ItemGroup>
     <None Remove="config1.json" />
+    <None Remove="kerneldlls\CANDevCore.dll" />
+    <None Remove="kerneldlls\CANDevice.dll" />
+    <None Remove="kerneldlls\CANDTU_NET.dll" />
+    <None Remove="kerneldlls\CANETE.dll" />
+    <None Remove="kerneldlls\CANET_TCP.dll" />
+    <None Remove="kerneldlls\CANFDCOM.dll" />
+    <None Remove="kerneldlls\CANFDNET.dll" />
+    <None Remove="kerneldlls\CANWIFI_TCP.dll" />
+    <None Remove="kerneldlls\CANWIFI_UDP.dll" />
+    <None Remove="kerneldlls\devices_property\can.xml" />
+    <None Remove="kerneldlls\devices_property\candtu-100ur.xml" />
+    <None Remove="kerneldlls\devices_property\candtu-200ur.xml" />
+    <None Remove="kerneldlls\devices_property\candtu-net-400.xml" />
+    <None Remove="kerneldlls\devices_property\candtu-net.xml" />
+    <None Remove="kerneldlls\devices_property\candtu.ini" />
+    <None Remove="kerneldlls\devices_property\canet-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canet-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdblue-200u.xml" />
+    <None Remove="kerneldlls\devices_property\canfdcom-100ie.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet100-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet100-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet30cascade-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet30cascade-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet400u-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet400u-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet600u-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet600u-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet800u-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdnet800u-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdwifi-tcp.xml" />
+    <None Remove="kerneldlls\devices_property\canfdwifi-udp.xml" />
+    <None Remove="kerneldlls\devices_property\canscope.xml" />
+    <None Remove="kerneldlls\devices_property\device_locale_strings.xml" />
+    <None Remove="kerneldlls\devices_property\pci-5010-u.xml" />
+    <None Remove="kerneldlls\devices_property\pci-5020-u.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-100u-ex.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-100u.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-200u-ex.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-200u.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-400u-ex.xml" />
+    <None Remove="kerneldlls\devices_property\pcie-canfd-400u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan-2e-u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan-4e-u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan-8e-u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan-e-u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan1.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan2.xml" />
+    <None Remove="kerneldlls\devices_property\usbcan4.xml" />
+    <None Remove="kerneldlls\devices_property\usbcanfd-100u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcanfd-200u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcanfd-400u.xml" />
+    <None Remove="kerneldlls\devices_property\usbcanfd-800u.xml" />
+    <None Remove="kerneldlls\devices_property\virtual.xml" />
+    <None Remove="kerneldlls\dll_cfg.ini" />
+    <None Remove="kerneldlls\usbcan.dll" />
+    <None Remove="kerneldlls\USBCAN.xml" />
+    <None Remove="kerneldlls\USBCANFD.dll" />
+    <None Remove="kerneldlls\USBCANFD800U.dll" />
+    <None Remove="kerneldlls\VCI_USBCAN2.xml" />
+    <None Remove="kerneldlls\VirtualUSBCAN.dll" />
+    <None Remove="kerneldlls\ZlgCloud.dll" />
+    <None Remove="zlgcan.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,10 +91,202 @@
     <Content Include="controlcan.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="kerneldlls\CANDevCore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANDevice.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANDTU_NET.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANETE.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANET_TCP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANFDCOM.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANFDNET.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANWIFI_TCP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\CANWIFI_UDP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\can.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\candtu-100ur.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\candtu-200ur.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\candtu-net-400.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\candtu-net.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\candtu.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canet-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canet-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdblue-200u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdcom-100ie.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet100-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet100-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet30cascade-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet30cascade-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet400u-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet400u-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet600u-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet600u-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet800u-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdnet800u-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdwifi-tcp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canfdwifi-udp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\canscope.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\device_locale_strings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pci-5010-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pci-5020-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-100u-ex.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-100u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-200u-ex.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-200u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-400u-ex.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\pcie-canfd-400u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan-2e-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan-4e-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan-8e-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan-e-u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcan4.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcanfd-100u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcanfd-200u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcanfd-400u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\usbcanfd-800u.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\devices_property\virtual.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\dll_cfg.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\usbcan.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\USBCAN.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\USBCANFD.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\USBCANFD800U.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\VCI_USBCAN2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\VirtualUSBCAN.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="kerneldlls\ZlgCloud.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="PCANBasic.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PCANBasic_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="zlgcan.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
