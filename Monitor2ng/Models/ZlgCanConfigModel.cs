@@ -12,6 +12,19 @@ namespace Monitor2ng.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public ObservableCollection<string> DeviceTypes { get; private set; }
+        public int SelectedDeviceTypeIndex
+        {
+            get => selectedDeviceTypeIndex;
+            set
+            {
+                selectedDeviceTypeIndex = value;
+                OnPropertityChanged("SelectedDeviceTypeIndex");
+            }
+        }
+        private int selectedDeviceTypeIndex;
+        public string SelectedDeviceType { get => DeviceTypes[SelectedDeviceTypeIndex]; }
+
         public ObservableCollection<string> Devices { get; private set; }
         public int SelectedDeviceIndex
         {
@@ -70,6 +83,10 @@ namespace Monitor2ng.Models
 
         public ZlgCanConfigModel()
         {
+            DeviceTypes = new ObservableCollection<string>();
+            DeviceTypes.Add("USBCAN-I");
+            DeviceTypes.Add("USBCAN-II");
+
             Devices = new ObservableCollection<string>();
             Devices.Add("0");
             Devices.Add("1");
@@ -86,6 +103,8 @@ namespace Monitor2ng.Models
             Baudrates.Add("250 kbps");
             Baudrates.Add("500 kbps");
             Baudrates.Add("1000 kbps");
+
+            SelectedDeviceTypeIndex = 0;
 
             SelectedBaudrateIndex = Baudrates.IndexOf("500 kbps");
 

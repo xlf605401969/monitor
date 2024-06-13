@@ -29,6 +29,8 @@ namespace Monitor2ng.ViewModels
 
         public ZlgCanConfigModel ZlgCanConfigModel { get; set; }
 
+        public Rs485ConfigModel Rs485ConfigModel { get; set; }
+
 
         public RelayCommand RefreshCommand { get; set; }
 
@@ -65,6 +67,7 @@ namespace Monitor2ng.ViewModels
             PeakCanConfigModel = new PeakCanConfigModel();
             UsbCanConfigModel = new UsbCanConfigModel();
             ZlgCanConfigModel = new ZlgCanConfigModel();
+            Rs485ConfigModel = new Rs485ConfigModel();
             RefreshConfigFiles();
 
             RefreshCommand = new RelayCommand((object o) =>
@@ -180,6 +183,19 @@ namespace Monitor2ng.ViewModels
 
                     CanClient client = new CanClient();
                     client.Connect(zlgCanDriverAdapter);
+                    controlWindowViewModel.CanClient = client;
+                }
+                else if (MonitorConfigModel.SelectedDevice == "RS485")
+                {
+                    Rs485CanSimDriver rs485CanSimDriver = new Rs485CanSimDriver();
+                    rs485CanSimDriver.EditConfig("Port", Rs485ConfigModel.SelectedPort);
+                    rs485CanSimDriver.EditConfig("Baudrate", Rs485ConfigModel.Baudrate);
+                    controlWindowViewModel.CommunicationId = 0x100;
+
+                    controlWindowViewModel.WindowTitle = String.Format("{0}@{1}", MonitorConfigModel.SelectedDevice, MonitorConfigModel.SelectedConfigFile);
+
+                    CanClient client = new CanClient();
+                    client.Connect(rs485CanSimDriver);
                     controlWindowViewModel.CanClient = client;
                 }
 

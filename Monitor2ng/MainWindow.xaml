@@ -16,7 +16,7 @@
         mc:Ignorable="d"
         d:DataContext="{StaticResource SampleMainVM}"
         Closing="Window_Closing"
-        Title="连接管理" Width="535" Height="180">
+        Title="连接管理" Width="640" Height="180">
     <Window.Resources>
         <vm:TabVisiablityConverter x:Key="TabVisiablityConverter"/>
         <Style x:Key="RoundButton" TargetType="{x:Type Button}">
@@ -83,7 +83,11 @@
             <Button Content="启动" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5" MinWidth="60" Width="60" Command="{Binding StartCommand}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" Grid.Column="2"/>
         </Grid>
         <Grid x:Name="deviceConfigPanel" Grid.Row="1">
-            <GroupBox Header="PCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=0, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="123*"/>
+                <ColumnDefinition Width="517*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="PCAN" d:Visibility="Hidden" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=0, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5" Grid.ColumnSpan="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Label Content="通道：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
                     <ComboBox Width="110" ItemsSource="{Binding PeakCanConfigModel.Channels}" SelectedIndex="{Binding PeakCanConfigModel.SelectedChannelIndex}" Margin="5,5,0,5"/>
@@ -93,7 +97,7 @@
                     <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding PeakCanConfigModel.CommunicationId}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="USBCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=1, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+            <GroupBox Header="USBCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=1, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5" Grid.ColumnSpan="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Label Content="设备号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
                     <ComboBox Width="50" ItemsSource="{Binding UsbCanConfigModel.Devices, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedDeviceIndex}"/>
@@ -103,18 +107,28 @@
                     <ComboBox Width="80" ItemsSource="{Binding UsbCanConfigModel.Baudrates, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
                     <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
                     <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding UsbCanConfigModel.CommunicationId}"/>
-                </StackPanel>        
+                </StackPanel>
             </GroupBox>
-            <GroupBox Header="ZLGCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=2, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5">
+            <GroupBox Header="ZLGCAN" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=2, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5" Grid.ColumnSpan="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="类型：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" ItemsSource="{Binding ZlgCanConfigModel.DeviceTypes, Mode=OneWay}" SelectedIndex="{Binding ZlgCanConfigModel.SelectedDeviceTypeIndex}"/>
                     <Label Content="设备号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
-                    <ComboBox Width="50" ItemsSource="{Binding ZlgCanConfigModel.Devices, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedDeviceIndex}"/>
+                    <ComboBox Width="25" ItemsSource="{Binding ZlgCanConfigModel.Devices, Mode=OneWay}" SelectedIndex="{Binding ZlgCanConfigModel.SelectedDeviceIndex}"/>
                     <Label Content="通道号：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
-                    <ComboBox Width="50" ItemsSource="{Binding ZlgCanConfigModel.Channels, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedChannelIndex}"/>
+                    <ComboBox Width="25" ItemsSource="{Binding ZlgCanConfigModel.Channels, Mode=OneWay}" SelectedIndex="{Binding ZlgCanConfigModel.SelectedChannelIndex}"/>
                     <Label Content="波特率：" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,5"/>
-                    <ComboBox Width="80" ItemsSource="{Binding ZlgCanConfigModel.Baudrates, Mode=OneWay}" SelectedIndex="{Binding UsbCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
+                    <ComboBox Width="80" ItemsSource="{Binding ZlgCanConfigModel.Baudrates, Mode=OneWay}" SelectedIndex="{Binding ZlgCanConfigModel.SelectedBaudrateIndex}" Margin="5,5,0,5"/>
                     <Label Content="ID：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
                     <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding ZlgCanConfigModel.CommunicationId}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="RS485" d:Visibility="Visible" Visibility="{Binding SelectedIndex, Converter={StaticResource TabVisiablityConverter}, ConverterParameter=3, ElementName=deviceComboBox, Mode=OneWay}" Margin="5,5,5,5" Grid.ColumnSpan="2">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="端口：" HorizontalAlignment="Left" Margin="5,5,0,5" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" ItemsSource="{Binding Rs485ConfigModel.Ports, Mode=OneWay}" SelectedIndex="{Binding Rs485ConfigModel.SelectedPortIndex}"/>
+                    <Label Content="波特率：" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,0,5"/>
+                    <TextBox TextWrapping="Wrap" Width="90" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,0,5" Text="{Binding Rs485ConfigModel.Baudrate}"/>
                 </StackPanel>
             </GroupBox>
         </Grid>

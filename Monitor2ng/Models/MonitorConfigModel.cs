@@ -52,6 +52,7 @@ namespace Monitor2ng.Models
             Devices.Add("PCAN");
             Devices.Add("USBCAN");
             Devices.Add("ZLGCAN-I");
+            Devices.Add("RS485");
 
             ConfigFiles = new ObservableCollection<string>();
         }
